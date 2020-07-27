@@ -1,0 +1,32 @@
+﻿<Window x:Class="FASDesktopUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FASDesktopUI"
+        mc:Ignorable="d"
+        Title="FAS" Height="600" Width="350" Background="#000d30">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Image Source=".\fp.jpg" Grid.Row="0" x:Name="Image" Margin="0 110 0 0"/>
+
+        <Ellipse Width="50" Height="50" Grid.Row="2" x:Name="tick" >
+            <Ellipse.Fill>
+                <ImageBrush ImageSource=".\tick.png" />
+                
+            </Ellipse.Fill>
+        </Ellipse>
+
+        <Ellipse Width="50" Height="50" Grid.Row="2" x:Name="error">
+            <Ellipse.Fill>
+                <ImageBrush ImageSource=".\error.png" />
+            </Ellipse.Fill>
+        </Ellipse>
+
+    </Grid>
+</Window>
