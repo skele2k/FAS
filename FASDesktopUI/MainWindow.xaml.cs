@@ -112,6 +112,7 @@ namespace FASDesktopUI
             staffList.ForEach(x => staffs.Add(x));
             return staffList.Count();
         }
+        // Seperate thread for displaying tick or error. 
         private void displayTickOrError()
         {
             int code = fp.TickOrError();

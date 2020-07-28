@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASDataManager", "FASDataMa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASDesktopUI", "FASDesktopUI\FASDesktopUI.csproj", "{BEA7994E-50B2-4E19-AE49-4A96D83646A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASAdmin", "FASAdmin\FASAdmin.csproj", "{221364FC-D911-4275-B99B-4186B2C54833}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BEA7994E-50B2-4E19-AE49-4A96D83646A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEA7994E-50B2-4E19-AE49-4A96D83646A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEA7994E-50B2-4E19-AE49-4A96D83646A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{221364FC-D911-4275-B99B-4186B2C54833}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{221364FC-D911-4275-B99B-4186B2C54833}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{221364FC-D911-4275-B99B-4186B2C54833}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{221364FC-D911-4275-B99B-4186B2C54833}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
