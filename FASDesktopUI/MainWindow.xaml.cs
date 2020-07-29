@@ -15,8 +15,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FASDesktopUI.Models;
 using FASDesktopUI.Fingerprint;
-using FASDesktopUI.DataAccess;
 using System.Threading;
+using FASLib.DataAccess;
 
 namespace FASDesktopUI
 {

@@ -9,7 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using FASDesktopUI.Models;
-using FASDesktopUI.DataAccess;
+using FASLib.DataAccess;
+
 namespace FASDesktopUI.Fingerprint
 {
     class FingerprintHandler

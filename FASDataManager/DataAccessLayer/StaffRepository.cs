@@ -1,6 +1,5 @@
-﻿using FASDataManager.Library.DataAccess;
-using FASDataManager.Models;
-using Microsoft.Ajax.Utilities;
+﻿using FASDataManager.Models;
+using FASLib.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +50,7 @@ namespace FASDataManager.DataAccessLayer
             {
                 SqliteDataAccess.SaveData(sql, parameters);
             }
-            catch (Exception e)
+            catch
             {
                 output = false;
             }
