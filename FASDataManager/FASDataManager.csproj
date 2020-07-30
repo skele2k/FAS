@@ -163,6 +163,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DataAccessLayer\IStaffRepository.cs" />
     <Compile Include="DataAccessLayer\StaffRepository.cs" />

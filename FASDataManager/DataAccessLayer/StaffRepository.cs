@@ -50,7 +50,7 @@ namespace FASDataManager.DataAccessLayer
             {
                 SqliteDataAccess.SaveData(sql, parameters);
             }
-            catch
+            catch(Exception e)
             {
                 output = false;
             }
