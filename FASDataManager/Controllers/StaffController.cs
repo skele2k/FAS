@@ -13,17 +13,16 @@ namespace FASDataManager.Controllers
     {
         private StaffRepository _staffRepository = new StaffRepository();
         // GET: api/Staff
-        public IEnumerable<string> Get()
+        public List<StaffModel> Get()
         {
-            return new string[] { "value1", "value2" };
+            return _staffRepository.GetStaffs();
         }
 
         // GET: api/Staff/5
-        public string Get(int id)
+        public StaffModel Get(int id)
         {
-            return "value";
+            return _staffRepository.GetSingleStaff(id);
         }
-
         // POST: api/Staff
         public bool Post([FromBody]StaffModel theStaff)
         {
@@ -31,13 +30,15 @@ namespace FASDataManager.Controllers
         }
 
         // PUT: api/Staff/5
-        public void Put(int id, [FromBody]string value)
+        public bool Put(int id, [FromBody]StaffModel updatedStaff)
         {
+            return _staffRepository.UpdateStaff(id,updatedStaff);
         }
 
         // DELETE: api/Staff/5
-        public void Delete(int id)
+        public bool Delete(int id)
         {
+            return _staffRepository.DeleteStaff(id);
         }
     }
 }

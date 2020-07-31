@@ -9,10 +9,10 @@ namespace FASDataManager.DataAccessLayer
 {
     internal interface IStaffRepository
     {
-        List<StaffModel> GetStaffs(int amount, string sort);
+        List<StaffModel> GetStaffs();
         StaffModel GetSingleStaff(int staffId);
         bool InsertStaff(StaffModel ourCustomer);
         bool DeleteStaff(int staffId);
-        bool UpdateStaff(StaffModel ourCustomer);
+        bool UpdateStaff(int id, StaffModel ourCustomer);
     }
 }
