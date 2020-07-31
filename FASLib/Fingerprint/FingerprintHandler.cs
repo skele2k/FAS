@@ -1,5 +1,4 @@
-﻿using libzkfpcsharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,13 +6,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using FASDesktopUI.Models;
 using FASLib.DataAccess;
+using libzkfpcsharp;
+using System.Windows.Forms;
+using FASLib.Models;
 
-namespace FASDesktopUI.Fingerprint
+namespace FASLib.Fingerprint
 {
-    class FingerprintHandler
+    public class FingerprintHandler
     {
         public FingerprintHandler()
         {

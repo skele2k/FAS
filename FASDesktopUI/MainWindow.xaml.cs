@@ -13,10 +13,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using FASDesktopUI.Models;
-using FASDesktopUI.Fingerprint;
 using System.Threading;
 using FASLib.DataAccess;
+using FASLib.Models;
+using FASLib.Fingerprint;
 
 namespace FASDesktopUI
 {

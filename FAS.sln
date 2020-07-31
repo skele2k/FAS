@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASDesktopUI", "FASDesktopUI\FASDesktopUI.csproj", "{BEA7994E-50B2-4E19-AE49-4A96D83646A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASAdmin", "FASAdmin\FASAdmin.csproj", "{221364FC-D911-4275-B99B-4186B2C54833}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASDataManager", "FASDataManager\FASDataManager.csproj", "{B9B4DCF8-70BD-4951-B6D8-506361DE28EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASLib", "FASLib\FASLib.csproj", "{93D162F2-6C3E-4713-ABE0-E8D088D6020C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FASTAdmin", "FASTAdmin\FASTAdmin.csproj", "{20652497-3E3A-4CA3-9303-68AEDE3F7AA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +21,6 @@ Global
 		{BEA7994E-50B2-4E19-AE49-4A96D83646A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEA7994E-50B2-4E19-AE49-4A96D83646A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEA7994E-50B2-4E19-AE49-4A96D83646A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{221364FC-D911-4275-B99B-4186B2C54833}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{221364FC-D911-4275-B99B-4186B2C54833}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{221364FC-D911-4275-B99B-4186B2C54833}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{221364FC-D911-4275-B99B-4186B2C54833}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9B4DCF8-70BD-4951-B6D8-506361DE28EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9B4DCF8-70BD-4951-B6D8-506361DE28EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9B4DCF8-70BD-4951-B6D8-506361DE28EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{93D162F2-6C3E-4713-ABE0-E8D088D6020C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93D162F2-6C3E-4713-ABE0-E8D088D6020C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93D162F2-6C3E-4713-ABE0-E8D088D6020C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20652497-3E3A-4CA3-9303-68AEDE3F7AA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20652497-3E3A-4CA3-9303-68AEDE3F7AA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20652497-3E3A-4CA3-9303-68AEDE3F7AA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20652497-3E3A-4CA3-9303-68AEDE3F7AA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FASDataManager.Models
+namespace FASLib.Models
 {
     public class StaffModel
     {
@@ -13,5 +14,12 @@ namespace FASDataManager.Models
         public string lastName { get; set; }
         public string fingerPrint { get; set; }
         public int hasLunch { get; set; }
+        public string fullName
+        {
+            get
+            {
+                return lastName + " " + firstName;
+            }
+        }
     }
 }

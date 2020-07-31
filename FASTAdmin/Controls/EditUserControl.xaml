@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="FASTAdmin.Controls.EditUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FASTAdmin.Controls"
+             mc:Ignorable="d" FontSize="18" Foreground="White"
+             d:DesignHeight="600" d:DesignWidth="350" Background="#FF0E1429">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <!-- Row 0 -->
+        <ContentControl x:Name="BackControl" Grid.Row="0" />
+        
+        <!-- Row 1-->
+        <Button x:Name="Back" Grid.Row="1" Click="Back_Click"  Width="70" HorizontalAlignment="Left">Буцах</Button>
+        
+        
+        <!-- Row 2-->
+        <TextBlock x:Name="editTextBlock" Text="Ажилчин янзлах" Grid.Row="2" HorizontalAlignment="Center" FontFamily="Impact" FontSize="30" Margin="0 60 0 0" />
+
+        <!--Row 3 -->
+        <StackPanel Orientation="Vertical" Grid.Row="3" Margin="50 80 0 0" x:Name="staffSelectStackPanel">
+            <TextBlock Text="Ажилчин сонгох:" Margin="0 0 0 10"/>
+            <ComboBox x:Name="staffSelectDropDown" Width="253" HorizontalAlignment="Left" SelectionChanged="staffSelectDropDown_SelectionChanged"/>
+        </StackPanel>
+        
+        <!--Row 4 -->
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Margin="50 20 0 0" x:Name="newLastNameStackPanel">
+            <TextBlock Text="Шинэ овог:" Margin="0 0 10 0"/>
+            <TextBox x:Name="newFirstname" Width="150"/>
+        </StackPanel>
+
+        <!--Row 5 -->
+        <StackPanel Orientation="Horizontal" Grid.Row="5" Margin="50 20 0 0" x:Name="newFirstNameStackPanel">
+            <TextBlock Text="Шинэ нэр:" Margin="0 0 19 0"/>
+            <TextBox x:Name="newLastname" Width="150"/>
+        </StackPanel>
+        
+        <!-- Row 6 -->
+        <StackPanel Orientation="Vertical" Grid.Row="6" Margin="50 10 0 0" x:Name="newBranchStackPanel">
+            <TextBlock Text="Шинэ тасаг сонгох:" Margin="0 0 0 10"/>
+            <ComboBox x:Name="newBranchSelectDropDown" Width="253" HorizontalAlignment="Left"/>
+        </StackPanel>
+        
+        <!-- Row 7 -->
+        <Button x:Name="newFpAddButton" Grid.Row="7" Margin="0 20 0 0" Width="250" Click="newFpAddButton_Click">Шинэ хурууны хээ таниулах</Button>
+        
+        <!-- Row 8 -->
+        <CheckBox x:Name="lunchChangeCheckBox" Grid.Row="8" Foreground="White" Margin="0 20 0 0" HorizontalAlignment="Center">Үдийн цай</CheckBox>
+        
+        <!--Row 9 -->
+        <Button x:Name="submitNewUser" Grid.Row="9" Margin="0 20 0 0" Width="100" Click="submitNewUser_Click">Хадгалах</Button>
+
+    </Grid>
+
+</UserControl>

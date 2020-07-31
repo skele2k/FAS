@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FASDesktopUI.Models
+namespace FASLib.Models
 {
-    public class AdminModel
+    public class BranchModel
     {
         public int id { get; set; }
-        public string username { get; set; }
-        public string password { get; set; }
+        public string name { get; set; }
     }
 }
