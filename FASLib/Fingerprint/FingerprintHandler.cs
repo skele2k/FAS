@@ -93,6 +93,11 @@ namespace FASLib.Fingerprint
         }
         public void PushData(List<string> fingerprints)
         {
+            if (fingerprints == null)
+            {
+                return;
+            }
+
             dataSize = fingerprints.Count();
             fpData = new byte[dataSize][];
 
@@ -267,7 +272,7 @@ namespace FASLib.Fingerprint
 
         private AttendanceModel getRecordOfTheStaff(StaffModel theStaff)
         {
-            string sql = "SELECT * FROM attendance WHERE staff_id = @staff_id AND branch_id = @branch_id AND date = @date";
+            string sql = "SELECT * FROM attendance WHERE staff_id = @staff_id AND date = @date";
             string currentDate = getCurrentDate();
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {

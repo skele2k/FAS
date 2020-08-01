@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FASLib.DataAccess;
+using FASLib.Helpers;
 using FASLib.Models;
 
 
@@ -28,7 +29,6 @@ namespace FASTAdmin.Controls
         public EditBranchControl()
         {
             InitializeComponent();
-            InitializeBranchList();
             WireUpBranchesDropdown();
         }
 
@@ -39,10 +39,9 @@ namespace FASTAdmin.Controls
             branchSelectDropDown.SelectedValuePath = "id";
         }
 
-        private void InitializeBranchList()
+        private async Task InitializeBranchList()
         {
-            string sql = "SELECT * FROM branch";
-            var branchesList = SqliteDataAccess.LoadData<BranchModel>(sql, new Dictionary<string, object>());
+            var branchesList = await ApiProcessor.LoadBranches();
             branchesList.ForEach(x => branches.Add(x));
         }
 
@@ -52,6 +51,7 @@ namespace FASTAdmin.Controls
             BranchModel model = new BranchModel();
             try
             {
+                model.id = (int) branchSelectDropDown.SelectedValue;
                 model.name = newBranchname.Text;
             }
             catch
@@ -65,7 +65,7 @@ namespace FASTAdmin.Controls
             newBranchname.Text = "";
             branchSelectDropDown.SelectedItem = null;
         }
-        private void AddBranchToDatabase()
+        private async void AddBranchToDatabase()
         {
             var form = ValidateForm();
             if (form.isValid == false)
@@ -74,16 +74,20 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            string sql = "UPDATE branch SET name = @name WHERE id = @id";
+            var t = await ApiProcessor.EditBranchByID(form.model);
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>
+            if (t == "success")
             {
-                {"@id", (int)branchSelectDropDown.SelectedValue },
-                {"@name", form.model.name }
-            };
-            SqliteDataAccess.SaveData(sql, parameters);
-
-            MessageBox.Show("Амжилттай шинэчиллээ.");
+                MessageBox.Show("Амжилттай шинэчиллээ.");
+            }
+            else
+            {
+                MessageBox.Show("Алдаа гарлаа. Та дахин оролдоно уу?");
+            }
+            ClearForm();
+            branches.Clear();
+            await InitializeBranchList();
+            WireUpBranchesDropdown();
         }
         private void submitNewBranch_Click(object sender, RoutedEventArgs e)
         {
@@ -99,10 +103,6 @@ namespace FASTAdmin.Controls
             }
 
             AddBranchToDatabase();
-            ClearForm();
-            branches.Clear();
-            InitializeBranchList();
-            WireUpBranchesDropdown();
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
@@ -113,6 +113,11 @@ namespace FASTAdmin.Controls
             newNameStackPanel.Visibility = Visibility.Collapsed;
             submitNewBranch.Visibility = Visibility.Collapsed;
             BackControl.Content = new AdminControl();
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            await InitializeBranchList();
         }
     }
 }

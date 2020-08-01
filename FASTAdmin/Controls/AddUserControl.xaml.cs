@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using FASLib.DataAccess;
+using FASLib.Helpers;
 using FASLib.Models;
 
 namespace FASTAdmin.Controls
@@ -20,18 +22,20 @@ namespace FASTAdmin.Controls
         public AddUserControl()
         {
             InitializeComponent();
-            InitializeBranchList();
             WireUpBranchDropDown();
             
         }
 
-        private void InitializeBranchList()
+        private async Task InitializeBranchList()
         {
-            string sql = "SELECT * FROM branch";
-            var branchesList = SqliteDataAccess.LoadData<BranchModel>(sql, new Dictionary<string, object>());
 
-            branchesList.ForEach(x => branches.Add(x));
+            var branchesList = await ApiProcessor.LoadBranches();
+            if (branchesList != null)
+            {
+                branchesList.ForEach(x => branches.Add(x));
+            }
         }
+
         private int FindBranchID()
         {
             return (int)branchSelectDropdown.SelectedValue;
@@ -45,20 +49,11 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Форматаа зөв оруулна уу?");
                 return;
             }
+            
+            var t = Task.Run(() => ApiProcessor.SaveStaff(form.model));
+            t.Wait();
 
-            string sql = "INSERT INTO staff(branch_id, firstName, lastName ,fingerPrint , hasLunch) " +
-                         "VALUES(@branch_id, @firstName, @lastName ,@fingerPrint ,@hasLunch)";
-
-            Dictionary<string, object> parameters = new Dictionary<string, object>
-            {
-                {"@branch_id", form.model.branch_id },
-                {"@firstName", form.model.firstName },
-                {"@lastName", form.model.lastName },
-                {"@fingerPrint", fpTemplate },
-                {"@hasLunch", form.model.hasLunch }
-            };
-            SqliteDataAccess.SaveData(sql, parameters);
-            InsertToAttendanceSheet();
+            InsertToAttendanceSheet(form.model);
             MessageBox.Show("Амжилттай ажилтан нэмлээ.");
         }
         private string getCurrentDate()
@@ -67,35 +62,40 @@ namespace FASTAdmin.Controls
             string currentDate = dateTime.ToString("dd/MM/yyyy");
             return currentDate;
         }
-
-        private StaffModel GetStaff()
+        private (AttendanceModel model, bool isValid) ValidateAttendanceModel(StaffModel theStaff)
         {
-            string sql = "SELECT * FROM staff WHERE fingerPrint = @fingerPrint";
-            Dictionary<string, object> parameters = new Dictionary<string, object>
+            AttendanceModel model = new AttendanceModel();
+            bool isValid = true;
+
+            try
             {
-                {"@fingerPrint", fpTemplate }
-            };
-            var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, parameters);
-            if (staffList.Count() == 0)
-            {
-                throw new Exception();
+                model.staff_id = theStaff.id;
+                model.branch_id = theStaff.branch_id;
+                model.date = getCurrentDate();
+                model.atOffice = 0;
+                model.hasLunch = theStaff.hasLunch > 0;
             }
-            return staffList[0];
-        }
-
-        private void InsertToAttendanceSheet()
-        {
-            string sql = "INSERT INTO attendance(staff_id, branch_id, date, hasLunch) VALUES (@staff_id, @branch_id, @date, @hasLunch)";
-            string date = getCurrentDate();
-            StaffModel model = GetStaff();
-            Dictionary<string, object> parameters = new Dictionary<string, object>
+            catch
             {
-                {"@staff_id", model.id },
-                {"@branch_id", model.branch_id },
-                {"@date", date },
-                {"@hasLunch", model.hasLunch }
-            };
-            SqliteDataAccess.SaveData(sql, parameters);
+                isValid = false;
+            }
+            return (model, isValid);
+        }
+        private async void InsertToAttendanceSheet(StaffModel theStaff)
+        {
+            var staffs = await ApiProcessor.LoadStaffs();
+            foreach(StaffModel staff in staffs)
+            {
+                if (staff.fingerPrint == theStaff.fingerPrint)
+                {
+                    theStaff.id = staff.id;
+                    break;
+                }
+            }
+            var form = ValidateAttendanceModel(theStaff);
+
+            var t = Task.Run(() => ApiProcessor.SaveToAttendanceSheet(form.model));
+            t.Wait();
         }
 /*        private void AddStaffsToList()
         {
@@ -135,7 +135,7 @@ namespace FASTAdmin.Controls
                 model.firstName = addFirstNameTextBox.Text;
                 model.lastName = addLastNameTextBox.Text;
                 model.hasLunch = (bool) hasLunch.IsChecked ? 1 : 0;
-
+                model.fingerPrint = fpTemplate;
             }
             catch
             {
@@ -165,7 +165,7 @@ namespace FASTAdmin.Controls
             AddStaffsToDatabase();
             ResetForm();
             branches.Clear();
-            InitializeBranchList();
+            //await InitializeBranchList();
             WireUpBranchDropDown();
         }
 
@@ -191,6 +191,11 @@ namespace FASTAdmin.Controls
             hasLunch.Visibility = Visibility.Collapsed;
             addStaffButton.Visibility = Visibility.Collapsed;
             BackControl.Content = new AdminControl();
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            await InitializeBranchList();
         }
     }
 }

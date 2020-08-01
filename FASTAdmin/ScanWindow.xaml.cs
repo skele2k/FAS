@@ -18,6 +18,7 @@ using System.Threading;
 using FASLib.Fingerprint;
 using FASLib.DataAccess;
 using FASLib.Models;
+using FASLib.Helpers;
 
 namespace FASTAdmin
 {
@@ -48,11 +49,13 @@ namespace FASTAdmin
             displayThread.IsBackground = true;
             displayThread.Start();
         }
-        public void GetFingerprintsFromDB()
+        private async void GetFingerprintsFromDB()
         {
-            string sql = "SELECT * FROM staff";
-            var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
-
+            var staffList = await ApiProcessor.LoadStaffs(); 
+            if (staffList == null)
+            {
+                return;
+            }
             foreach (var model in staffList)
             {
                 if (model.fingerPrint != null)
@@ -87,6 +90,6 @@ namespace FASTAdmin
             this.Dispatcher.Invoke(() => { Window.GetWindow(this).DialogResult = true; });
             this.Dispatcher.Invoke(() => { Window.GetWindow(this).Close(); });
         }
-        
+
     }
 }

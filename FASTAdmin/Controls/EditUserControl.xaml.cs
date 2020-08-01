@@ -1,4 +1,4 @@
-﻿
+﻿using FASLib.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +17,7 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using FASLib.DataAccess;
 using FASLib.Models;
+using System.Net.Http;
 
 namespace FASTAdmin.Controls
 {
@@ -31,23 +32,19 @@ namespace FASTAdmin.Controls
         public EditUserControl()
         {
             InitializeComponent();
-            InitializeStaffDropdown();
             WireUpStaffDropdown();
-            InitializeBranchDropdown();
             WireUpBranchDropdown();
             ToggleFormFieldsDisplay(false);
             
         }
-        private void InitializeBranchDropdown()
+        private async Task InitializeBranchDropdown()
         {
-            string sql = "SELECT * FROM branch";
-            var branchList = SqliteDataAccess.LoadData<BranchModel>(sql, new Dictionary<string, object>());
+            var branchList = await ApiProcessor.LoadBranches();
             branchList.ForEach(x => branches.Add(x));
         }
-        private void InitializeStaffDropdown()
+        private async Task InitializeStaffDropdown()
         {
-            string sql = "SELECT * FROM staff";
-            var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
+            var staffList = await ApiProcessor.LoadStaffs();
             staffList.ForEach(x => staffs.Add(x));
         }
         private void WireUpStaffDropdown()
@@ -78,19 +75,39 @@ namespace FASTAdmin.Controls
         {
             bool isValid = true;
             StaffModel model = new StaffModel();
-            try
+            if (fpTemplate == "")
             {
-                model.firstName = newFirstname.Text;
-                model.lastName = newLastname.Text;
-                model.hasLunch = (bool) lunchChangeCheckBox.IsChecked ? 1 : 0;
-                model.id = (int) staffSelectDropDown.SelectedValue;
-                model.branch_id = (int) newBranchSelectDropDown.SelectedValue;
+                try
+                {
+                    model.firstName = newFirstname.Text;
+                    model.lastName = newLastname.Text;
+                    model.hasLunch = (bool)lunchChangeCheckBox.IsChecked ? 1 : 0;
+                    model.id = (int)staffSelectDropDown.SelectedValue;
+                    model.branch_id = (int)newBranchSelectDropDown.SelectedValue;
+                }
+                catch
+                {
+                    isValid = false;
+                }
+                return (isValid, model);
             }
-            catch
+            else
             {
-                isValid = false;
+                try
+                {
+                    model.firstName = newFirstname.Text;
+                    model.lastName = newLastname.Text;
+                    model.hasLunch = (bool)lunchChangeCheckBox.IsChecked ? 1 : 0;
+                    model.id = (int)staffSelectDropDown.SelectedValue;
+                    model.branch_id = (int)newBranchSelectDropDown.SelectedValue;
+                    model.fingerPrint = fpTemplate;
+                }
+                catch
+                {
+                    isValid = false;
+                }
+                return (isValid, model);
             }
-            return (isValid, model);
         }
         private void SaveStaffToDatabase()
         {
@@ -100,17 +117,21 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Өгөгдлөө зөв бөглөнө үү?");
                 return;
             }
-            string sql = "UPDATE staff SET branch_id = @branch_id, firstName = @firstName, lastName = @LastName, hasLunch = @hasLunch, fingerPrint = @fingerPrint WHERE id = @id";
-            Dictionary<string, object> parameters = new Dictionary<string, object>
-            {
-                { "@id", form.model.id },
-                {"@branch_id", form.model.branch_id },
-                {"@firstName", form.model.firstName },
-                {"@lastName", form.model.lastName },
-                {"@hasLunch", form.model.hasLunch },
-                {"@fingerPrint", fpTemplate }
-            };
-            SqliteDataAccess.SaveData(sql, parameters);
+            //string sql = "UPDATE staff SET branch_id = @branch_id, firstName = @firstName, lastName = @LastName, hasLunch = @hasLunch, fingerPrint = @fingerPrint WHERE id = @id";
+            //Dictionary<string, object> parameters = new Dictionary<string, object>
+            //{
+            //    { "@id", form.model.id },
+            //    {"@branch_id", form.model.branch_id },
+            //    {"@firstName", form.model.firstName },
+            //    {"@lastName", form.model.lastName },
+            //    {"@hasLunch", form.model.hasLunch },
+            //    {"@fingerPrint", fpTemplate }
+            //};
+            //SqliteDataAccess.SaveData(sql, parameters);
+
+            var t = Task.Run(() => ApiProcessor.EditStaffByID(form.model));
+            t.Wait();
+
         }
         private void ResetForm()
         {
@@ -122,7 +143,7 @@ namespace FASTAdmin.Controls
             newFpAddButton.Content = "Шинэ хурууны хээ таниулах";
             newFpAddButton.IsEnabled = true;
         }
-        private void submitNewUser_Click(object sender, RoutedEventArgs e)
+        private async void submitNewUser_Click(object sender, RoutedEventArgs e)
         {
             if (newFirstname.Text == "" || newLastname.Text == "")
             {
@@ -135,9 +156,9 @@ namespace FASTAdmin.Controls
             ResetForm();
             ToggleFormFieldsDisplay(false);
             staffs.Clear();
-            InitializeStaffDropdown();
+            await InitializeStaffDropdown();
             WireUpStaffDropdown();
-
+            
         }
         private void ToggleFormFieldsDisplay(bool displayFields)
         {
@@ -183,6 +204,12 @@ namespace FASTAdmin.Controls
                 newFpAddButton.Content = "Хурууны хээ бүртгэгдсэн";
                 newFpAddButton.IsEnabled = false;
             }
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            await InitializeStaffDropdown();
+            await InitializeBranchDropdown();
         }
     }
 }

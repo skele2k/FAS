@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FASLib.Helpers;
 
 namespace FASTAdmin.Controls
 {
@@ -26,7 +27,7 @@ namespace FASTAdmin.Controls
         {
             InitializeComponent();
         }
-        private void AddBranchToDatabase()
+        private async void AddBranchToDatabase()
         {
             var form = Validate();
             
@@ -36,16 +37,15 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            string sql = "INSERT INTO branch(name) " + "VALUES(@name)";
-
-            Dictionary<string, object> parameters = new Dictionary<string, object>
+            var t = await ApiProcessor.SaveBranch(form.model);
+            if (t == "success")
             {
-                {"@name", form.model.name }
-            };
-
-            SqliteDataAccess.SaveData(sql, parameters);
-
-            MessageBox.Show("Амжилттай нэмэгдлээ.");
+                MessageBox.Show("Амжилттай нэмэгдлээ.");
+            }
+            else
+            {
+                MessageBox.Show("Алдаа гарлаа. Та дахин оролдоно уу?");
+            }
         }
 
         private void ResetForm()

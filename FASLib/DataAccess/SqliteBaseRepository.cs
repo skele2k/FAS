@@ -1,34 +1,31 @@
 ﻿using Dapper;
+using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.IO.IsolatedStorage;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FASDataManager.DataAccessLayer
+namespace FASLib.DataAccess
 {
-    public class SqliteBaseRepository
+    public static class SqliteBaseRepository
     {
-        public static string DbFile
-        {
-            //get { return Environment.CurrentDirectory + "\\AttendDB.sqlite";  }
-            get 
-            {
-                string output = "|DataDirectory|\\AttendDB.sqlite";
-                return output;
-            }
-        }
+        public static string FullPath { get; set; }
         public static string DbLocation
         {
             get
             {
-                var fullPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/AttendDB.sqlite");
-                return fullPath;
+                string untilUser = System.Environment.GetEnvironmentVariable("USERPROFILE");
+                string fullPath = untilUser + @"\AppData\Local\FAS\db";
+                System.IO.Directory.CreateDirectory(fullPath);
+                return fullPath + @"\AttendDB.sqlite";
             }
         }
         public static SQLiteConnection SimpleDbConnection()
         {
-            return new SQLiteConnection("Data Source=" + DbFile + ";Version=3;");
+            return new SQLiteConnection("Data Source=" + DbLocation + "; Version = 3;");
         }
 
         public static void CreateDatabase()

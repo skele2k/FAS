@@ -1,4 +1,5 @@
 ﻿using FASTAdmin.Controls;
+using FASLib.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace FASTAdmin
         public MainWindow()
         {
             InitializeComponent();
+            ApiHelper.InitializeClient();
             content.Content = new AuthenticationControl();
         }
     }

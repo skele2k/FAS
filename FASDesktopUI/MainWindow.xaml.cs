@@ -45,14 +45,31 @@ namespace FASDesktopUI
         }
         public void GetFingerprintsFromDB()
         {
-            string sql = "SELECT * FROM staff";
-            var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
-
-            foreach (var model in staffList)
+            try
             {
-                if (model.fingerPrint != null)
+                string sql = "SELECT * FROM staff";
+                var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
+
+                foreach (var model in staffList)
                 {
-                    fps.Add(model.fingerPrint);
+                    if (model.fingerPrint != null)
+                    {
+                        fps.Add(model.fingerPrint);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                SqliteBaseRepository.CreateDatabase();
+                string sql = "SELECT * FROM staff";
+                var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
+
+                foreach (var model in staffList)
+                {
+                    if (model.fingerPrint != null)
+                    {
+                        fps.Add(model.fingerPrint);
+                    }
                 }
             }
         }
@@ -93,6 +110,7 @@ namespace FASDesktopUI
                 for (int i = 0; i < numOfStaffs; i++)
                 {
                     StaffModel model = staffs[i];
+
                     Dictionary<string, object> parameters = new Dictionary<string, object>
                     {
                         {"@staff_id", model.id },

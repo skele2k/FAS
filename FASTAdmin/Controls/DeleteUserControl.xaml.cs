@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FASLib.Models;
 using FASLib.DataAccess;
+using FASLib.Helpers;
 
 namespace FASTAdmin.Controls
 {
@@ -28,14 +29,11 @@ namespace FASTAdmin.Controls
         public DeleteUserControl()
         {
             InitializeComponent();
-            InitializeStaffList();
             WireUpStaffDropdown();
         }
-        private void InitializeStaffList()
+        private async Task InitializeStaffList()
         {
-            string sql = "SELECT * FROM staff";
-            var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
-
+            var staffList = await ApiProcessor.LoadStaffs();
             staffList.ForEach(x => staffs.Add(x));
         }
         private void WireUpStaffDropdown()
@@ -45,7 +43,7 @@ namespace FASTAdmin.Controls
             staffSelectDropDown.SelectedValuePath = "id";
         }
 
-        private void deleteStaff_Click(object sender, RoutedEventArgs e)
+        private async void deleteStaff_Click(object sender, RoutedEventArgs e)
         {
             if (staffSelectDropDown.SelectedItem == null)
             {
@@ -54,22 +52,19 @@ namespace FASTAdmin.Controls
             }
 
             StaffModel model = (StaffModel)staffSelectDropDown.SelectedItem;
-            string sql = "DELETE FROM staff WHERE id = @id AND branch_id = @branch_id AND firstName = @firstName AND lastName = @lastName AND hasLunch = @hasLunch";
-
-            Dictionary<string, object> parameters = new Dictionary<string, object>
+            var t = await ApiProcessor.DeleteStaffByID(model.id);
+            if (t == "success")
             {
-                {"@id", model.id },
-                {"@branch_id", model.branch_id },
-                {"@firstName", model.firstName },
-                {"@lastName", model.lastName },
-                {"@hasLunch", model.hasLunch }
-            };
-            SqliteDataAccess.SaveData(sql, parameters);
-            MessageBox.Show("Амжилттай устгалаа.");
+                MessageBox.Show("Амжилттай устгалаа.");
+            }
+            else
+            {
+                MessageBox.Show("Устгалт амжилтгүй");
+            }
 
             ResetForm();
             staffs.Clear();
-            InitializeStaffList();
+            await InitializeStaffList();
             WireUpStaffDropdown();
         }
         private void ResetForm()
@@ -84,6 +79,11 @@ namespace FASTAdmin.Controls
             staffSelectStackPanel.Visibility = Visibility.Collapsed;
             deleteStaff.Visibility = Visibility.Collapsed;
             BackControl.Content = new AdminControl();
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            await InitializeStaffList();
         }
     }
 }

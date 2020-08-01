@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FASLib.DataAccess;
+using FASLib.Helpers;
 using FASLib.Models;
 
 namespace FASTAdmin.Controls
@@ -27,14 +28,12 @@ namespace FASTAdmin.Controls
         public DeleteBranchControl()
         {
             InitializeComponent();
-            InitializeBranchesToList();
             WireUpBranchDropdown();
         }
-        private void InitializeBranchesToList()
+        private async Task InitializeBranchesToList()
         {
-            string sql = "SELECT * FROM branch";
-            var branchList = SqliteDataAccess.LoadData<BranchModel>(sql, new Dictionary<string, object>());
-            branchList.ForEach(x => branches.Add(x));
+            var branchesList = await ApiProcessor.LoadBranches();
+            branchesList.ForEach(x => branches.Add(x));
         }
         private void WireUpBranchDropdown()
         {
@@ -43,7 +42,7 @@ namespace FASTAdmin.Controls
             branchSelectDropdown.SelectedValuePath = "id";
         }
 
-        private void deleteStaff_Click(object sender, RoutedEventArgs e)
+        private async void deleteBranch_Click(object sender, RoutedEventArgs e)
         {
             if (branchSelectDropdown.SelectedItem == null)
             {
@@ -52,19 +51,18 @@ namespace FASTAdmin.Controls
             }
 
             BranchModel model = (BranchModel) branchSelectDropdown.SelectedItem;
-            string sql = "DELETE FROM branch WHERE name = @name AND id = @id";
-
-            Dictionary<string, object> parameters = new Dictionary<string, object>
+            var t = await ApiProcessor.DeleteBranchByID(model.id);
+            if (t == "success")
             {
-                {"@id", model.id },
-                {"@name", model.name}
-            };
-
-            SqliteDataAccess.SaveData(sql, parameters);
+                MessageBox.Show("Амжилттай устгалаа.");
+            }
+            else
+            {
+                MessageBox.Show("Устгалт амжилтгүй.");
+            }
             ResetForm();
-            MessageBox.Show("Амжилттай устгалаа.");
             branches.Clear();
-            InitializeBranchesToList();
+            await InitializeBranchesToList();
             WireUpBranchDropdown();
         }
 
@@ -81,6 +79,11 @@ namespace FASTAdmin.Controls
             deleteStaff.Visibility = Visibility.Collapsed;
             BackControl.Content = new AdminControl();
 
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            await InitializeBranchesToList();
         }
     }
 }

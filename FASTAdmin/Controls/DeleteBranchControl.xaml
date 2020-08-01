@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
-             mc:Ignorable="d" FontSize="18" Foreground="White"
+             mc:Ignorable="d" FontSize="18" Foreground="White" Loaded="UserControl_Loaded"
              d:DesignHeight="600" d:DesignWidth="350" Background="#FF0E1429">
     <Grid>
         <Grid.RowDefinitions>
@@ -35,7 +35,7 @@
         </StackPanel>
         
         <!-- Row 4-->
-        <Button x:Name="deleteStaff" HorizontalAlignment="Center" Grid.Row="4" Margin="0 100 0 0" Width="70" Click="deleteStaff_Click">
+        <Button x:Name="deleteStaff" HorizontalAlignment="Center" Grid.Row="4" Margin="0 100 0 0" Width="70" Click="deleteBranch_Click">
             Устгах
         </Button>
     </Grid>

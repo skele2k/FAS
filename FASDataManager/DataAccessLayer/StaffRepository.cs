@@ -1,4 +1,4 @@
-﻿using FASDataManager.Models;
+﻿using FASLib.Models;
 using FASLib.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -62,13 +62,14 @@ namespace FASDataManager.DataAccessLayer
             {
                 SqliteBaseRepository.CreateDatabase();
             }
-            string sql = "insert into staff(branch_id, firstname, lastname, haslunch) values(@branch_id, @firstname, @lastname, @haslunch)";
+            string sql = "insert into staff(branch_id, firstname, lastname, fingerPrint ,haslunch) values(@branch_id, @firstname, @lastname, @fingerPrint, @haslunch)";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
                 {"@branch_id", newStaff.branch_id },
                 {"@firstname", newStaff.firstName },
                 {"@lastname", newStaff.lastName },
+                {"@fingerPrint", newStaff.fingerPrint },
                 {"@haslunch", newStaff.hasLunch }
             };
             bool output = true;
@@ -147,7 +148,7 @@ namespace FASDataManager.DataAccessLayer
                 return false;
             }
 
-            string sql = "UPDATE staff SET branch_id = @branch_id, firstName = @firstName, lastName = @lastName, hasLunch = @hasLunch WHERE id = @id";
+            string sql = "UPDATE staff SET branch_id = @branch_id, firstName = @firstName, lastName = @lastName, hasLunch = @hasLunch, fingerPrint = @fingerPrint WHERE id = @id";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
@@ -155,6 +156,7 @@ namespace FASDataManager.DataAccessLayer
                 {"@firstName", editedStaff.firstName},
                 {"@lastName", editedStaff.lastName},
                 {"@hasLunch", editedStaff.hasLunch},
+                {"@fingerPrint", editedStaff.fingerPrint },
                 {"@id", id},
             };
             bool output = true;

@@ -15,7 +15,7 @@ namespace FASLib.DataAccess
         {
             DynamicParameters p = parameters.ToDynamicParameters();
 
-            using (IDbConnection cnn = new SQLiteConnection(DataAccessHelpers.LoadConnectionString(connectionName)))
+            using (IDbConnection cnn = SqliteBaseRepository.SimpleDbConnection())
             {
                 var rows = cnn.Query<T>(sqlStatement, p);
 
@@ -27,7 +27,7 @@ namespace FASLib.DataAccess
         {
             DynamicParameters p = parameters.ToDynamicParameters();
 
-            using (IDbConnection cnn = new SQLiteConnection(DataAccessHelpers.LoadConnectionString(connectionName)))
+            using (IDbConnection cnn = SqliteBaseRepository.SimpleDbConnection())
             {
                 cnn.Execute(sqlStatement, p);
             }
