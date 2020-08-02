@@ -28,7 +28,7 @@ namespace FASTAdmin.Controls
     {
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
-        string fpTemplate = "";
+        byte[] fpTemplate;
         public EditUserControl()
         {
             InitializeComponent();
@@ -75,7 +75,7 @@ namespace FASTAdmin.Controls
         {
             bool isValid = true;
             StaffModel model = new StaffModel();
-            if (fpTemplate == "")
+            if (fpTemplate == null)
             {
                 try
                 {
@@ -199,7 +199,7 @@ namespace FASTAdmin.Controls
             {
                 fpTemplate = w.ReturnFP;
             }
-            if (fpTemplate != "")
+            if (fpTemplate != null)
             {
                 newFpAddButton.Content = "Хурууны хээ бүртгэгдсэн";
                 newFpAddButton.IsEnabled = false;

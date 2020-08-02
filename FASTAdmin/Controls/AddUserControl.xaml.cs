@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FASLib.Fingerprint;
+using FASLib.Helpers;
+using FASLib.Models;
+using libzkfpcsharp;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using FASLib.DataAccess;
-using FASLib.Helpers;
-using FASLib.Models;
-
 namespace FASTAdmin.Controls
 {
     /// <summary>
@@ -18,21 +17,27 @@ namespace FASTAdmin.Controls
     {
         //List<StaffModel> staffs;
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
-        string fpTemplate = "";
+        byte[] fpTemplate;
         public AddUserControl()
         {
             InitializeComponent();
             WireUpBranchDropDown();
-            
         }
 
         private async Task InitializeBranchList()
         {
 
-            var branchesList = await ApiProcessor.LoadBranches();
-            if (branchesList != null)
+            try
             {
-                branchesList.ForEach(x => branches.Add(x));
+                var branchesList = await ApiProcessor.LoadBranches();
+                if (branchesList != null)
+                {
+                    branchesList.ForEach(x => branches.Add(x));
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Мэдээлэл татан авахад алдаа гарлаа. Интэрнэт холболтоо шалгана уу?");
             }
         }
 
@@ -40,7 +45,7 @@ namespace FASTAdmin.Controls
         {
             return (int)branchSelectDropdown.SelectedValue;
         }
-        private void AddStaffsToDatabase()
+        private async void AddStaffsToDatabase()
         {
             var form = Validate();
 
@@ -49,12 +54,17 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Форматаа зөв оруулна уу?");
                 return;
             }
-            
-            var t = Task.Run(() => ApiProcessor.SaveStaff(form.model));
-            t.Wait();
 
-            InsertToAttendanceSheet(form.model);
-            MessageBox.Show("Амжилттай ажилтан нэмлээ.");
+            var t = await ApiProcessor.SaveStaff(form.model);
+            if (t == "success")
+            {
+                await InsertToAttendanceSheet(form.model);
+            }
+            else
+            {
+                MessageBox.Show("Мэдээллийг хадгалахад алдаа гарлаа. Интэрнэт холболтоо шалгана уу?");
+            }
+
         }
         private string getCurrentDate()
         {
@@ -81,12 +91,13 @@ namespace FASTAdmin.Controls
             }
             return (model, isValid);
         }
-        private async void InsertToAttendanceSheet(StaffModel theStaff)
+        private async Task InsertToAttendanceSheet(StaffModel theStaff)
         {
             var staffs = await ApiProcessor.LoadStaffs();
-            foreach(StaffModel staff in staffs)
+
+            foreach (StaffModel staff in staffs)
             {
-                if (staff.fingerPrint == theStaff.fingerPrint)
+                if (theStaff.fingerPrint.SequenceEqual(staff.fingerPrint))
                 {
                     theStaff.id = staff.id;
                     break;
@@ -96,13 +107,9 @@ namespace FASTAdmin.Controls
 
             var t = Task.Run(() => ApiProcessor.SaveToAttendanceSheet(form.model));
             t.Wait();
-        }
-/*        private void AddStaffsToList()
-        {
-            string sql = "SELECT * FROM staff";
-            staffs = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
-        }*/
 
+            MessageBox.Show("Амжилттай ажилтан нэмлээ.");
+        }
         private void WireUpBranchDropDown()
         {
             branchSelectDropdown.ItemsSource = branches;
@@ -118,7 +125,7 @@ namespace FASTAdmin.Controls
             {
                 fpTemplate = w.ReturnFP;
             }
-            if (fpTemplate != "")
+            if (fpTemplate != null)
             {
                 fpAddButton.Content = "Хурууны хээ бүртгэгдсэн";
                 fpAddButton.IsEnabled = false;
@@ -134,7 +141,7 @@ namespace FASTAdmin.Controls
             {
                 model.firstName = addFirstNameTextBox.Text;
                 model.lastName = addLastNameTextBox.Text;
-                model.hasLunch = (bool) hasLunch.IsChecked ? 1 : 0;
+                model.hasLunch = (bool)hasLunch.IsChecked ? 1 : 0;
                 model.fingerPrint = fpTemplate;
             }
             catch
@@ -156,7 +163,7 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Тасгаа сонгоно уу?");
                 return;
             }
-            if (fpTemplate == "")
+            if (fpTemplate == null)
             {
                 MessageBox.Show("Хурууны хээгээ оруулна уу?");
                 return;

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FASTAdmin"
-        mc:Ignorable="d" Background="Red" Foreground="White" FontSize="18"
+        mc:Ignorable="d" Background="Red" Foreground="White" FontSize="18" Loaded="Window_Loaded"
         Title="Хурууны хээ уншуулагч" Height="300" Width="300">
     <Grid>
         <Grid.RowDefinitions>

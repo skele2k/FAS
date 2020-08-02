@@ -26,7 +26,7 @@ namespace FASDesktopUI
     public partial class MainWindow : Window
     {
         FingerprintHandler fp;
-        List<string> fps = new List<string>();
+        List<byte[]> fps = new List<byte[]>();
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
         public MainWindow()
         {

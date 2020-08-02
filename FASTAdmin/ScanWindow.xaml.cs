@@ -27,10 +27,10 @@ namespace FASTAdmin
     /// </summary>
     public partial class ScanWindow : Window
     {
-        List<string> fps = new List<string>();
+        List<byte[]> fps = new List<byte[]>();
         FingerprintHandler fp;
-        string fpTemplate;
-        public string ReturnFP
+        byte[] fpTemplate;
+        public byte[] ReturnFP
         {
             get
             {
@@ -41,15 +41,8 @@ namespace FASTAdmin
         {
             InitializeComponent();
             fp = new FingerprintHandler();
-            GetFingerprintsFromDB();
-            fp.PushData(fps);
-            fp.ConnectDeviceAndRegister();
-
-            Thread displayThread = new Thread(new ThreadStart(UpdateNumber));
-            displayThread.IsBackground = true;
-            displayThread.Start();
         }
-        private async void GetFingerprintsFromDB()
+        private async Task GetFingerprintsFromDB()
         {
             var staffList = await ApiProcessor.LoadStaffs(); 
             if (staffList == null)
@@ -91,5 +84,15 @@ namespace FASTAdmin
             this.Dispatcher.Invoke(() => { Window.GetWindow(this).Close(); });
         }
 
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            await GetFingerprintsFromDB();
+            fp.PushData(fps);
+            fp.ConnectDeviceAndRegister();
+
+            Thread displayThread = new Thread(new ThreadStart(UpdateNumber));
+            displayThread.IsBackground = true;
+            displayThread.Start();
+        }
     }
 }

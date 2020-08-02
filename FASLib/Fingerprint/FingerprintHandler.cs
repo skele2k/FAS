@@ -21,7 +21,8 @@ namespace FASLib.Fingerprint
         }
 
         Thread captureThread = null;
-        string oneFP = string.Empty;
+        byte[] theChosenOne = new byte[2048]; // Complete fingerprint template when registering. It is later returned to either AddUserControl or EditUserControl
+
         const int REGISTER_FINGER_COUNT = 3;
 
         zkfp fpInstance = new zkfp();
@@ -37,7 +38,6 @@ namespace FASLib.Fingerprint
         //int scanThreadID;
 
         //int deviceIndex;
-        Dictionary<byte[], string> mapper = new Dictionary<byte[], string>();
         byte[][] RegTmps = new byte[REGISTER_FINGER_COUNT][];
         byte[][] fpData;
 
@@ -60,9 +60,9 @@ namespace FASLib.Fingerprint
         {
             return tickOrError;
         }
-        public string GetTemplate()
+        public byte[] GetTemplate()
         {
-            return oneFP;
+            return theChosenOne;
         }
         public bool InitializeDevice()
         {
@@ -91,7 +91,7 @@ namespace FASLib.Fingerprint
                 return false;
             }
         }
-        public void PushData(List<string> fingerprints)
+        public void PushData(List<byte[]> fingerprints)
         {
             if (fingerprints == null)
             {
@@ -104,18 +104,17 @@ namespace FASLib.Fingerprint
             for (int i = 0; i < dataSize; i++)
             {
                 fpData[i] = new byte[2048];
-                fpData[i] = zkfp.Base64String2Blob(fingerprints[i]);
-                mapper[fpData[i]] = fingerprints[i];
+                fpData[i] = fingerprints[i];
             }
         }
-        public string ConnectDeviceAndRegister()
+        public void ConnectDeviceAndRegister()
         {
             int openDeviceCallBackCode = fpInstance.OpenDevice(0);
 
             if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode)
             {
                 MessageBox.Show("Төхөөрөмжтэй холбогдоход алдаа гарлаа.");
-                return "";
+                return;
             }
 
             for (int i = 0; i < REGISTER_FINGER_COUNT; i++)
@@ -141,7 +140,7 @@ namespace FASLib.Fingerprint
             captureThread.IsBackground = true;
             captureThread.Start();
 
-            return oneFP;
+            return;
         }
 
         /*private (bool isValid, AttendanceModel model) ValidateAttendanceForm()
@@ -166,7 +165,7 @@ namespace FASLib.Fingerprint
             double hours = leaTime.Subtract(arrTime).TotalHours;
             return hours;
         }
-        private void RegisterTimeToDB(string fingerPrint)
+        private void RegisterTimeToDB(byte[] fingerPrint)
         {
             ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
             string sql = "SELECT * FROM staff WHERE fingerPrint = @fingerPrint";
@@ -399,7 +398,6 @@ namespace FASLib.Fingerprint
                     return;
                 }
             }
-
             //Check if the user has entered the fingerprint 3 times or not
             if (RegisterCount > 0 && fpInstance.Match(CapTmp, RegTmps[RegisterCount - 1]) <= 0)
             {
@@ -416,19 +414,10 @@ namespace FASLib.Fingerprint
                 if (zkfp.ZKFP_ERR_OK == returnValue)
                 {
                     RegisterCount = 0;
-                    // LOAD TEMPLATE TO MEMORY
-                    //returnValue = fpInstance.AddRegTemplate(iFid, RegTmp);
-                    string fingerPrintTemplate = string.Empty;
-                    zkfp.Blob2Base64String(RegTmp, regTempLen, ref fingerPrintTemplate);
-
-                    // fingerPrintTemplate holdes successfully enrolled fingerprint in base64
-
+                    
                     bIsTimeToDie = true;
-                    oneFP = fingerPrintTemplate;
-
-
+                    theChosenOne = RegTmp;
                     return;
-
                 }
                 else
                 {
@@ -451,7 +440,7 @@ namespace FASLib.Fingerprint
                 int ret = fpInstance.Match(CapTmp, fpData[i]);
                 if (ret > 0)
                 {
-                    RegisterTimeToDB(mapper[fpData[i]]);
+                    RegisterTimeToDB(fpData[i]);
                     return;
                 }
             }

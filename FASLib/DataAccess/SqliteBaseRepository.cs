@@ -40,7 +40,7 @@ namespace FASLib.DataAccess
                         branch_id       INTEGER,
                         firstName       TEXT NOT NULL,
                         lastName        TEXT NOT NULL,
-                        fingerPrint     TEXT,
+                        fingerPrint     BLOB,
                         hasLunch        INTEGER NOT NULL,
                         FOREIGN KEY(branch_id) REFERENCES branch(id) ON DELETE SET NULL,
                         PRIMARY KEY(id AUTOINCREMENT)
