@@ -1,4 +1,5 @@
-﻿using FASLib.Models;
+﻿using FASLib.Helpers;
+using FASLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace FASTAdmin.Controls
             }
             return (isValid, model);
         }
-        private void loginButton_Click(object sender, RoutedEventArgs e)
+        private async void loginButton_Click(object sender, RoutedEventArgs e)
         {
             if (addUsernameTextBox.Text == "" || addPasswordTextBox.Password == "")
             {
@@ -49,12 +50,16 @@ namespace FASTAdmin.Controls
             }
             var form = ValidateForm();
 
-            if (form.model.username == "admin" && form.model.password == "admin")
+            Token token = await ApiProcessor.Authenticate(form.model.username, form.model.password);
+            
+
+            if (token != null)
             {
                 loginTextBlock.Visibility = Visibility.Collapsed;
                 usernameStackPanel.Visibility = Visibility.Collapsed;
                 passwordStackPanel.Visibility = Visibility.Collapsed;
                 loginButton.Visibility = Visibility.Collapsed;
+                ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
                 BackControl.Content = new AdminControl();
             }
             else

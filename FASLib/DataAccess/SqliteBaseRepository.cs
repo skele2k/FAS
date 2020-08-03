@@ -74,6 +74,8 @@ namespace FASLib.DataAccess
                         password        TEXT NOT NULL,
                         PRIMARY KEY(id AUTOINCREMENT)
                     );
+                    
+                    INSERT INTO admin(username, password) VALUES('admin', 'admin');
                 ");
 
             }

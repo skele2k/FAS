@@ -15,7 +15,7 @@ namespace FASLib.Helpers
     {
         public static async Task<List<StaffModel>> LoadStaffs()
         {
-            string url = "https://localhost:44360/api/staff";
+            string url = "/api/staff";
 
             using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
             {
@@ -33,7 +33,7 @@ namespace FASLib.Helpers
         }
         public static async Task<StaffModel> LoadStaffByID(int id)
         {
-            string url = $"https://localhost:44360/api/staff/ { id } ";
+            string url = $"/api/staff/ { id } ";
             using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
             {
                 if(response.IsSuccessStatusCode)
@@ -50,7 +50,7 @@ namespace FASLib.Helpers
 
         public static async Task<List<BranchModel>> LoadBranches()
         {
-            string url = "https://localhost:44360/api/branch";
+            string url = "/api/branch";
 
             using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
             {
@@ -68,7 +68,7 @@ namespace FASLib.Helpers
         }
         public static async Task<BranchModel> LoadBranchByID(int id)
         {
-            string url = $"https://localhost:44360/api/branch { id }";
+            string url = $"/api/branch { id }";
             using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
             {
                 if (response.IsSuccessStatusCode)
@@ -84,7 +84,7 @@ namespace FASLib.Helpers
         }
         public static async Task<string> SaveBranch(BranchModel theBranch)
         {
-            string url = "https://localhost:44360/api/branch";
+            string url = "/api/branch";
 
             var json = new JavaScriptSerializer().Serialize(theBranch);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -103,7 +103,7 @@ namespace FASLib.Helpers
         }
         public static async Task<string> SaveStaff(StaffModel theStaff)
         {
-            string url = "https://localhost:44360/api/staff";
+            string url = "/api/staff";
             
             var json = new JavaScriptSerializer().Serialize(theStaff);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -124,7 +124,7 @@ namespace FASLib.Helpers
         }
         public static async Task<string> SaveToAttendanceSheet(AttendanceModel theStaff)
         {
-            string url = "https://localhost:44360/api/attendance";
+            string url = "/api/attendance/";
 
             var json = new JavaScriptSerializer().Serialize(theStaff);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -161,7 +161,7 @@ namespace FASLib.Helpers
         }
         public static async Task<string> EditBranchByID(BranchModel theBranch)
         {
-            string url = $"https://localhost:44360/api/branch/ { theBranch.id }";
+            string url = $"/api/branch/ { theBranch.id }";
             var json = new JavaScriptSerializer().Serialize(theBranch);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -179,7 +179,7 @@ namespace FASLib.Helpers
         }
         public static async Task<string> DeleteStaffByID(int id)
         {
-            string url = $"https://localhost:44360/api/staff/ { id }";
+            string url = $"/api/staff/ { id }";
             
             using (HttpResponseMessage response = await ApiHelper.ApiClient.DeleteAsync(url))
             {
@@ -195,7 +195,7 @@ namespace FASLib.Helpers
         }
         public static async Task<string> DeleteBranchByID(int id)
         {
-            string url = $"https://localhost:44360/api/branch/ { id }";
+            string url = $"/api/branch/ { id }";
 
             using (HttpResponseMessage response = await ApiHelper.ApiClient.DeleteAsync(url))
             {
@@ -209,5 +209,47 @@ namespace FASLib.Helpers
                 }
             }
         }
+
+        public static async Task<List<AdminModel>> LoadAdmins()
+        {
+            string url = "/api/admin";
+
+            using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    List<AdminModel> admins = await response.Content.ReadAsAsync<List<AdminModel>>();
+
+                    return admins;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        public static async Task<Token> Authenticate(string username, string password)
+        {
+            var data = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "password"),
+                new KeyValuePair<string, string>("username", username),
+                new KeyValuePair<string, string>("password", password)
+            });
+
+            using (HttpResponseMessage response = await ApiHelper.ApiClient.PostAsync("/token", data))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsAsync<Token>();
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
     }
 }

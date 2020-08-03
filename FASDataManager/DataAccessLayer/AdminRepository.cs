@@ -1,62 +1,55 @@
-﻿using FASLib.Models;
-using FASLib.DataAccess;
+﻿using FASLib.DataAccess;
+using FASLib.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
-using Dapper;
-using System.Web.Configuration;
 
 namespace FASDataManager.DataAccessLayer
 {
-    public class StaffRepository : IStaffRepository
+    public class AdminRepository : IAdminRepository
     {
-        // Todo: implement exceptions
-        public List<StaffModel> GetStaffs()
+        public List<AdminModel> GetAdmins()
         {
             if (!File.Exists(SqliteBaseRepository.DbLocation))
             {
                 return null;
             }
 
-            string sql = "SELECT * FROM staff";
+            string sql = "SELECT * FROM admin";
 
-            var output = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
+            var output = SqliteDataAccess.LoadData<AdminModel>(sql, new Dictionary<string, object>());
             return output;
         }
-
-        public StaffModel GetSingleStaff(int staffId)
+        public AdminModel GetSingleAdmin(int adminId)
         {
             if (!File.Exists(SqliteBaseRepository.DbLocation))
             {
                 return null;
             }
 
-            string sql = "SELECT * FROM staff WHERE id = @staffId";
+            string sql = "SELECT * FROM admin WHERE id = @adminId";
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
-                {"@staffId", staffId }
+                {"@adminId", adminId }
             };
 
-            var output = SqliteDataAccess.LoadData<StaffModel>(sql, parameters).FirstOrDefault();
+            var output = SqliteDataAccess.LoadData<AdminModel>(sql, parameters).FirstOrDefault();
             return output;
         }
-        public bool InsertStaff(StaffModel newStaff)
+        public bool InsertAdmin(AdminModel theAdmin)
         {
             if (!File.Exists(SqliteBaseRepository.DbLocation))
             {
                 SqliteBaseRepository.CreateDatabase();
             }
-            string sql = "insert into staff(branch_id, firstname, lastname, fingerPrint ,haslunch) values(@branch_id, @firstname, @lastname, @fingerPrint, @haslunch)";
+            string sql = "INSERT INTO admin(username, password) VALUES(@username, @password)";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
-                {"@branch_id", newStaff.branch_id },
-                {"@firstname", newStaff.firstName },
-                {"@lastname", newStaff.lastName },
-                {"@fingerPrint", newStaff.fingerPrint },
-                {"@haslunch", newStaff.hasLunch }
+                {"@username", theAdmin.username},
+                {"@password", theAdmin.password }
             };
             bool output = true;
             try
@@ -69,18 +62,17 @@ namespace FASDataManager.DataAccessLayer
             }
             return output;
         }
-
-        public bool DeleteStaff(int staffId)
+        public bool DeleteAdmin(int adminId)
         {
             if (!File.Exists(SqliteBaseRepository.DbLocation))
             {
                 return false;
             }
-            string sql = "DELETE FROM staff WHERE id = @staffId";
+            string sql = "DELETE FROM admin WHERE id = @adminId";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
-                {"@staffId", staffId }
+                {"@adminId", adminId }
             };
 
             bool output = true;
@@ -95,22 +87,19 @@ namespace FASDataManager.DataAccessLayer
             }
             return output;
         }
-        public bool UpdateStaff(int id,StaffModel editedStaff)
+        public bool UpdateAdmin(int id, AdminModel theAdmin)
         {
             if (!File.Exists(SqliteBaseRepository.DbLocation))
             {
                 return false;
             }
 
-            string sql = "UPDATE staff SET branch_id = @branch_id, firstName = @firstName, lastName = @lastName, hasLunch = @hasLunch, fingerPrint = @fingerPrint WHERE id = @id";
+            string sql = "UPDATE admin SET username = @username, password = @password WHERE id = @id";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
-                {"@branch_id", editedStaff.branch_id},
-                {"@firstName", editedStaff.firstName},
-                {"@lastName", editedStaff.lastName},
-                {"@hasLunch", editedStaff.hasLunch},
-                {"@fingerPrint", editedStaff.fingerPrint },
+                {"@username", theAdmin.username},
+                {"@password", theAdmin.password},
                 {"@id", id},
             };
             bool output = true;

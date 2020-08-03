@@ -12,24 +12,28 @@ namespace FASDataManager.Controllers
     public class AttendanceController : ApiController
     {
         AttendanceRepository _attendanceRepository = new AttendanceRepository();
+        [Authorize]
         // GET: api/Attendance
         public List<AttendanceModel> Get()
         {
             return _attendanceRepository.GetAttendance();
         }
 
+        [Authorize]
         // GET: api/Attendance/5
         public string Get(int id)
         {
             return "value";
         }
 
+        [Authorize]
         // POST: api/Attendance
         public void Post([FromBody]AttendanceModel staffModel)
         {
             _attendanceRepository.AddStaffToAttendanceSheet(staffModel);
         }
 
+        [Authorize]
         // DELETE: api/Attendance/5
         public void Delete(int id)
         {
