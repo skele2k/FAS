@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FASTAdmin.excelHelper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,7 @@ namespace FASTAdmin.Controls
 
         private void exportToExcelMenuItem_Click(object sender, RoutedEventArgs e)
         {
-
+            xlHelper.Exporter();
         }
 
         private void addStaffMenuItem_Click(object sender, RoutedEventArgs e)
