@@ -58,11 +58,8 @@
         <!-- Row 7 -->
         <Button x:Name="newFpAddButton" Grid.Row="7" Margin="0 20 0 0" Width="250" Click="newFpAddButton_Click">Шинэ хурууны хээ таниулах</Button>
         
-        <!-- Row 8 -->
-        <CheckBox x:Name="lunchChangeCheckBox" Grid.Row="8" Foreground="White" Margin="0 20 0 0" HorizontalAlignment="Center">Үдийн цай</CheckBox>
-        
         <!--Row 9 -->
-        <Button x:Name="submitNewUser" Grid.Row="9" Margin="0 20 0 0" Width="100" Click="submitNewUser_Click">Хадгалах</Button>
+        <Button x:Name="submitNewUser" Grid.Row="9" Margin="0 40 0 0" Width="100" Click="submitNewUser_Click">Хадгалах</Button>
 
     </Grid>
 

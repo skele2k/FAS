@@ -28,7 +28,7 @@ namespace FASTAdmin.Controls
 
         private void exportToExcelMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            xlHelper.Exporter();
+            xlHelper.AllDataExporter();
         }
 
         private void addStaffMenuItem_Click(object sender, RoutedEventArgs e)

@@ -141,6 +141,23 @@ namespace FASLib.Helpers
                 }
             }
         }
+        public static async Task<List<AttendanceModel>> LoadAttendanceSheet()
+        {
+            string url = "/api/attendance";
+
+            using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var AttendanceModels = await response.Content.ReadAsAsync<List<AttendanceModel>>();
+                    return AttendanceModels;
+                }
+                else
+                {
+                    throw new Exception(response.ReasonPhrase);
+                }
+            }
+        }
         public static async Task<string> EditStaffByID(StaffModel theStaff)
         {
             string url = $"https://localhost:44360/api/staff/ { theStaff.id }";

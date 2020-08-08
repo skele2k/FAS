@@ -83,7 +83,6 @@ namespace FASTAdmin.Controls
                 model.branch_id = theStaff.branch_id;
                 model.date = getCurrentDate();
                 model.atOffice = 0;
-                model.hasLunch = theStaff.hasLunch > 0;
             }
             catch
             {
@@ -141,7 +140,6 @@ namespace FASTAdmin.Controls
             {
                 model.firstName = addFirstNameTextBox.Text;
                 model.lastName = addLastNameTextBox.Text;
-                model.hasLunch = (bool)hasLunch.IsChecked ? 1 : 0;
                 model.fingerPrint = fpTemplate;
             }
             catch
@@ -180,7 +178,6 @@ namespace FASTAdmin.Controls
         {
             addFirstNameTextBox.Text = "";
             addLastNameTextBox.Text = "";
-            hasLunch.IsChecked = false;
             branchSelectDropdown.SelectedItem = null;
             fpAddButton.Content = "Хурууны хээ таниулах";
             fpAddButton.IsEnabled = true;
@@ -195,7 +192,6 @@ namespace FASTAdmin.Controls
             firstnameStackPanel.Visibility = Visibility.Collapsed;
             branchStackPanel.Visibility = Visibility.Collapsed;
             fpAddButton.Visibility = Visibility.Collapsed;
-            hasLunch.Visibility = Visibility.Collapsed;
             addStaffButton.Visibility = Visibility.Collapsed;
             BackControl.Content = new AdminControl();
         }

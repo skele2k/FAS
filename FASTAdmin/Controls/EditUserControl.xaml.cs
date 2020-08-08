@@ -67,7 +67,6 @@ namespace FASTAdmin.Controls
                 StaffModel model = (StaffModel)staffSelectDropDown.SelectedItem;
                 newFirstname.Text = model.firstName;
                 newLastname.Text = model.lastName;
-                lunchChangeCheckBox.IsChecked = (model.hasLunch > 0);
                 newBranchSelectDropDown.SelectedValue = model.branch_id;
             }
         }
@@ -81,7 +80,6 @@ namespace FASTAdmin.Controls
                 {
                     model.firstName = newFirstname.Text;
                     model.lastName = newLastname.Text;
-                    model.hasLunch = (bool)lunchChangeCheckBox.IsChecked ? 1 : 0;
                     model.id = (int)staffSelectDropDown.SelectedValue;
                     model.branch_id = (int)newBranchSelectDropDown.SelectedValue;
                 }
@@ -97,7 +95,6 @@ namespace FASTAdmin.Controls
                 {
                     model.firstName = newFirstname.Text;
                     model.lastName = newLastname.Text;
-                    model.hasLunch = (bool)lunchChangeCheckBox.IsChecked ? 1 : 0;
                     model.id = (int)staffSelectDropDown.SelectedValue;
                     model.branch_id = (int)newBranchSelectDropDown.SelectedValue;
                     model.fingerPrint = fpTemplate;
@@ -137,7 +134,6 @@ namespace FASTAdmin.Controls
         {
             newFirstname.Text = "";
             newLastname.Text = "";
-            lunchChangeCheckBox.IsChecked = false;
             staffSelectDropDown.SelectedItem = null;
             newBranchSelectDropDown.SelectedItem = null;
             newFpAddButton.Content = "Шинэ хурууны хээ таниулах";
@@ -168,7 +164,6 @@ namespace FASTAdmin.Controls
             newFirstNameStackPanel.Visibility = display;
             newBranchStackPanel.Visibility = display;
             newFpAddButton.Visibility = display;
-            lunchChangeCheckBox.Visibility = display;
             submitNewUser.Visibility = display;
         }
         private void staffSelectDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -186,7 +181,6 @@ namespace FASTAdmin.Controls
             newFirstNameStackPanel.Visibility = Visibility.Collapsed;
             newBranchStackPanel.Visibility = Visibility.Collapsed;
             newFpAddButton.Visibility = Visibility.Collapsed;
-            lunchChangeCheckBox.Visibility = Visibility.Collapsed;
             submitNewUser.Visibility = Visibility.Collapsed;
             BackControl.Content = new AdminControl();
         }

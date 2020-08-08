@@ -58,7 +58,6 @@ namespace FASLib.DataAccess
                         staff_id        INTEGER NOT NULL,
                         branch_id       INTEGER NOT NULL,
                         date            TEXT NOT NULL,
-                        hasLunch        INTEGER,
                         arriveTime      TEXT,
                         leaveTime       TEXT,
                         officeHours     REAL DEFAULT 0,

@@ -32,7 +32,7 @@ namespace FASDataManager.DataAccessLayer
             {
                 return false;
             }
-            string sql = "INSERT INTO attendance(staff_id, branch_id, date, hasLunch) VALUES(@staff_id, @branch_id, @date, @hasLunch)";
+            string sql = "INSERT INTO attendance(staff_id, branch_id, date, hasLunch) VALUES(@staff_id, @branch_id, @date)";
             bool output = true;
             try
             {
@@ -41,7 +41,6 @@ namespace FASDataManager.DataAccessLayer
                     {"@staff_id", theAttendance.staff_id },
                     {"@branch_id", theAttendance.branch_id },
                     {"@date", theAttendance.date },
-                    {"@hasLunch", theAttendance.hasLunch }
                 };
                 SqliteDataAccess.SaveData(sql, parameters);
             }

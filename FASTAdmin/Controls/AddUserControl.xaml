@@ -63,9 +63,6 @@
         <Button x:Name="fpAddButton" IsDefault="True" Grid.Row="6" Margin="0 40 0 0" Width="210" Click="fpAddButton_Click">Хурууны хээ таниулах</Button>
         
         <!-- Row 6 -->
-        <CheckBox x:Name="hasLunch" Grid.Row="7" HorizontalAlignment="Center" Margin="0 50 0 0" Foreground="White">Үдийн цай</CheckBox>
-        
-        <!-- Row 7 -->
         <Button x:Name="addStaffButton" Grid.Row="8" Margin="0 40 0 0" Width="90" Click="addStaffButton_Click">Нэмэх</Button>
     </Grid>
 </UserControl>

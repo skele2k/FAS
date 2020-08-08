@@ -20,13 +20,6 @@ namespace FASDataManager.Controllers
         }
 
         [Authorize]
-        // GET: api/Attendance/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        [Authorize]
         // POST: api/Attendance
         public void Post([FromBody]AttendanceModel staffModel)
         {
