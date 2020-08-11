@@ -50,21 +50,28 @@ namespace FASTAdmin.Controls
             }
             var form = ValidateForm();
 
-            Token token = await ApiProcessor.Authenticate(form.model.username, form.model.password);
-            
+            try
+            {
+                Token token = await ApiProcessor.Authenticate(form.model.username, form.model.password);
 
-            if (token != null)
-            {
-                loginTextBlock.Visibility = Visibility.Collapsed;
-                usernameStackPanel.Visibility = Visibility.Collapsed;
-                passwordStackPanel.Visibility = Visibility.Collapsed;
-                loginButton.Visibility = Visibility.Collapsed;
-                ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
-                BackControl.Content = new AdminControl();
+                if (token != null)
+                {
+                    loginTextBlock.Visibility = Visibility.Collapsed;
+                    usernameStackPanel.Visibility = Visibility.Collapsed;
+                    passwordStackPanel.Visibility = Visibility.Collapsed;
+                    loginButton.Visibility = Visibility.Collapsed;
+                    ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
+                    BackControl.Content = new AdminControl();
+                }
+                else
+                {
+                    MessageBox.Show("Нэр эсвэл нууц үг буруу байна.");
+                    return;
+                }
             }
-            else
+            catch (Exception)
             {
-                MessageBox.Show("Нэр эсвэл нууц үг буруу байна.");
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
                 return;
             }
         }

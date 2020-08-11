@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using FASLib.DataAccess;
 using FASLib.Models;
 using System.Net.Http;
+using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -28,24 +29,37 @@ namespace FASTAdmin.Controls
     {
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
+        public StaffModel selectedStaff { get; set; }
         byte[] fpTemplate;
         public EditUserControl()
         {
             InitializeComponent();
             WireUpStaffDropdown();
             WireUpBranchDropdown();
-            ToggleFormFieldsDisplay(false);
-            
         }
         private async Task InitializeBranchDropdown()
         {
-            var branchList = await ApiProcessor.LoadBranches();
-            branchList.ForEach(x => branches.Add(x));
+            try
+            {
+                var branchList = await ApiProcessor.LoadBranches();
+                branchList.ForEach(x => branches.Add(x));
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
         }
         private async Task InitializeStaffDropdown()
         {
-            var staffList = await ApiProcessor.LoadStaffs();
-            staffList.ForEach(x => staffs.Add(x));
+            try
+            {
+                var staffList = await ApiProcessor.LoadStaffs();
+                staffList.ForEach(x => staffs.Add(x));
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
         }
         private void WireUpStaffDropdown()
         {
@@ -126,20 +140,31 @@ namespace FASTAdmin.Controls
             //};
             //SqliteDataAccess.SaveData(sql, parameters);
 
-            var t = Task.Run(() => ApiProcessor.EditStaffByID(form.model));
-            t.Wait();
-
+            try
+            {
+                var t = Task.Run(() => ApiProcessor.EditStaffByID(form.model));
+                t.Wait();
+                if (t.Equals("fail"))
+                {
+                    MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
         }
         private void ResetForm()
         {
-            newFirstname.Text = "";
-            newLastname.Text = "";
-            staffSelectDropDown.SelectedItem = null;
-            newBranchSelectDropDown.SelectedItem = null;
-            newFpAddButton.Content = "Шинэ хурууны хээ таниулах";
-            newFpAddButton.IsEnabled = true;
+            editTextBlock.Visibility = Visibility.Collapsed;
+            staffSelectStackPanel.Visibility = Visibility.Collapsed;
+            newLastNameStackPanel.Visibility = Visibility.Collapsed;
+            newFirstNameStackPanel.Visibility = Visibility.Collapsed;
+            newBranchStackPanel.Visibility = Visibility.Collapsed;
+            newFpAddButton.Visibility = Visibility.Collapsed;
+            submitNewUser.Visibility = Visibility.Collapsed;
         }
-        private async void submitNewUser_Click(object sender, RoutedEventArgs e)
+        private void submitNewUser_Click(object sender, RoutedEventArgs e)
         {
             if (newFirstname.Text == "" || newLastname.Text == "")
             {
@@ -150,41 +175,13 @@ namespace FASTAdmin.Controls
             MessageBox.Show("Амжилттай шинэчиллээ.");
 
             ResetForm();
-            ToggleFormFieldsDisplay(false);
             staffs.Clear();
-            await InitializeStaffDropdown();
-            WireUpStaffDropdown();
-            
-        }
-        private void ToggleFormFieldsDisplay(bool displayFields)
-        {
-            Visibility display = displayFields ? Visibility.Visible : Visibility.Collapsed;
-
-            newLastNameStackPanel.Visibility = display;
-            newFirstNameStackPanel.Visibility = display;
-            newBranchStackPanel.Visibility = display;
-            newFpAddButton.Visibility = display;
-            submitNewUser.Visibility = display;
+            refreshNoticer.refreshNow = true;
         }
         private void staffSelectDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LoadStaff();
-            ToggleFormFieldsDisplay(true);
         }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            Back.Visibility = Visibility.Collapsed;
-            editTextBlock.Visibility = Visibility.Collapsed;
-            staffSelectStackPanel.Visibility = Visibility.Collapsed;
-            newLastNameStackPanel.Visibility = Visibility.Collapsed;
-            newFirstNameStackPanel.Visibility = Visibility.Collapsed;
-            newBranchStackPanel.Visibility = Visibility.Collapsed;
-            newFpAddButton.Visibility = Visibility.Collapsed;
-            submitNewUser.Visibility = Visibility.Collapsed;
-            BackControl.Content = new AdminControl();
-        }
-
         private void newFpAddButton_Click(object sender, RoutedEventArgs e)
         {
             var w = new ScanWindow();
@@ -204,6 +201,28 @@ namespace FASTAdmin.Controls
         {
             await InitializeStaffDropdown();
             await InitializeBranchDropdown();
+
+            int left = 0;
+            int right = staffs.Count() - 1;
+
+            while (left <= right)
+            {
+                int mid = left + (right - left) / 2;
+
+                if (staffs[mid].id == selectedStaff.id)
+                {
+                    staffSelectDropDown.SelectedItem = staffs[mid];
+                    break;
+                }
+                else if (staffs[mid].id > selectedStaff.id)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
         }
     }
 }

@@ -105,7 +105,7 @@ namespace FASDesktopUI
             bool isNewDay = IsNewDay(currentDate);
             if (isNewDay == true)
             {
-                string sql = "INSERT INTO attendance(staff_id, branch_id, date, hasLunch) VALUES(@staff_id, @branch_id, @date, @hasLunch)";
+                string sql = "INSERT INTO attendance(staff_id, branch_id, date) VALUES(@staff_id, @branch_id, @date)";
 
                 for (int i = 0; i < numOfStaffs; i++)
                 {
@@ -115,8 +115,7 @@ namespace FASDesktopUI
                     {
                         {"@staff_id", model.id },
                         {"@branch_id", model.branch_id },
-                        {"@date", currentDate },
-                        {"@hasLunch", model.hasLunch }
+                        {"@date", currentDate }
                     };
                     SqliteDataAccess.SaveData(sql, parameters);
                 }

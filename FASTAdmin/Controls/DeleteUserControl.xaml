@@ -19,11 +19,9 @@
                 * Make a pop up verification -->
         <!-- Row 0 -->
         <ContentControl x:Name="BackControl" Grid.Row="0" />
-        <!-- Row 1 -->
-        <Button x:Name="Back" Grid.Row="1" Click="Back_Click"  Width="70" HorizontalAlignment="Left">Буцах</Button>
-        
+
         <!--Row 0 -->
-        <TextBlock x:Name="deleteStaffTextBox" Grid.Row="2" Text="Ажилчин хасах" HorizontalAlignment="Center" FontFamily="Impact" Margin="0 60 0 0" FontSize="30"/>
+        <TextBlock x:Name="deleteStaffTextBox" Grid.Row="2" Text="Ажилчин хасах" HorizontalAlignment="Center" FontFamily="Impact" Margin="0 70 0 0" FontSize="30"/>
 
         <!--Row 1 -->
         <StackPanel Orientation="Vertical" Grid.Row="3" Margin="0 100 0 0" x:Name="staffSelectStackPanel">

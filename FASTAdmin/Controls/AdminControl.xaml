@@ -4,17 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
-             mc:Ignorable="d" FontSize="18"
-             d:DesignHeight="600" d:DesignWidth="350" Background="#FF0E1429">
+             mc:Ignorable="d" FontSize="18" Loaded="UserControl_Loaded"
+             d:DesignHeight="760" d:DesignWidth="1360" Background="#FF0E1429">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" /> 
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ContentControl x:Name="leaveContent" Grid.Row="0"/>
-        <Menu IsMainMenu="True" Grid.Row="1" FontSize="18" Margin="0,0,0,10" x:Name="Menu">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <!--<ContentControl x:Name="leaveContent" Grid.Row="0"/>-->
+        <!--<Menu IsMainMenu="True" Grid.Row="1" FontSize="18" Margin="0,0,0,10" x:Name="Menu">
             <MenuItem Header="_Файл" >
                 <MenuItem x:Name="exportToExcelMenuItem" Header="Excel рүү хувиргах" Click="exportToExcelMenuItem_Click"/>
             </MenuItem>
@@ -28,7 +37,57 @@
                 <MenuItem x:Name="deleteBranchMenuItem" Header="Тасаг _Устгах" Click="deleteBranchMenuItem_Click"/>
                 <MenuItem x:Name="editBranchMenuItem" Header="Тасаг _Янзлах"  Click="editBranchMenuItem_Click"/>
             </MenuItem>
-        </Menu>
-        <Button x:Name="leaveAdminButton" Grid.Row="2" Margin="0 450 0 0" Width="100" Click="leaveAdminButton_Click">Гарах</Button>
+        </Menu>-->
+        
+        <TextBlock 
+            x:Name="staffListText"
+            Grid.Row="0" Grid.Column="0"
+            Text="Ажилтангуудын жагсаалт" 
+            Foreground="White"
+            FontFamily="Impact"
+            HorizontalAlignment="Center"
+            Margin="10 20 0 0"/>
+        <DataGrid
+            IsReadOnly="True"
+            Grid.Row="1" Grid.Column="0"
+            x:Name="staffDataGrid" 
+            HorizontalAlignment="Left" 
+            Margin="20 10 10 10" 
+            CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False"
+            MaxHeight="500" Height="500" Width="640"></DataGrid>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="20 0 0 0" HorizontalAlignment="Center">
+            <Button x:Name="AddNewStaffButton" Width="80" Margin="0 0 5 0" Click="AddNewStaffButton_Click">Шинэ</Button>
+            <Button x:Name="deleteSelectedItemButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedItemButton_Click_1">Устгах</Button>
+            <Button x:Name="EditSelectedItemButton" Width="80" Click="EditSelectedItemButton_Click">Янзлах</Button>
+        </StackPanel>
+
+        <TextBlock 
+            x:Name="branchListText"
+            Grid.Row="0" Grid.Column="1"
+            HorizontalAlignment="Center"
+            Text="Тасгийн жагсаалт" 
+            FontFamily="Impact"
+            Foreground="White"
+            Margin="10 20 0 0"/>
+
+        <DataGrid
+            IsReadOnly="True"
+            Grid.Row="1" Grid.Column="1"
+            x:Name="branchDataGrid" 
+            HorizontalAlignment="Left" 
+            Margin="20 10 10 10" 
+            CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False"
+            MaxHeight="500" Height="500" Width="250"></DataGrid>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="20 0 0 0">
+            <Button x:Name="addNewBranchButton" Width="80" Margin="0 0 5 0" Click="addNewBranchButton_Click">Шинэ</Button>
+            <Button x:Name="deleteSelectedBranchButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedBranchButton_Click">Устгах</Button>
+            <Button x:Name="EditSelectedBranchButton" Width="80" Click="EditSelectedBranchButton_Click">Янзлах</Button>
+        </StackPanel>
+
+        <ContentControl x:Name="externalContents" Grid.Row="0" Grid.Column="2" Width="350" Height="600" Grid.RowSpan="7" Margin="30 0 0 10"/>
+
+        <Button x:Name="leaveAdminButton" Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" Margin="0 100 0 0" Width="100">Гарах</Button>
     </Grid>
 </UserControl>

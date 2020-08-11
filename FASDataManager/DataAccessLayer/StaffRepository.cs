@@ -48,15 +48,14 @@ namespace FASDataManager.DataAccessLayer
             {
                 SqliteBaseRepository.CreateDatabase();
             }
-            string sql = "insert into staff(branch_id, firstname, lastname, fingerPrint ,haslunch) values(@branch_id, @firstname, @lastname, @fingerPrint, @haslunch)";
+            string sql = "insert into staff(branch_id, firstname, lastname, fingerPrint) values(@branch_id, @firstname, @lastname, @fingerPrint)";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
                 {"@branch_id", newStaff.branch_id },
                 {"@firstname", newStaff.firstName },
                 {"@lastname", newStaff.lastName },
-                {"@fingerPrint", newStaff.fingerPrint },
-                {"@haslunch", newStaff.hasLunch }
+                {"@fingerPrint", newStaff.fingerPrint }
             };
             bool output = true;
             try
@@ -102,17 +101,35 @@ namespace FASDataManager.DataAccessLayer
                 return false;
             }
 
-            string sql = "UPDATE staff SET branch_id = @branch_id, firstName = @firstName, lastName = @lastName, hasLunch = @hasLunch, fingerPrint = @fingerPrint WHERE id = @id";
+            string sql;
+            Dictionary<string, object> parameters;
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>
+            if (editedStaff.fingerPrint != null)
             {
-                {"@branch_id", editedStaff.branch_id},
-                {"@firstName", editedStaff.firstName},
-                {"@lastName", editedStaff.lastName},
-                {"@hasLunch", editedStaff.hasLunch},
-                {"@fingerPrint", editedStaff.fingerPrint },
-                {"@id", id},
-            };
+                sql = "UPDATE staff SET branch_id = @branch_id, firstName = @firstName, lastName = @lastName, fingerPrint = @fingerPrint WHERE id = @id";
+
+                parameters = new Dictionary<string, object>
+                {
+                    {"@branch_id", editedStaff.branch_id},
+                    {"@firstName", editedStaff.firstName},
+                    {"@lastName", editedStaff.lastName},
+                    {"@fingerPrint", editedStaff.fingerPrint },
+                    {"@id", id}
+                };
+            }
+            else
+            {
+                sql = "UPDATE staff SET branch_id = @branch_id, firstName = @firstName, lastName = @lastName WHERE id = @id";
+
+                parameters = new Dictionary<string, object>
+                {
+                    {"@branch_id", editedStaff.branch_id},
+                    {"@firstName", editedStaff.firstName},
+                    {"@lastName", editedStaff.lastName},
+                    {"@id", id}
+                };
+            }
+            
             bool output = true;
             try
             {

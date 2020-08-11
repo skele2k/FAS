@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using FASLib.Models;
 using FASLib.DataAccess;
 using FASLib.Helpers;
+using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -26,6 +27,7 @@ namespace FASTAdmin.Controls
     public partial class DeleteUserControl : UserControl
     {
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
+        public StaffModel selectedStaff { get; set; }
         public DeleteUserControl()
         {
             InitializeComponent();
@@ -33,14 +35,22 @@ namespace FASTAdmin.Controls
         }
         private async Task InitializeStaffList()
         {
-            var staffList = await ApiProcessor.LoadStaffs();
-            staffList.ForEach(x => staffs.Add(x));
+            try
+            {
+                var staffList = await ApiProcessor.LoadStaffs();
+                staffList.ForEach(x => staffs.Add(x));
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
         }
         private void WireUpStaffDropdown()
         {
             staffSelectDropDown.ItemsSource = staffs;
             staffSelectDropDown.DisplayMemberPath = "fullName";
             staffSelectDropDown.SelectedValuePath = "id";
+
         }
 
         private async void deleteStaff_Click(object sender, RoutedEventArgs e)
@@ -51,39 +61,59 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            StaffModel model = (StaffModel)staffSelectDropDown.SelectedItem;
-            var t = await ApiProcessor.DeleteStaffByID(model.id);
-            if (t == "success")
+            try
             {
-                MessageBox.Show("Амжилттай устгалаа.");
-            }
-            else
-            {
-                MessageBox.Show("Устгалт амжилтгүй");
-            }
+                StaffModel model = (StaffModel)staffSelectDropDown.SelectedItem;
+                var t = await ApiProcessor.DeleteStaffByID(model.id);
+                if (t == "success")
+                {
+                    MessageBox.Show("Амжилттай устгалаа.");
+                }
+                else
+                {
+                    MessageBox.Show("Устгалт амжилтгүй");
+                }
 
-            ResetForm();
-            staffs.Clear();
-            await InitializeStaffList();
-            WireUpStaffDropdown();
+                ResetForm();
+                staffs.Clear();
+                refreshNoticer.refreshNow = true;
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
         }
         private void ResetForm()
         {
-            staffSelectDropDown.SelectedItem = null;
-        }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            Back.Visibility = Visibility.Collapsed;
             deleteStaffTextBox.Visibility = Visibility.Collapsed;
             staffSelectStackPanel.Visibility = Visibility.Collapsed;
             deleteStaff.Visibility = Visibility.Collapsed;
-            BackControl.Content = new AdminControl();
         }
-
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await InitializeStaffList();
+
+            int left = 0;
+            int right = staffs.Count() - 1;
+
+            while (left <= right)
+            {
+                int mid = left + (right - left) / 2;
+
+                if (staffs[mid].id == selectedStaff.id)
+                {
+                    staffSelectDropDown.SelectedItem = staffs[mid];
+                    break;
+                }
+                else if (staffs[mid].id > selectedStaff.id)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
         }
     }
 }

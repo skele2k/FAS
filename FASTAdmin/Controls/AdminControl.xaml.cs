@@ -1,8 +1,12 @@
-﻿using FASTAdmin.excelHelper;
+﻿using FASLib.Helpers;
+using FASLib.Models;
+using FASTAdmin.excelHelper;
+using FASTAdmin.refreshHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,63 +25,120 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class AdminControl : UserControl
     {
+        BranchModel selectedBranch;
+        StaffModel selectedStaff;
         public AdminControl()
         {
             InitializeComponent();
-        }
+            refreshNoticer.refreshNow = false;
 
+            Thread refreshThread = new Thread(new ThreadStart(AutoRefresher));
+            refreshThread.IsBackground = true;
+            refreshThread.Start();
+        }
+        private void AutoRefresher()
+        {
+            while (true)
+            {
+                if (refreshNoticer.refreshNow == true)
+                {
+                    this.Dispatcher.Invoke(async () =>
+                    {
+                        Thread.Sleep(100);
+                        await LoadDataGrid();
+                        refreshNoticer.refreshNow = false;
+                    });
+                }
+            }
+        }
         private void exportToExcelMenuItem_Click(object sender, RoutedEventArgs e)
         {
             xlHelper.AllDataExporter();
         }
-
-        private void addStaffMenuItem_Click(object sender, RoutedEventArgs e)
+        private async Task LoadDataGrid()
         {
-            Menu.Visibility = Visibility.Collapsed;
-            leaveAdminButton.Visibility = Visibility.Collapsed;
-            leaveContent.Content = new AddUserControl();
+            try
+            {
+                var staffs = await ApiProcessor.LoadStaffs();
+                staffDataGrid.ItemsSource = staffs;
+
+                var branches = await ApiProcessor.LoadBranches();
+                branchDataGrid.ItemsSource = branches;
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
+        }
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            await LoadDataGrid();
         }
 
-        private void deleteStaffMenuItem_Click(object sender, RoutedEventArgs e)
+        private void AddNewStaffButton_Click(object sender, RoutedEventArgs e)
         {
-            Menu.Visibility = Visibility.Collapsed;
-            leaveAdminButton.Visibility = Visibility.Collapsed;
-            leaveContent.Content = new DeleteUserControl();
+            externalContents.Content = new AddUserControl();
         }
 
-        private void editStaffMenuItem_Click(object sender, RoutedEventArgs e)
+        private void deleteSelectedItemButton_Click_1(object sender, RoutedEventArgs e)
         {
-            Menu.Visibility = Visibility.Collapsed;
-            leaveAdminButton.Visibility = Visibility.Collapsed;
-            leaveContent.Content = new EditUserControl();
+            if (staffDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("Устгах ажилтнаа сонгоно уу?");
+                return;
+            }
+
+            selectedStaff = (StaffModel) staffDataGrid.SelectedItem;
+            DeleteUserControl deleteControl = new DeleteUserControl();
+            deleteControl.selectedStaff = selectedStaff;
+            externalContents.Content = deleteControl;
         }
 
-        private void addBranchMenuItem_Click(object sender, RoutedEventArgs e)
+        private void EditSelectedItemButton_Click(object sender, RoutedEventArgs e)
         {
-            Menu.Visibility = Visibility.Collapsed;
-            leaveAdminButton.Visibility = Visibility.Collapsed;
-            leaveContent.Content = new AddBranchControl();
+            if (staffDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("Янзлах ажилтнаа сонгоно уу?");
+                return;
+            }
+
+            selectedStaff = (StaffModel)staffDataGrid.SelectedItem;
+            EditUserControl editControl = new EditUserControl();
+            editControl.selectedStaff = selectedStaff;
+            externalContents.Content = editControl;
         }
 
-        private void deleteBranchMenuItem_Click(object sender, RoutedEventArgs e)
+        private void addNewBranchButton_Click(object sender, RoutedEventArgs e)
         {
-            Menu.Visibility = Visibility.Collapsed;
-            leaveAdminButton.Visibility = Visibility.Collapsed;
-            leaveContent.Content = new DeleteBranchControl();
+            externalContents.Content = new AddBranchControl();
         }
 
-        private void editBranchMenuItem_Click(object sender, RoutedEventArgs e)
+        private void deleteSelectedBranchButton_Click(object sender, RoutedEventArgs e)
         {
-            Menu.Visibility = Visibility.Collapsed;
-            leaveAdminButton.Visibility = Visibility.Collapsed;
-            leaveContent.Content = new EditBranchControl();
+            if (branchDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("Устгах тасгаа сонгоно уу?");
+                return;
+            }
+
+            selectedBranch = (BranchModel) branchDataGrid.SelectedItem;
+            DeleteBranchControl deleteControl = new DeleteBranchControl();
+            deleteControl.selectedBranch = selectedBranch;
+            externalContents.Content = deleteControl;
         }
 
-        private void leaveAdminButton_Click(object sender, RoutedEventArgs e)
+        private void EditSelectedBranchButton_Click(object sender, RoutedEventArgs e)
         {
-            Menu.Visibility = Visibility.Collapsed;
-            leaveAdminButton.Visibility = Visibility.Collapsed;
-            leaveContent.Content = new AuthenticationControl();
+            if (branchDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("Янзлах тасгаа сонгоно уу?");
+                return;
+            }
+
+            selectedBranch = (BranchModel)branchDataGrid.SelectedItem;
+            EditBranchControl editControl = new EditBranchControl();
+            editControl.selectedBranch = selectedBranch;
+            externalContents.Content = editControl;
         }
     }
 }

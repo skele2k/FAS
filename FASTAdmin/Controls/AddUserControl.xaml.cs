@@ -1,6 +1,7 @@
 ﻿using FASLib.Fingerprint;
 using FASLib.Helpers;
 using FASLib.Models;
+using FASTAdmin.refreshHelper;
 using libzkfpcsharp;
 using System;
 using System.Collections.ObjectModel;
@@ -37,7 +38,7 @@ namespace FASTAdmin.Controls
             }
             catch
             {
-                MessageBox.Show("Мэдээлэл татан авахад алдаа гарлаа. Интэрнэт холболтоо шалгана уу?");
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
             }
         }
 
@@ -55,14 +56,21 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            var t = await ApiProcessor.SaveStaff(form.model);
-            if (t == "success")
+            try
             {
-                await InsertToAttendanceSheet(form.model);
+                var t = await ApiProcessor.SaveStaff(form.model);
+                if (t == "success")
+                {
+                    await InsertToAttendanceSheet(form.model);
+                }
+                else
+                {
+                    MessageBox.Show("Мэдээллийг хадгалахад алдаа гарлаа.");
+                }
             }
-            else
+            catch
             {
-                MessageBox.Show("Мэдээллийг хадгалахад алдаа гарлаа. Интэрнэт холболтоо шалгана уу?");
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
             }
 
         }
@@ -92,22 +100,30 @@ namespace FASTAdmin.Controls
         }
         private async Task InsertToAttendanceSheet(StaffModel theStaff)
         {
-            var staffs = await ApiProcessor.LoadStaffs();
-
-            foreach (StaffModel staff in staffs)
+            try
             {
-                if (theStaff.fingerPrint.SequenceEqual(staff.fingerPrint))
+                var staffs = await ApiProcessor.LoadStaffs();
+
+                foreach (StaffModel staff in staffs)
                 {
-                    theStaff.id = staff.id;
-                    break;
+                    if (theStaff.fingerPrint.SequenceEqual(staff.fingerPrint))
+                    {
+                        theStaff.id = staff.id;
+                        break;
+                    }
                 }
+                var form = ValidateAttendanceModel(theStaff);
+
+                var t = Task.Run(() => ApiProcessor.SaveToAttendanceSheet(form.model));
+                t.Wait();
+
+                MessageBox.Show("Амжилттай ажилтан нэмлээ.");
             }
-            var form = ValidateAttendanceModel(theStaff);
-
-            var t = Task.Run(() => ApiProcessor.SaveToAttendanceSheet(form.model));
-            t.Wait();
-
-            MessageBox.Show("Амжилттай ажилтан нэмлээ.");
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
+            
         }
         private void WireUpBranchDropDown()
         {
@@ -170,32 +186,18 @@ namespace FASTAdmin.Controls
             AddStaffsToDatabase();
             ResetForm();
             branches.Clear();
-            //await InitializeBranchList();
-            WireUpBranchDropDown();
+            refreshNoticer.refreshNow = true;
         }
 
         private void ResetForm()
         {
-            addFirstNameTextBox.Text = "";
-            addLastNameTextBox.Text = "";
-            branchSelectDropdown.SelectedItem = null;
-            fpAddButton.Content = "Хурууны хээ таниулах";
-            fpAddButton.IsEnabled = true;
-
-        }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            Back.Visibility = Visibility.Collapsed;
             AddUser.Visibility = Visibility.Collapsed;
             lastnameStackPanel.Visibility = Visibility.Collapsed;
             firstnameStackPanel.Visibility = Visibility.Collapsed;
             branchStackPanel.Visibility = Visibility.Collapsed;
             fpAddButton.Visibility = Visibility.Collapsed;
             addStaffButton.Visibility = Visibility.Collapsed;
-            BackControl.Content = new AdminControl();
         }
-
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await InitializeBranchList();

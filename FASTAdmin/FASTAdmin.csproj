@@ -72,6 +72,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="excelHelper\xlHelper.cs" />
+    <Compile Include="refreshHelper\refreshNoticer.cs" />
     <Compile Include="ScanWindow.xaml.cs">
       <DependentUpon>ScanWindow.xaml</DependentUpon>
     </Compile>

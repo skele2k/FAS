@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using FASLib.DataAccess;
 using FASLib.Helpers;
 using FASLib.Models;
-
+using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -26,6 +26,7 @@ namespace FASTAdmin.Controls
     public partial class EditBranchControl : UserControl
     {
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
+        public BranchModel selectedBranch { get; set; }
         public EditBranchControl()
         {
             InitializeComponent();
@@ -41,8 +42,15 @@ namespace FASTAdmin.Controls
 
         private async Task InitializeBranchList()
         {
-            var branchesList = await ApiProcessor.LoadBranches();
-            branchesList.ForEach(x => branches.Add(x));
+            try
+            {
+                var branchesList = await ApiProcessor.LoadBranches();
+                branchesList.ForEach(x => branches.Add(x));
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
         }
 
         private (bool isValid, BranchModel model) ValidateForm()
@@ -60,11 +68,6 @@ namespace FASTAdmin.Controls
             }
             return (isValid, model);
         }
-        private void ClearForm()
-        {
-            newBranchname.Text = "";
-            branchSelectDropDown.SelectedItem = null;
-        }
         private async void AddBranchToDatabase()
         {
             var form = ValidateForm();
@@ -73,21 +76,15 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Та тохирох өгөгдөл оруулна уу?");
                 return;
             }
-
-            var t = await ApiProcessor.EditBranchByID(form.model);
-
-            if (t == "success")
+            try
             {
-                MessageBox.Show("Амжилттай шинэчиллээ.");
+                var t = await ApiProcessor.EditBranchByID(form.model);
             }
-            else
+            catch
             {
-                MessageBox.Show("Алдаа гарлаа. Та дахин оролдоно уу?");
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
             }
-            ClearForm();
-            branches.Clear();
-            await InitializeBranchList();
-            WireUpBranchesDropdown();
+
         }
         private void submitNewBranch_Click(object sender, RoutedEventArgs e)
         {
@@ -103,21 +100,43 @@ namespace FASTAdmin.Controls
             }
 
             AddBranchToDatabase();
+            MessageBox.Show("Амжилттай шинэчиллээ.");
+            ResetForm();
+            refreshNoticer.refreshNow = true;
         }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
+        private void ResetForm()
         {
-            Back.Visibility = Visibility.Collapsed;
             editBranchTextBlock.Visibility = Visibility.Collapsed;
             selectBranchStackPanel.Visibility = Visibility.Collapsed;
             newNameStackPanel.Visibility = Visibility.Collapsed;
             submitNewBranch.Visibility = Visibility.Collapsed;
-            BackControl.Content = new AdminControl();
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await InitializeBranchList();
+
+            int left = 0;
+            int right = branches.Count() - 1;
+
+            while (left <= right)
+            {
+                int mid = left + (right - left) / 2;
+
+                if (branches[mid].id == selectedBranch.id)
+                {
+                    branchSelectDropDown.SelectedItem = branches[mid];
+                    break;
+                }
+                else if (branches[mid].id > selectedBranch.id)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
         }
     }
 }

@@ -18,9 +18,6 @@
         
         <!-- Row 0 -->
         <ContentControl x:Name="BackControl" Grid.Row="0" />
-
-        <!-- Row 1 -->
-        <Button x:Name="Back" Grid.Row="1" Click="Back_Click"  Width="70" HorizontalAlignment="Left">Буцах</Button>
         
         <!-- Grid Row 2 -->
         <TextBlock x:Name="deleteBranchTextBlock" Text="Тасаг устгах" Foreground="White" Grid.Row="2" 

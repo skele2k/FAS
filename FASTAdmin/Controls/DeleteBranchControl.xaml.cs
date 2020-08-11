@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using FASLib.DataAccess;
 using FASLib.Helpers;
 using FASLib.Models;
+using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -25,6 +26,7 @@ namespace FASTAdmin.Controls
     public partial class DeleteBranchControl : UserControl
     {
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
+        public BranchModel selectedBranch { get; set; }
         public DeleteBranchControl()
         {
             InitializeComponent();
@@ -32,8 +34,15 @@ namespace FASTAdmin.Controls
         }
         private async Task InitializeBranchesToList()
         {
-            var branchesList = await ApiProcessor.LoadBranches();
-            branchesList.ForEach(x => branches.Add(x));
+            try
+            {
+                var branchesList = await ApiProcessor.LoadBranches();
+                branchesList.ForEach(x => branches.Add(x));
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
         }
         private void WireUpBranchDropdown()
         {
@@ -50,40 +59,60 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            BranchModel model = (BranchModel) branchSelectDropdown.SelectedItem;
-            var t = await ApiProcessor.DeleteBranchByID(model.id);
-            if (t == "success")
+            try
             {
-                MessageBox.Show("Амжилттай устгалаа.");
+                BranchModel model = (BranchModel)branchSelectDropdown.SelectedItem;
+                var t = await ApiProcessor.DeleteBranchByID(model.id);
+                if (t == "success")
+                {
+                    MessageBox.Show("Амжилттай устгалаа.");
+                }
+                else
+                {
+                    MessageBox.Show("Устгалт амжилтгүй.");
+                }
+                ResetForm();
+                branches.Clear();
+                refreshNoticer.refreshNow = true;
             }
-            else
+            catch
             {
-                MessageBox.Show("Устгалт амжилтгүй.");
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
             }
-            ResetForm();
-            branches.Clear();
-            await InitializeBranchesToList();
-            WireUpBranchDropdown();
         }
 
         private void ResetForm()
         {
-            branchSelectDropdown.SelectedItem = null;
-        }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            Back.Visibility = Visibility.Collapsed;
             deleteBranchTextBlock.Visibility = Visibility.Collapsed;
             selectBranchStackPanel.Visibility = Visibility.Collapsed;
             deleteStaff.Visibility = Visibility.Collapsed;
-            BackControl.Content = new AdminControl();
-
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await InitializeBranchesToList();
+
+            int left = 0;
+            int right = branches.Count() - 1;
+
+            while (left <= right)
+            {
+                int mid = left + (right - left) / 2;
+
+                if (branches[mid].id == selectedBranch.id)
+                {
+                    branchSelectDropdown.SelectedItem = branches[mid];
+                    break;
+                }
+                else if (branches[mid].id > selectedBranch.id)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FASLib.Helpers;
+using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -36,21 +37,29 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Форм бөглөхөд алдаа гарлаа. Та формоо зөв бөглөнө үү?");
                 return;
             }
-
-            var t = await ApiProcessor.SaveBranch(form.model);
-            if (t == "success")
+            try
             {
-                MessageBox.Show("Амжилттай нэмэгдлээ.");
+                var t = await ApiProcessor.SaveBranch(form.model);
+                if (t == "success")
+                {
+                    MessageBox.Show("Амжилттай нэмэгдлээ.");
+                }
+                else
+                {
+                    MessageBox.Show("Алдаа гарлаа. Та дахин оролдоно уу?");
+                }
             }
-            else
+            catch
             {
-                MessageBox.Show("Алдаа гарлаа. Та дахин оролдоно уу?");
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
             }
         }
 
         private void ResetForm()
         {
-            BranchNameTextBox.Text = "";
+            addBranchTextBlock.Visibility = Visibility.Collapsed;
+            addBranchNameTextBox.Visibility = Visibility.Collapsed;
+            addBranchButton.Visibility = Visibility.Collapsed;
         }
 
         private (bool isValid, BranchModel model) Validate()
@@ -77,15 +86,7 @@ namespace FASTAdmin.Controls
             }
             AddBranchToDatabase();
             ResetForm();
-        }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            Back.Visibility = Visibility.Collapsed;
-            addBranchTextBlock.Visibility = Visibility.Collapsed;
-            addBranchNameTextBox.Visibility = Visibility.Collapsed;
-            addBranchButton.Visibility = Visibility.Collapsed;
-            BackControl.Content = new AdminControl();
+            refreshNoticer.refreshNow = true;
         }
     }
 }

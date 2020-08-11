@@ -84,7 +84,6 @@ namespace FASLib.Fingerprint
             {
                 if (callBackCode == zkfperrdef.ZKFP_ERR_ALREADY_INIT)
                 {
-                    MessageBox.Show("succ");
                     return true;
                 }
                 // Initialization failed
@@ -384,8 +383,6 @@ namespace FASLib.Fingerprint
             }
             catch { }
         }
-        [DllImport("user32.dll", EntryPoint = "SendMessageA")]
-        public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         public void RegistrationCase()
         {

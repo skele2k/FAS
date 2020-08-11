@@ -13,7 +13,6 @@ namespace FASLib.Models
         public string firstName { get; set; }
         public string lastName { get; set; }
         public byte[] fingerPrint { get; set; }
-        public int hasLunch { get; set; }
         public string fullName
         {
             get
