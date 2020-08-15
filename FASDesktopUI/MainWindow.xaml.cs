@@ -17,6 +17,9 @@ using System.Threading;
 using FASLib.DataAccess;
 using FASLib.Models;
 using FASLib.Fingerprint;
+using FASLib.Helpers;
+using Caliburn.Micro;
+using System.Runtime.InteropServices;
 
 namespace FASDesktopUI
 {
@@ -31,10 +34,12 @@ namespace FASDesktopUI
         public MainWindow()
         {
             InitializeComponent();
+            ApiHelper.InitializeClient();
+            Authenticate();
             fp = new FingerprintHandler();
             GetFingerprintsFromDB();
-            fp.PushData(fps);
             fp.ConnectDeviceAndIdentify();
+            
             InitializeCurrentDate();
             tick.Visibility = Visibility.Hidden;
             error.Visibility = Visibility.Hidden;
@@ -43,12 +48,30 @@ namespace FASDesktopUI
             tickOrErrorDisplayer.IsBackground = true;
             tickOrErrorDisplayer.Start();
         }
-        public void GetFingerprintsFromDB()
+
+        private void Authenticate()
         {
             try
             {
-                string sql = "SELECT * FROM staff";
-                var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
+                var ret = Task.Run(async () => await ApiProcessor.Authenticate("FINGERPRINT1", "FINGERPRINT1"));
+                Token token = ret.Result;
+
+                if (token != null)
+                {
+                    ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа гарлаа. Сүлжээгээ шалгана уу?");
+            }
+        }
+
+        public async void GetFingerprintsFromDB()
+        {
+            try
+            {
+                var staffList = await ApiProcessor.LoadStaffs();
 
                 foreach (var model in staffList)
                 {
@@ -57,77 +80,85 @@ namespace FASDesktopUI
                         fps.Add(model.fingerPrint);
                     }
                 }
+                fp.PushData(fps);
             }
             catch (Exception)
             {
-                SqliteBaseRepository.CreateDatabase();
-                string sql = "SELECT * FROM staff";
-                var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
-
-                foreach (var model in staffList)
-                {
-                    if (model.fingerPrint != null)
-                    {
-                        fps.Add(model.fingerPrint);
-                    }
-                }
+                MessageBox.Show("Сүлжээтэй холбогдоход алдаа гарлаа.");
             }
         }
         private bool IsNewDay(string currentDate)
         {
-            string sql = "SELECT date FROM attendance WHERE date = @date";
+            //string sql = "SELECT date FROM attendance WHERE date = @date";
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>
-            {
-                {"@date", currentDate }
-            };
+            //Dictionary<string, object> parameters = new Dictionary<string, object>
+            //{
+            //    {"@date", currentDate }
+            //};
 
-            var lastDateList = SqliteDataAccess.LoadData<string>(sql, parameters);
-            int size = lastDateList.Count();
+            //var lastDateList = SqliteDataAccess.LoadData<string>(sql, parameters);
+            var w = Task.Run(async () => await ApiProcessor.LoadAttendanceSheet());
+            var attendanceList = w.Result;
+            int size = attendanceList.Count();
             if (size == 0)
             {
                 return true;
             }
             else
             {
-                string lastDate = lastDateList[size - 1];
+                string lastDate = attendanceList[size - 1].date;
                 return !(lastDate == currentDate);
             }
         }
+        private AttendanceModel ValidateForm(StaffModel staffModel, string currentDate)
+        {
+            AttendanceModel model = new AttendanceModel();
+            
+            model.staff_id = staffModel.id;
+            model.branch_id = staffModel.branch_id;
+            model.date = currentDate;
 
+            return model;
+        }
         private void InitializeCurrentDate()
         {
-            DateTime dateTime = DateTime.UtcNow.Date;
-            string currentDate = dateTime.ToString("dd/MM/yyyy");
-
-            int numOfStaffs = CountStaff();
-
-            bool isNewDay = IsNewDay(currentDate);
-            if (isNewDay == true)
+            try
             {
-                string sql = "INSERT INTO attendance(staff_id, branch_id, date) VALUES(@staff_id, @branch_id, @date)";
+                DateTime dateTime = DateTime.UtcNow.Date;
+                string currentDate = dateTime.ToString("dd/MM/yyyy");
 
-                for (int i = 0; i < numOfStaffs; i++)
+                int numOfStaffs = CountStaff();
+                bool isNewDay = IsNewDay(currentDate);
+                if (isNewDay == true)
                 {
-                    StaffModel model = staffs[i];
-
-                    Dictionary<string, object> parameters = new Dictionary<string, object>
+                    for (int i = 0; i < numOfStaffs; i++)
                     {
-                        {"@staff_id", model.id },
-                        {"@branch_id", model.branch_id },
-                        {"@date", currentDate }
-                    };
-                    SqliteDataAccess.SaveData(sql, parameters);
+                        StaffModel model = staffs[i];
+
+                        var t = Task.Run(async () => await ApiProcessor.SaveToAttendanceSheet(ValidateForm(model, currentDate)));
+                    }
                 }
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа.");
             }
         }
 
         private int CountStaff()
         {
-            string sql = "SELECT * FROM staff";
-            var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, new Dictionary<string, object>());
-            staffList.ForEach(x => staffs.Add(x));
-            return staffList.Count();
+            try
+            {
+                var t = Task.Run(async () => await ApiProcessor.LoadStaffs());
+                var staffList = t.Result;
+                staffList.ForEach(x => staffs.Add(x));
+                return staffList.Count();
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа.");
+                return 0;
+            }
         }
         // Seperate thread for displaying tick or error. 
         private void displayTickOrError()
@@ -139,14 +170,14 @@ namespace FASDesktopUI
                 {
                     // This is when the fingerprint has been recognized
                     this.Dispatcher.Invoke(() => { tick.Visibility = Visibility.Visible; });
-                    Thread.Sleep(1000);
+                    Thread.Sleep(800);
                     this.Dispatcher.Invoke(() => { tick.Visibility = Visibility.Hidden; });
                 }
                 else if (code == 2)
                 {
                     // This is when the fingerprint has not been recognized
                     this.Dispatcher.Invoke(() => { error.Visibility = Visibility.Visible; });
-                    Thread.Sleep(1000);
+                    Thread.Sleep(800);
                     this.Dispatcher.Invoke(() => { error.Visibility = Visibility.Hidden; });
                 }
                 if (fp == null)

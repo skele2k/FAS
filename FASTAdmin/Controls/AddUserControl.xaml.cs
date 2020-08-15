@@ -114,8 +114,9 @@ namespace FASTAdmin.Controls
                 }
                 var form = ValidateAttendanceModel(theStaff);
 
-                var t = Task.Run(() => ApiProcessor.SaveToAttendanceSheet(form.model));
-                t.Wait();
+                var t = Task.Run(async () => await ApiProcessor.SaveToAttendanceSheet(form.model));
+                var res = t.Result;
+
 
                 MessageBox.Show("Амжилттай ажилтан нэмлээ.");
             }

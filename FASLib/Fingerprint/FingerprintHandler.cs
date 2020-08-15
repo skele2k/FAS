@@ -10,6 +10,7 @@ using FASLib.DataAccess;
 using libzkfpcsharp;
 using System.Windows.Forms;
 using FASLib.Models;
+using FASLib.Helpers;
 
 namespace FASLib.Fingerprint
 {
@@ -166,22 +167,40 @@ namespace FASLib.Fingerprint
         }
         private void RegisterTimeToDB(byte[] fingerPrint)
         {
-            ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
-            string sql = "SELECT * FROM staff WHERE fingerPrint = @fingerPrint";
-            Dictionary<string, object> parameters = new Dictionary<string, object>
-            {
-                {"@fingerPrint", fingerPrint}
-            };
+            //ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
+            //string sql = "SELECT * FROM staff WHERE fingerPrint = @fingerPrint";
+            //Dictionary<string, object> parameters = new Dictionary<string, object>
+            //{
+            //    {"@fingerPrint", fingerPrint}
+            //};
 
-            var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, parameters);
-
-            // just in case
-            if (staffList.Count() == 0)
+            //var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, parameters);
+            StaffModel theStaff = null;
+            try
             {
-                MessageBox.Show("Уучлаарай таны хурууны хээ бүртгэлгүй байна");
-                return;
+                var t = Task.Run(async () => await ApiProcessor.LoadStaffs());
+                var staffList = t.Result;
+
+                foreach (StaffModel staff in staffList)
+                {
+                    if (staff.fingerPrint.SequenceEqual(fingerPrint))
+                    {
+                        theStaff = staff;
+                        break;
+                    }
+                }
+
+                if (theStaff == null)
+                {
+                    tickOrError = 2;
+                    return;
+                }
             }
-            StaffModel theStaff = staffList[0];
+            catch
+            {
+                MessageBox.Show("#1");//------------------------------------------------------------------------------------------------------------------------
+            }
+
             try
             {
                 AttendanceModel theRecordOfStaff = getRecordOfTheStaff(theStaff);
@@ -190,77 +209,74 @@ namespace FASLib.Fingerprint
                 if (atOffice == false && theRecordOfStaff.arriveTime == null)
                 {
                     tickOrError = 1;
-                    sql = "UPDATE attendance SET arriveTime = @arriveTime, atOffice = @atOffice WHERE staff_id = @staff_id AND branch_id = @branch_id AND date = @date";
                     string date = getCurrentDate();
                     string time = getCurrentTime();
-                    parameters = null;
-                    parameters = new Dictionary<string, object>
-                    {
-                        {"@arriveTime", time},
-                        {"@atOffice", 1 },
-                        {"@staff_id", theStaff.id },
-                        {"@branch_id", theStaff.branch_id },
-                        {"@date", date}
-                    };
-                    SqliteDataAccess.SaveData(sql, parameters);
+                    
+                    AttendanceModel model = new AttendanceModel();
+                    model.arriveTime = time;
+                    model.atOffice = 1;
+                    model.staff_id = theStaff.id;
+                    model.branch_id = theStaff.branch_id;
+                    model.date = date;
+
+                    var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
+                    var ans = res.Result;
                     //MessageBox.Show($"Сайн байна уу? {theStaff.fullName}");
 
                 }
                 else if (atOffice == false && theRecordOfStaff.arriveTime != null)
                 {
                     tickOrError = 1;
-                    sql = "UPDATE attendance SET atOffice = @atOffice WHERE staff_id = @staff_id AND branch_id = @branch_id AND date = @date";
                     string date = getCurrentDate();
                     string time = getCurrentTime();
-                    parameters = null;
-                    parameters = new Dictionary<string, object>
-                    {
-                        {"@atOffice", 1 },
-                        {"@staff_id", theStaff.id },
-                        {"@branch_id", theStaff.branch_id },
-                        {"@date", date}
-                    };
-                    SqliteDataAccess.SaveData(sql, parameters);
+                    
+                    AttendanceModel model = new AttendanceModel();
+                    model.atOffice = 1;
+                    model.staff_id = theStaff.id;
+                    model.branch_id = theStaff.branch_id;
+                    model.date = date;
+
+                    var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
+                    var ans = res.Result;
                     //MessageBox.Show($"Сайн байна уу? {theStaff.fullName}");
                 }
                 else if (atOffice == true && theRecordOfStaff.leaveTime == null)
                 {
                     tickOrError = 1;
-                    sql = "UPDATE attendance SET leaveTime = @leaveTime, atOffice = @atOffice, officeHours = @officeHours WHERE staff_id = @staff_id AND branch_id = @branch_id AND date = @date";
                     string date = getCurrentDate();
                     string time = getCurrentTime();
                     double officeHours = CalculateOfficeHours(theRecordOfStaff.arriveTime, time);
-                    parameters = null;
-                    parameters = new Dictionary<string, object>
-                    {
-                        {"@leaveTime", time},
-                        {"@atOffice", 0 },
-                        {"@staff_id", theStaff.id },
-                        {"@branch_id", theStaff.branch_id },
-                        {"@date", date},
-                        {"@officeHours", officeHours }
-                    };
-                    SqliteDataAccess.SaveData(sql, parameters);
+
+                    AttendanceModel model = new AttendanceModel();
+                    model.leaveTime = time;
+                    model.atOffice = 0;
+                    model.staff_id = theStaff.id;
+                    model.branch_id = theStaff.branch_id;
+                    model.date = date;
+                    model.officeHours = officeHours;
+
+                    var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
+                    var str = res.Result;
+
                     //MessageBox.Show($"Баяртай! {theStaff.fullName}");
                 }
                 else if (atOffice == true && theRecordOfStaff.leaveTime != null)
                 {
                     tickOrError = 1;
-                    sql = "UPDATE attendance SET leaveTime = @leaveTime, atOffice = @atOffice, officeHours = @officeHours WHERE staff_id = @staff_id AND branch_id = @branch_id AND date = @date";
                     string date = getCurrentDate();
                     string time = getCurrentTime();
                     double officeHours = CalculateOfficeHours(theRecordOfStaff.arriveTime, time);
-                    parameters = null;
-                    parameters = new Dictionary<string, object>
-                    {
-                        {"@leaveTime", time},
-                        {"@atOffice", 0 },
-                        {"@staff_id", theStaff.id },
-                        {"@branch_id", theStaff.branch_id },
-                        {"@date", date},
-                        {"@officeHours", officeHours }
-                    };
-                    SqliteDataAccess.SaveData(sql, parameters);
+                    
+                    AttendanceModel model = new AttendanceModel();
+                    model.leaveTime = time;
+                    model.atOffice = 0;
+                    model.staff_id = theStaff.id;
+                    model.branch_id = theStaff.branch_id;
+                    model.date = date;
+                    model.officeHours = officeHours;
+
+                    var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
+                    var str = res.Result;
                     //MessageBox.Show($"Баяртай! {theStaff.fullName}");
                 }
             }
@@ -270,23 +286,31 @@ namespace FASLib.Fingerprint
 
         private AttendanceModel getRecordOfTheStaff(StaffModel theStaff)
         {
-            string sql = "SELECT * FROM attendance WHERE staff_id = @staff_id AND date = @date";
-            string currentDate = getCurrentDate();
-            Dictionary<string, object> parameters = new Dictionary<string, object>
+            try
             {
-                {"@staff_id", theStaff.id },
-                {"@branch_id", theStaff.branch_id },
-                {"@date", currentDate }
-            };
-            var attendanceList = SqliteDataAccess.LoadData<AttendanceModel>(sql, parameters);
-            if (attendanceList.Count() == 0)
+                string currentDate = getCurrentDate();
+
+                AttendanceModel theRecord = null;
+
+                var t = Task.Run(async () => await ApiProcessor.LoadAttendanceSheet());
+                var attendance = t.Result;
+
+                for (int i = attendance.Count - 1; i >= 0; i--)
+                {
+                    if (attendance[i].staff_id == theStaff.id && attendance[i].date == currentDate)
+                    {
+                        theRecord = attendance[i];
+                        break;
+                    }
+                }
+
+                return theRecord;
+            }
+            catch
             {
-                MessageBox.Show("Unexpected error; ERROR CODE: 2");
+                MessageBox.Show("Сүлжээний алдаа.");
                 return null;
             }
-            AttendanceModel theRecord = attendanceList[0];
-
-            return theRecord;
         }
         private string getCurrentDate()
         {

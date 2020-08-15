@@ -74,6 +74,8 @@ namespace FASLib.DataAccess
                     );
                     
                     INSERT INTO admin(username, password) VALUES('admin', 'admin');
+
+                    INSERT INTO admin(username, password) VALUES('FINGERPRINT1', 'FINGERPRINT1');
                 ");
 
             }

@@ -194,6 +194,24 @@ namespace FASLib.Helpers
                 }
             }    
         }
+        public static async Task<string> EditAttendanceSheet(AttendanceModel model)
+        {
+            string url = $"/api/attendance";
+            var json = new JavaScriptSerializer().Serialize(model);
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            using (HttpResponseMessage response = await ApiHelper.ApiClient.PutAsync(url, content))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    return "success";
+                }
+                else
+                {
+                    return "fail";
+                }
+            }
+        }
         public static async Task<string> DeleteStaffByID(int id)
         {
             string url = $"/api/staff/ { id }";
