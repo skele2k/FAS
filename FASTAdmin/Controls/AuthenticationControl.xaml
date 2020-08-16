@@ -14,6 +14,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Row 0 -->
@@ -26,9 +27,16 @@
                    Margin="0 200 0 0"
                    FontSize="30"
                    x:Name="loginTextBlock"/>
-
+        
         <!-- Row 2 -->
-        <StackPanel Orientation="Horizontal" Grid.Row="3"  Margin="0 100 0 0" x:Name="usernameStackPanel"
+        <StackPanel Orientation="Horizontal" Grid.Row="3"  Margin="0 100 0 0" x:Name="ipAddressStackPanel"
+                    HorizontalAlignment="Center">
+            <TextBlock Text="IP: " Foreground="White" Margin="0 0 50 0"/>
+            <TextBox x:Name="ipAddressTextBox" Width="180" />
+        </StackPanel>
+        
+        <!-- Row 2 -->
+        <StackPanel Orientation="Horizontal" Grid.Row="4"  Margin="0 20 0 0" x:Name="usernameStackPanel"
                     HorizontalAlignment="Center">
             <TextBlock Text="Нэр: " Foreground="White" Margin="0 0 34 0"/>
             <TextBox x:Name="addUsernameTextBox" Width="180" />
@@ -37,7 +45,7 @@
 
         <!-- Row 3 -->
         <StackPanel Orientation="Horizontal" 
-                    Grid.Row="4" 
+                    Grid.Row="5" 
                     Margin="0 20 0 0" 
                     x:Name="passwordStackPanel"
                     HorizontalAlignment="Center">
@@ -45,7 +53,7 @@
             <PasswordBox x:Name="addPasswordTextBox" Width="180" />
         </StackPanel>
         <!-- Row 4 -->
-        <Button x:Name="loginButton" Grid.Row="5" Width="85" HorizontalAlignment="Center"
+        <Button x:Name="loginButton" Grid.Row="6" Width="85" HorizontalAlignment="Center"
                 Margin="0 100 0 0" Click="loginButton_Click">Нэвтрэх</Button>
 
     </Grid>

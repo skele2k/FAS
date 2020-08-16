@@ -25,7 +25,6 @@ namespace FASTAdmin
         public MainWindow()
         {
             InitializeComponent();
-            ApiHelper.InitializeClient();
             content.Content = new AuthenticationControl();
         }
     }

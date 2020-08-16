@@ -2,7 +2,9 @@
 using FASLib.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,6 +27,16 @@ namespace FASTAdmin.Controls
         public AuthenticationControl()
         {
             InitializeComponent();
+
+            InitializeIPAddress();
+        }
+        private void InitializeIPAddress()
+        {
+            var api = ConfigurationManager.AppSettings["api"];
+            if (api != "notset")
+            {
+                ipAddressTextBox.Text = api;
+            }
         }
         private (bool isValid, AdminModel model) ValidateForm()
         {
@@ -48,6 +60,21 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Нэр эсвэл нууц үг хоосон байна.");
                 return;
             }
+            var api = ConfigurationManager.AppSettings["api"];
+            var new_api = ipAddressTextBox.Text;
+            if (new_api == "" && api == "notset")
+            {
+                MessageBox.Show("Холбогдох сүлжээгээ өгнө үү?");    
+            }
+            if (new_api != api && new_api != "notset")
+            {
+                Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                configuration.AppSettings.Settings["api"].Value = new_api;
+                configuration.Save();
+
+                ConfigurationManager.RefreshSection("appSettings");
+            }
+            ApiHelper.InitializeClient();
             var form = ValidateForm();
 
             try
@@ -60,6 +87,7 @@ namespace FASTAdmin.Controls
                     usernameStackPanel.Visibility = Visibility.Collapsed;
                     passwordStackPanel.Visibility = Visibility.Collapsed;
                     loginButton.Visibility = Visibility.Collapsed;
+                    ipAddressStackPanel.Visibility = Visibility.Collapsed;
                     ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
                     BackControl.Content = new AdminControl();
                 }

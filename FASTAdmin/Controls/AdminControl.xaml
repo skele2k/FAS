@@ -38,7 +38,9 @@
                 <MenuItem x:Name="editBranchMenuItem" Header="Тасаг _Янзлах"  Click="editBranchMenuItem_Click"/>
             </MenuItem>
         </Menu>-->
-        
+
+        <ContentControl x:Name="BackControl" Grid.Row="0" Grid.ColumnSpan="4" Grid.Column="0"/>
+
         <TextBlock 
             x:Name="staffListText"
             Grid.Row="0" Grid.Column="0"
@@ -56,7 +58,8 @@
             CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False"
             MaxHeight="500" Height="500" Width="640"></DataGrid>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="20 0 0 0" HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="20 0 0 0" HorizontalAlignment="Center"
+                    x:Name="staffEditButtons">
             <Button x:Name="AddNewStaffButton" Width="80" Margin="0 0 5 0" Click="AddNewStaffButton_Click">Шинэ</Button>
             <Button x:Name="deleteSelectedItemButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedItemButton_Click_1">Устгах</Button>
             <Button x:Name="EditSelectedItemButton" Width="80" Click="EditSelectedItemButton_Click">Янзлах</Button>
@@ -80,7 +83,8 @@
             CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False"
             MaxHeight="500" Height="500" Width="250"></DataGrid>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="20 0 0 0">
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="20 0 0 0"
+                    x:Name="branchEditButtons">
             <Button x:Name="addNewBranchButton" Width="80" Margin="0 0 5 0" Click="addNewBranchButton_Click">Шинэ</Button>
             <Button x:Name="deleteSelectedBranchButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedBranchButton_Click">Устгах</Button>
             <Button x:Name="EditSelectedBranchButton" Width="80" Click="EditSelectedBranchButton_Click">Янзлах</Button>
@@ -88,6 +92,6 @@
 
         <ContentControl x:Name="externalContents" Grid.Row="0" Grid.Column="2" Width="350" Height="600" Grid.RowSpan="7" Margin="30 0 0 10"/>
 
-        <Button x:Name="leaveAdminButton" Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" Margin="0 100 0 0" Width="100">Гарах</Button>
+        <Button x:Name="leaveAdminButton" Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" Margin="0 100 0 0" Width="100" Click="leaveAdminButton_Click">Гарах</Button>
     </Grid>
 </UserControl>

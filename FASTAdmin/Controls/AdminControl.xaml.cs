@@ -27,12 +27,13 @@ namespace FASTAdmin.Controls
     {
         BranchModel selectedBranch;
         StaffModel selectedStaff;
+        Thread refreshThread = null;
         public AdminControl()
         {
             InitializeComponent();
             refreshNoticer.refreshNow = false;
 
-            Thread refreshThread = new Thread(new ThreadStart(AutoRefresher));
+            refreshThread = new Thread(new ThreadStart(AutoRefresher));
             refreshThread.IsBackground = true;
             refreshThread.Start();
         }
@@ -139,6 +140,26 @@ namespace FASTAdmin.Controls
             EditBranchControl editControl = new EditBranchControl();
             editControl.selectedBranch = selectedBranch;
             externalContents.Content = editControl;
+        }
+
+        private void leaveAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            staffListText.Visibility = Visibility.Collapsed;
+            staffDataGrid.Visibility = Visibility.Collapsed;
+            staffEditButtons.Visibility = Visibility.Collapsed;
+            branchListText.Visibility = Visibility.Collapsed;
+            branchDataGrid.Visibility = Visibility.Collapsed;
+            branchEditButtons.Visibility = Visibility.Collapsed;
+            externalContents.Visibility = Visibility.Collapsed;
+            leaveAdminButton.Visibility = Visibility.Collapsed;
+
+            try
+            {
+                refreshThread.Abort();
+            }
+            catch { }
+
+            BackControl.Content = new AuthenticationControl();
         }
     }
 }
