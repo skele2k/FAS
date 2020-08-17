@@ -1,5 +1,6 @@
 ﻿using FASLib.Helpers;
 using FASLib.Models;
+using OfficeOpenXml.Packaging.Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -88,6 +89,8 @@ namespace FASTAdmin.Controls
                     passwordStackPanel.Visibility = Visibility.Collapsed;
                     loginButton.Visibility = Visibility.Collapsed;
                     ipAddressStackPanel.Visibility = Visibility.Collapsed;
+                    changePassTextBlock.Visibility = Visibility.Collapsed;
+
                     ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
                     BackControl.Content = new AdminControl();
                 }
@@ -102,6 +105,18 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
                 return;
             }
+        }
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            loginTextBlock.Visibility = Visibility.Collapsed;
+            usernameStackPanel.Visibility = Visibility.Collapsed;
+            passwordStackPanel.Visibility = Visibility.Collapsed;
+            loginButton.Visibility = Visibility.Collapsed;
+            ipAddressStackPanel.Visibility = Visibility.Collapsed;
+            changePassTextBlock.Visibility = Visibility.Collapsed;
+
+            BackControl.Content = new ChangePasswordControl();
         }
     }
 }

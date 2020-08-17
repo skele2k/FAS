@@ -25,7 +25,7 @@
         <ContentControl x:Name="BackControl" Grid.Row="0" />
         
         <!-- Row 2-->
-        <TextBlock x:Name="editTextBlock" Text="Ажилчин янзлах" Grid.Row="2" HorizontalAlignment="Center" FontFamily="Impact" FontSize="30" Margin="0 70 0 0" />
+        <TextBlock x:Name="editTextBlock" Text="Ажилчин янзлах" Grid.Row="2" HorizontalAlignment="Center" FontFamily="Calibri" FontWeight="DemiBold"  FontSize="30" Margin="0 70 0 0" />
 
         <!--Row 3 -->
         <StackPanel Orientation="Vertical" Grid.Row="3" Margin="50 80 0 0" x:Name="staffSelectStackPanel">

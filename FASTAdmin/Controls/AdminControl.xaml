@@ -46,7 +46,7 @@
             Grid.Row="0" Grid.Column="0"
             Text="Ажилтангуудын жагсаалт" 
             Foreground="White"
-            FontFamily="Impact"
+            FontFamily="Calibri"
             HorizontalAlignment="Center"
             Margin="10 20 0 0"/>
         <DataGrid
@@ -70,7 +70,7 @@
             Grid.Row="0" Grid.Column="1"
             HorizontalAlignment="Center"
             Text="Тасгийн жагсаалт" 
-            FontFamily="Impact"
+            FontFamily="Calibri"
             Foreground="White"
             Margin="10 20 0 0"/>
 

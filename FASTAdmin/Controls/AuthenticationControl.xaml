@@ -15,6 +15,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Row 0 -->
@@ -23,7 +24,7 @@
         <!-- Row 1 -->
         <TextBlock Text="НЭВТРЭХ ХЭСЭГ" Foreground="White" Grid.Row="2" 
                    HorizontalAlignment="Center"
-                   FontFamily="Impact"
+                   FontFamily="Calibri"
                    Margin="0 200 0 0"
                    FontSize="30"
                    x:Name="loginTextBlock"/>
@@ -52,9 +53,17 @@
             <TextBlock Text="Нууц үг:" Foreground="White" Margin="0 0 10 0"/>
             <PasswordBox x:Name="addPasswordTextBox" Width="180" />
         </StackPanel>
+
+        <TextBlock Grid.Row="6"
+                   HorizontalAlignment='Center'
+                   Margin=" 0 20 143 0"
+                   x:Name="changePassTextBlock">
+                    <Hyperlink Click="Hyperlink_Click">Нууц үг солих</Hyperlink>
+        </TextBlock>
+        
         <!-- Row 4 -->
-        <Button x:Name="loginButton" Grid.Row="6" Width="85" HorizontalAlignment="Center"
-                Margin="0 100 0 0" Click="loginButton_Click">Нэвтрэх</Button>
+        <Button x:Name="loginButton" Grid.Row="7" Width="85" HorizontalAlignment="Center"
+                Margin="0 70 0 0" Click="loginButton_Click">Нэвтрэх</Button>
 
     </Grid>
 </UserControl>

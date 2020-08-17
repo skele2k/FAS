@@ -21,7 +21,7 @@
         <ContentControl x:Name="BackControl" Grid.Row="0" />
 
         <!--Row 0 -->
-        <TextBlock x:Name="deleteStaffTextBox" Grid.Row="2" Text="Ажилчин хасах" HorizontalAlignment="Center" FontFamily="Impact" Margin="0 70 0 0" FontSize="30"/>
+        <TextBlock x:Name="deleteStaffTextBox" Grid.Row="2" Text="Ажилчин хасах" HorizontalAlignment="Center" FontFamily="Calibri" Margin="0 70 0 0" FontSize="30"/>
 
         <!--Row 1 -->
         <StackPanel Orientation="Vertical" Grid.Row="3" Margin="0 100 0 0" x:Name="staffSelectStackPanel">

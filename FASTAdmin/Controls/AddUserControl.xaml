@@ -24,7 +24,7 @@
         <!-- Row 2 -->
         <TextBlock Text="Ажилчин нэмэх" Foreground="White" Grid.Row="2" 
                    HorizontalAlignment="Center"
-                   FontFamily="Impact"
+                   FontFamily="Calibri"
                    Margin="0 70 0 0"
                    FontSize="30"
                    x:Name="AddUser"/>

@@ -22,7 +22,7 @@
         <!-- Grid Row 2 -->
         <TextBlock x:Name="deleteBranchTextBlock" Text="Тасаг устгах" Foreground="White" Grid.Row="2" 
                    HorizontalAlignment="Center"
-                   FontFamily="Impact"
+                   FontFamily="Calibri"
                    Margin="0 70 0 0"
                    FontSize="30"/>
         <!-- Grid Row 3 -->

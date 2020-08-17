@@ -21,7 +21,7 @@
         <!-- Grid Row 2 -->
         <TextBlock x:Name="addBranchTextBlock" Text="Тасаг нэмэх" Foreground="White" Grid.Row="2" 
                    HorizontalAlignment="Center"
-                   FontFamily="Impact"
+                   FontFamily="Calibri"
                    Margin="0 70 0 0"
                    FontSize="30"/>
         
