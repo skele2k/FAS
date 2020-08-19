@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
              mc:Ignorable="d" FontSize="18" Foreground="White" Loaded="UserControl_Loaded"
-             d:DesignHeight="600" d:DesignWidth="350" Background="#FF0E1429">
+             d:DesignHeight="600" d:DesignWidth="350" Background="#343ba8">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -21,16 +21,23 @@
         <ContentControl x:Name="BackControl" Grid.Row="0" />
 
         <!--Row 0 -->
-        <TextBlock x:Name="deleteStaffTextBox" Grid.Row="2" Text="Ажилчин хасах" HorizontalAlignment="Center" FontFamily="Calibri" Margin="0 70 0 0" FontSize="30"/>
+        <TextBlock x:Name="deleteStaffTextBox" Grid.Row="2" Text="Ажилтан хасах" HorizontalAlignment="Center" FontFamily="Calibri" Margin="0 70 0 0" FontSize="30"/>
 
         <!--Row 1 -->
         <StackPanel Orientation="Vertical" Grid.Row="3" Margin="0 100 0 0" x:Name="staffSelectStackPanel">
-            <TextBlock Text="Ажилчин сонгох:" HorizontalAlignment="Center" Margin="0 0 0 15"/>
+            <TextBlock Text="Ажилтан сонгох:" HorizontalAlignment="Center" Margin="0 0 0 15"/>
             <ComboBox x:Name="staffSelectDropDown" Width="150" HorizontalAlignment="Center"/>
         </StackPanel>
         
         <!-- Row 2-->
-        <Button x:Name="deleteStaff" HorizontalAlignment="Center" Grid.Row="4" Margin="0 100 0 0" Width="70" Click="deleteStaff_Click">
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}" 
+            x:Name="deleteStaff" 
+            HorizontalAlignment="Center"
+            Grid.Row="4" Margin="0 100 0 0" 
+            Width="70" 
+            Click="deleteStaff_Click">
             Хасах
         </Button>
         

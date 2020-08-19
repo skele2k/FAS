@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
              mc:Ignorable="d" FontSize="18" Foreground="White"
-             d:DesignHeight="760" d:DesignWidth="1360" Background="#FF0E1429">
+             d:DesignHeight="760" d:DesignWidth="1360" Background="#343ba8">
+
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="182" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -15,29 +17,33 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="181" />
         </Grid.RowDefinitions>
         <!-- Row 0 -->
-        <ContentControl x:Name="BackControl" Grid.Row="0" />
+        <ContentControl x:Name="BackControl" Grid.Row="0" Grid.RowSpan="8"/>
 
         <!-- Row 1 -->
-        <TextBlock Text="НЭВТРЭХ ХЭСЭГ" Foreground="White" Grid.Row="2" 
+        <TextBlock Text="НЭВТРЭХ ХЭСЭГ" Foreground="White" Grid.Row="1" 
                    HorizontalAlignment="Center"
                    FontFamily="Calibri"
-                   Margin="0 200 0 0"
                    FontSize="30"
                    x:Name="loginTextBlock"/>
-        
+
         <!-- Row 2 -->
-        <StackPanel Orientation="Horizontal" Grid.Row="3"  Margin="0 100 0 0" x:Name="ipAddressStackPanel"
+        <StackPanel Orientation="Horizontal" 
+                    Grid.Row="2"  
+                    Margin="0 100 0 0" 
+                    x:Name="ipAddressStackPanel"
                     HorizontalAlignment="Center">
             <TextBlock Text="IP: " Foreground="White" Margin="0 0 50 0"/>
             <TextBox x:Name="ipAddressTextBox" Width="180" />
         </StackPanel>
-        
+
         <!-- Row 2 -->
-        <StackPanel Orientation="Horizontal" Grid.Row="4"  Margin="0 20 0 0" x:Name="usernameStackPanel"
+        <StackPanel Orientation="Horizontal" 
+                    Grid.Row="3"  
+                    Margin="0 20 0 0" 
+                    x:Name="usernameStackPanel"
                     HorizontalAlignment="Center">
             <TextBlock Text="Нэр: " Foreground="White" Margin="0 0 34 0"/>
             <TextBox x:Name="addUsernameTextBox" Width="180" />
@@ -46,7 +52,7 @@
 
         <!-- Row 3 -->
         <StackPanel Orientation="Horizontal" 
-                    Grid.Row="5" 
+                    Grid.Row="4" 
                     Margin="0 20 0 0" 
                     x:Name="passwordStackPanel"
                     HorizontalAlignment="Center">
@@ -54,16 +60,26 @@
             <PasswordBox x:Name="addPasswordTextBox" Width="180" />
         </StackPanel>
 
-        <TextBlock Grid.Row="6"
+        <TextBlock Grid.Row="5"
                    HorizontalAlignment='Center'
                    Margin=" 0 20 143 0"
                    x:Name="changePassTextBlock">
                     <Hyperlink Click="Hyperlink_Click">Нууц үг солих</Hyperlink>
         </TextBlock>
-        
+
         <!-- Row 4 -->
-        <Button x:Name="loginButton" Grid.Row="7" Width="85" HorizontalAlignment="Center"
-                Margin="0 70 0 0" Click="loginButton_Click">Нэвтрэх</Button>
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}" 
+            x:Name="loginButton" 
+            Grid.Row="6" 
+            Width="85" 
+            HorizontalAlignment="Center"
+            Margin="0 70 0 0"
+            Click="loginButton_Click">Нэвтрэх</Button>
+
+
+        <!--<Border BorderBrush="#29308f" BorderThickness="2" HorizontalAlignment="Left" Height="417" VerticalAlignment="Top" Width="282" Margin="538,177,0,0" Grid.RowSpan="9"/>-->
 
     </Grid>
 </UserControl>

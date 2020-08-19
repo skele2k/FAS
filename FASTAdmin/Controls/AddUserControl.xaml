@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
              mc:Ignorable="d" FontSize="18" Foreground="White" Loaded="UserControl_Loaded"
-             d:DesignHeight="600" d:DesignWidth="350" Background="#FF0E1429">
+             d:DesignHeight="600" d:DesignWidth="350" Background="#343ba8">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -22,7 +22,7 @@
         <!-- Row 0 -->
         <ContentControl x:Name="BackControl" Grid.Row="0" />
         <!-- Row 2 -->
-        <TextBlock Text="Ажилчин нэмэх" Foreground="White" Grid.Row="2" 
+        <TextBlock Text="Ажилтан нэмэх" Foreground="White" Grid.Row="2" 
                    HorizontalAlignment="Center"
                    FontFamily="Calibri"
                    Margin="0 70 0 0"
@@ -53,9 +53,23 @@
         </StackPanel>
         
         <!-- Row 5 -->
-        <Button x:Name="fpAddButton" IsDefault="True" Grid.Row="6" Margin="0 40 0 0" Width="210" Click="fpAddButton_Click">Хурууны хээ таниулах</Button>
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}" 
+            x:Name="fpAddButton" IsDefault="True" 
+            Grid.Row="6" 
+            Margin="0 40 0 0" 
+            Width="210" 
+            Click="fpAddButton_Click">Хурууны хээ таниулах</Button>
         
         <!-- Row 6 -->
-        <Button x:Name="addStaffButton" Grid.Row="8" Margin="0 40 0 0" Width="90" Click="addStaffButton_Click">Нэмэх</Button>
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}" 
+            x:Name="addStaffButton" 
+            Grid.Row="8" 
+            Margin="0 40 0 0"
+            Width="90" 
+            Click="addStaffButton_Click">Нэмэх</Button>
     </Grid>
 </UserControl>

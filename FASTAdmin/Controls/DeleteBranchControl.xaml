@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
              mc:Ignorable="d" FontSize="18" Foreground="White" Loaded="UserControl_Loaded"
-             d:DesignHeight="600" d:DesignWidth="350" Background="#FF0E1429">
+             d:DesignHeight="600" d:DesignWidth="350" Background="#343ba8">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -32,7 +32,15 @@
         </StackPanel>
         
         <!-- Row 4-->
-        <Button x:Name="deleteStaff" HorizontalAlignment="Center" Grid.Row="4" Margin="0 100 0 0" Width="70" Click="deleteBranch_Click">
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}"
+            x:Name="deleteStaff" 
+            HorizontalAlignment="Center" 
+            Grid.Row="4" 
+            Margin="0 100 0 0" 
+            Width="70" 
+            Click="deleteBranch_Click">
             Устгах
         </Button>
     </Grid>

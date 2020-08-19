@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
              mc:Ignorable="d" FontSize="18" Foreground="White" Loaded="UserControl_Loaded"
-             d:DesignHeight="600" d:DesignWidth="350" Background="#FF0E1429">
+             d:DesignHeight="600" d:DesignWidth="350" Background="#343ba8">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -42,6 +42,13 @@
         </StackPanel>
         
         <!-- Row 5 -->
-        <Button x:Name="submitNewBranch" Grid.Row="5" Margin="0 60 0 0" Width="100" Click="submitNewBranch_Click">Хадгалах</Button>
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}"
+            x:Name="submitNewBranch" 
+            Grid.Row="5" 
+            Margin="0 60 0 0" 
+            Width="100" 
+            Click="submitNewBranch_Click">Хадгалах</Button>
     </Grid>
 </UserControl>

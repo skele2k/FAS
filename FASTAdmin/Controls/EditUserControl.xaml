@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
              mc:Ignorable="d" FontSize="18" Foreground="White" Loaded="UserControl_Loaded"
-             d:DesignHeight="600" d:DesignWidth="350" Background="#FF0E1429">
+             d:DesignHeight="600" d:DesignWidth="350" Background="#343ba8">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -25,11 +25,11 @@
         <ContentControl x:Name="BackControl" Grid.Row="0" />
         
         <!-- Row 2-->
-        <TextBlock x:Name="editTextBlock" Text="Ажилчин янзлах" Grid.Row="2" HorizontalAlignment="Center" FontFamily="Calibri" FontWeight="DemiBold"  FontSize="30" Margin="0 70 0 0" />
+        <TextBlock x:Name="editTextBlock" Text="Ажилтан янзлах" Grid.Row="2" HorizontalAlignment="Center" FontFamily="Calibri" FontWeight="DemiBold"  FontSize="30" Margin="0 70 0 0" />
 
         <!--Row 3 -->
         <StackPanel Orientation="Vertical" Grid.Row="3" Margin="50 80 0 0" x:Name="staffSelectStackPanel">
-            <TextBlock Text="Ажилчин сонгох:" Margin="0 0 0 10"/>
+            <TextBlock Text="Ажилтан сонгох:" Margin="0 0 0 10"/>
             <ComboBox x:Name="staffSelectDropDown" Width="253" HorizontalAlignment="Left" SelectionChanged="staffSelectDropDown_SelectionChanged"/>
         </StackPanel>
         
@@ -52,10 +52,24 @@
         </StackPanel>
         
         <!-- Row 7 -->
-        <Button x:Name="newFpAddButton" Grid.Row="7" Margin="0 20 0 0" Width="250" Click="newFpAddButton_Click">Шинэ хурууны хээ таниулах</Button>
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}"
+            x:Name="newFpAddButton" 
+            Grid.Row="7" 
+            Margin="0 20 0 0"
+            Width="250" 
+            Click="newFpAddButton_Click">Шинэ хурууны хээ таниулах</Button>
         
         <!--Row 9 -->
-        <Button x:Name="submitNewUser" Grid.Row="9" Margin="0 40 0 0" Width="100" Click="submitNewUser_Click">Хадгалах</Button>
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}"
+            x:Name="submitNewUser" 
+            Grid.Row="9" 
+            Margin="0 40 0 0" 
+            Width="100" 
+            Click="submitNewUser_Click">Хадгалах</Button>
 
     </Grid>
 

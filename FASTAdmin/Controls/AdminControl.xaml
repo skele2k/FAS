@@ -5,16 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FASTAdmin.Controls"
              mc:Ignorable="d" FontSize="18" Loaded="UserControl_Loaded"
-             d:DesignHeight="760" d:DesignWidth="1360" Background="#FF0E1429">
+             d:DesignHeight="760" d:DesignWidth="1360" Background="#343ba8">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="42" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" /> 
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="42" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
@@ -22,6 +23,10 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
+        <!--BorderBrush="Aquamarine"
+        BorderThickness="4"-->
+
         <!--<ContentControl x:Name="leaveContent" Grid.Row="0"/>-->
         <!--<Menu IsMainMenu="True" Grid.Row="1" FontSize="18" Margin="0,0,0,10" x:Name="Menu">
             <MenuItem Header="_Файл" >
@@ -39,7 +44,11 @@
             </MenuItem>
         </Menu>-->
 
-        <ContentControl x:Name="BackControl" Grid.Row="0" Grid.ColumnSpan="4" Grid.Column="0"/>
+        <ContentControl x:Name="BackControl"
+                        Grid.Row="0" 
+                        Grid.ColumnSpan="4"
+                        Grid.Column="0"
+                        Grid.RowSpan="5"/>
 
         <TextBlock 
             x:Name="staffListText"
@@ -60,9 +69,9 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="20 0 0 0" HorizontalAlignment="Center"
                     x:Name="staffEditButtons">
-            <Button x:Name="AddNewStaffButton" Width="80" Margin="0 0 5 0" Click="AddNewStaffButton_Click">Шинэ</Button>
-            <Button x:Name="deleteSelectedItemButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedItemButton_Click_1">Устгах</Button>
-            <Button x:Name="EditSelectedItemButton" Width="80" Click="EditSelectedItemButton_Click">Янзлах</Button>
+            <Button Style="{StaticResource ButtonTemplate}" Height="30"  x:Name="AddNewStaffButton" Width="80" Margin="0 0 5 0" Click="AddNewStaffButton_Click">Шинэ</Button>
+            <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="deleteSelectedItemButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedItemButton_Click_1">Устгах</Button>
+            <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="EditSelectedItemButton" Width="80" Click="EditSelectedItemButton_Click">Янзлах</Button>
         </StackPanel>
 
         <TextBlock 
@@ -85,13 +94,22 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="20 0 0 0"
                     x:Name="branchEditButtons">
-            <Button x:Name="addNewBranchButton" Width="80" Margin="0 0 5 0" Click="addNewBranchButton_Click">Шинэ</Button>
-            <Button x:Name="deleteSelectedBranchButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedBranchButton_Click">Устгах</Button>
-            <Button x:Name="EditSelectedBranchButton" Width="80" Click="EditSelectedBranchButton_Click">Янзлах</Button>
+            <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="addNewBranchButton" Width="80" Margin="0 0 5 0" Click="addNewBranchButton_Click">Шинэ</Button>
+            <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="deleteSelectedBranchButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedBranchButton_Click">Устгах</Button>
+            <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="EditSelectedBranchButton" Width="80" Click="EditSelectedBranchButton_Click">Янзлах</Button>
         </StackPanel>
 
         <ContentControl x:Name="externalContents" Grid.Row="0" Grid.Column="2" Width="350" Height="600" Grid.RowSpan="7" Margin="30 0 0 10"/>
 
-        <Button x:Name="leaveAdminButton" Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" Margin="0 100 0 0" Width="100" Click="leaveAdminButton_Click">Гарах</Button>
+        <Button x:Name="leaveAdminButton"
+                Style="{StaticResource BackButtonTemplate}"
+                Grid.Row="0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Grid.ColumnSpan="2" 
+                Grid.Column="0"
+                Width="55"
+                Height="35"
+                Click="leaveAdminButton_Click">Гарах</Button>
     </Grid>
 </UserControl>
