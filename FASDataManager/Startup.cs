@@ -1,15 +1,14 @@
-﻿using FASDataManager.Authorization;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Web.Http;
+using FASDataManager.Authorization;
 using FASLib.DataAccess;
-using FASLib.Helpers;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+
+[assembly: OwinStartup(typeof(FASDataManager.Startup))]
 
 namespace FASDataManager
 {
@@ -17,6 +16,7 @@ namespace FASDataManager
     {
         public void Configuration(IAppBuilder app)
         {
+            // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=316888
             if (!File.Exists(SqliteBaseRepository.DbLocation))
             {
                 SqliteBaseRepository.CreateDatabase();

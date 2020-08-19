@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,19 +55,16 @@ namespace FASTAdmin.Controls
             }
             return (isValid, model);
         }
-        private async void loginButton_Click(object sender, RoutedEventArgs e)
+        private bool ConfigureAPI()
         {
-            if (addUsernameTextBox.Text == "" || addPasswordTextBox.Password == "")
-            {
-                MessageBox.Show("Нэр эсвэл нууц үг хоосон байна.");
-                return;
-            }
             var api = ConfigurationManager.AppSettings["api"];
             var new_api = ipAddressTextBox.Text;
-            if (new_api == "" && api == "notset")
+            if (new_api == "" && api == "notset" )
             {
-                MessageBox.Show("Холбогдох сүлжээгээ өгнө үү?");    
+                MessageBox.Show("Холбогдох сүлжээгээ өгнө үү?");
+                return false;
             }
+
             if (new_api != api && new_api != "notset")
             {
                 Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -76,6 +74,20 @@ namespace FASTAdmin.Controls
                 ConfigurationManager.RefreshSection("appSettings");
             }
             ApiHelper.InitializeClient();
+            return true;
+        }
+        private async void loginButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (addUsernameTextBox.Text == "" || addPasswordTextBox.Password == "")
+            {
+                MessageBox.Show("Нэр эсвэл нууц үг хоосон байна.");
+                return;
+            }
+            if(!ConfigureAPI())
+            {
+                return;
+            }
+
             var form = ValidateForm();
 
             try
@@ -102,13 +114,18 @@ namespace FASTAdmin.Controls
             }
             catch (Exception)
             {
-                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+                MessageBox.Show("Сүлжээнд холбогдсон эсэхээ шалгана уу?");
                 return;
             }
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
+            if (!ConfigureAPI())
+            {
+                return;
+            }
+
             loginTextBlock.Visibility = Visibility.Collapsed;
             usernameStackPanel.Visibility = Visibility.Collapsed;
             passwordStackPanel.Visibility = Visibility.Collapsed;

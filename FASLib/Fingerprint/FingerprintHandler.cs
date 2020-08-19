@@ -196,9 +196,9 @@ namespace FASLib.Fingerprint
                     return;
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("#1");//------------------------------------------------------------------------------------------------------------------------
+                MessageBox.Show(ex.ToString());
             }
 
             try

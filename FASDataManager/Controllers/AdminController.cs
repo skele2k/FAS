@@ -34,7 +34,7 @@ namespace FASDataManager.Controllers
         }
 
         [Authorize]
-        // PUT: api/Admin/5
+        // PUT: api/Admin/adminname
         public void Put(int id, [FromBody]AdminModel newAdmin)
         {
             _adminRepository.UpdateAdmin(id, newAdmin);
