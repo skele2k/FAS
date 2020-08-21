@@ -1,7 +1,6 @@
 ﻿using FASLib.Fingerprint;
 using FASLib.Helpers;
 using FASLib.Models;
-using FASTAdmin.refreshHelper;
 using libzkfpcsharp;
 using System;
 using System.Collections.ObjectModel;
@@ -187,7 +186,6 @@ namespace FASTAdmin.Controls
             AddStaffsToDatabase();
             ResetForm();
             branches.Clear();
-            refreshNoticer.refreshNow = true;
         }
 
         private void ResetForm()

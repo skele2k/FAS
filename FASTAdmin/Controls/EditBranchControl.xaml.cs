@@ -16,7 +16,6 @@ using System.Windows.Shapes;
 using FASLib.DataAccess;
 using FASLib.Helpers;
 using FASLib.Models;
-using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -102,7 +101,6 @@ namespace FASTAdmin.Controls
             AddBranchToDatabase();
             MessageBox.Show("Амжилттай шинэчиллээ.");
             ResetForm();
-            refreshNoticer.refreshNow = true;
         }
         private void ResetForm()
         {

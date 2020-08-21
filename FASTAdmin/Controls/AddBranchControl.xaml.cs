@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FASLib.Helpers;
-using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -86,7 +85,6 @@ namespace FASTAdmin.Controls
             }
             AddBranchToDatabase();
             ResetForm();
-            refreshNoticer.refreshNow = true;
         }
     }
 }

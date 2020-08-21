@@ -1,7 +1,6 @@
 ﻿using FASLib.Helpers;
 using FASLib.Models;
 using FASTAdmin.excelHelper;
-using FASTAdmin.refreshHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,31 +30,26 @@ namespace FASTAdmin.Controls
         public AdminControl()
         {
             InitializeComponent();
-            refreshNoticer.refreshNow = false;
 
-            refreshThread = new Thread(new ThreadStart(AutoRefresher));
-            refreshThread.IsBackground = true;
-            refreshThread.Start();
+            //refreshThread = new Thread(new ThreadStart(AutoRefresher));
+            //refreshThread.IsBackground = true;
+            //refreshThread.Start();
         }
-        private void AutoRefresher()
-        {
-            while (true)
-            {
-                if (refreshNoticer.refreshNow == true)
-                {
-                    this.Dispatcher.Invoke(async () =>
-                    {
-                        Thread.Sleep(100);
-                        await LoadDataGrid();
-                        refreshNoticer.refreshNow = false;
-                    });
-                }
-            }
-        }
-        private void exportToExcelMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            xlHelper.AllDataExporter();
-        }
+        //private void AutoRefresher()
+        //{
+        //    while (true)
+        //    {
+        //        if (refreshNoticer.refreshNow == true)
+        //        {
+        //            this.Dispatcher.Invoke(async () =>
+        //            {
+        //                Thread.Sleep(100);
+        //                await LoadDataGrid();
+        //                refreshNoticer.refreshNow = false;
+        //            });
+        //        }
+        //    }
+        //}
         private async Task LoadDataGrid()
         {
             try
@@ -160,6 +154,16 @@ namespace FASTAdmin.Controls
             catch { }
 
             BackControl.Content = new AuthenticationControl();
+        }
+
+        private void exportToExcel_Click(object sender, RoutedEventArgs e)
+        {
+            externalContents.Content = new ExportToExcelControl();
+        }
+
+        private async void reloadListButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadDataGrid();
         }
     }
 }

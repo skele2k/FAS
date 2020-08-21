@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="FASTAdmin.Controls.ExportToExcelControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FASTAdmin.Controls"
+             mc:Ignorable="d" FontSize="18" Foreground="White"
+             d:DesignHeight="600" d:DesignWidth="350" Background="#343ba8">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <!-- Row 1-->
+        <TextBlock x:Name="exportToExcelTextblock" 
+                   Grid.Row="1"
+                   Text="Ирц хуулах"
+                   HorizontalAlignment="Center"
+                   FontFamily="Calibri"
+                   FontSize="30"/>
+
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Center"
+                    Margin="0 70 0 0"
+                    x:Name="CalendarsStackPanel"
+                    Grid.Row="2">
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="startExcelTextBlock"
+                       Text="Эхлэх өдөр"/>
+                <DatePicker Margin="0 5 0 0" x:Name="startDataPicker"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="endExcelTextBlock"
+                       Text="Төгсгөх өдөр"/>
+                <DatePicker Margin="0 5 0 0" x:Name="endDataPicker"/>
+            </StackPanel>
+            
+        </StackPanel>
+
+        <Button 
+            Height="30" 
+            Style="{StaticResource ButtonTemplate}" 
+            x:Name="exportToExcelButton" 
+            Grid.Row="3" 
+            Margin="0 40 0 0"
+            Width="90" 
+            Click="exportToExcelButton_Click">Хуулах</Button>
+    </Grid>
+</UserControl>

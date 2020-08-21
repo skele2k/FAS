@@ -125,7 +125,7 @@ namespace FASDesktopUI
             try
             {
                 DateTime dateTime = DateTime.UtcNow.Date;
-                string currentDate = dateTime.ToString("dd/MM/yyyy");
+                string currentDate = dateTime.ToString("MM/dd/yyyy");
 
                 int numOfStaffs = CountStaff();
                 bool isNewDay = IsNewDay(currentDate);

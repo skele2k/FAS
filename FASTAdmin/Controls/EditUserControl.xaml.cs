@@ -18,7 +18,6 @@ using System.Collections.ObjectModel;
 using FASLib.DataAccess;
 using FASLib.Models;
 using System.Net.Http;
-using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -176,7 +175,6 @@ namespace FASTAdmin.Controls
 
             ResetForm();
             staffs.Clear();
-            refreshNoticer.refreshNow = true;
         }
         private void staffSelectDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

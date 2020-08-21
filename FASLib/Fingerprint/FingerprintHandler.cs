@@ -167,14 +167,6 @@ namespace FASLib.Fingerprint
         }
         private void RegisterTimeToDB(byte[] fingerPrint)
         {
-            //ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
-            //string sql = "SELECT * FROM staff WHERE fingerPrint = @fingerPrint";
-            //Dictionary<string, object> parameters = new Dictionary<string, object>
-            //{
-            //    {"@fingerPrint", fingerPrint}
-            //};
-
-            //var staffList = SqliteDataAccess.LoadData<StaffModel>(sql, parameters);
             StaffModel theStaff = null;
             try
             {
@@ -315,7 +307,7 @@ namespace FASLib.Fingerprint
         private string getCurrentDate()
         {
             DateTime dateTime = DateTime.UtcNow.Date;
-            string currentDate = dateTime.ToString("dd/MM/yyyy");
+            string currentDate = dateTime.ToString("MM/dd/yyyy");
             return currentDate;
         }
 

@@ -74,8 +74,10 @@
     <Compile Include="Controls\ChangePasswordControl.xaml.cs">
       <DependentUpon>ChangePasswordControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ExportToExcelControl.xaml.cs">
+      <DependentUpon>ExportToExcelControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="excelHelper\xlHelper.cs" />
-    <Compile Include="refreshHelper\refreshNoticer.cs" />
     <Compile Include="ScanWindow.xaml.cs">
       <DependentUpon>ScanWindow.xaml</DependentUpon>
     </Compile>
@@ -114,6 +116,10 @@
     <Page Include="Controls\EditUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ExportToExcelControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\FingerScanControl.xaml">
       <Generator>MSBuild:Compile</Generator>

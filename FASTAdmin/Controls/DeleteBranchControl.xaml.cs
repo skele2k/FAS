@@ -16,7 +16,6 @@ using System.Windows.Shapes;
 using FASLib.DataAccess;
 using FASLib.Helpers;
 using FASLib.Models;
-using FASTAdmin.refreshHelper;
 
 namespace FASTAdmin.Controls
 {
@@ -73,7 +72,6 @@ namespace FASTAdmin.Controls
                 }
                 ResetForm();
                 branches.Clear();
-                refreshNoticer.refreshNow = true;
             }
             catch
             {

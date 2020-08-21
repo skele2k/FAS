@@ -50,6 +50,32 @@
                         Grid.Column="0"
                         Grid.RowSpan="5"/>
 
+        <Button x:Name="leaveAdminButton"
+                Style="{StaticResource BackButtonTemplate}"
+                Grid.Row="0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Grid.ColumnSpan="2" 
+                Grid.Column="0"
+                Width="55"
+                Height="35"
+                Click="leaveAdminButton_Click">Гарах</Button>
+
+        <Button x:Name="reloadListButton"
+                Style="{StaticResource BackButtonTemplate}"
+                Grid.Row="0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Grid.ColumnSpan="2" 
+                Grid.Column="0"
+                Width="55"
+                Margin="55 0 0 0"
+                Height="35"
+                FontSize="25"
+                Click="reloadListButton_Click">
+            ⟲
+        </Button>
+
         <TextBlock 
             x:Name="staffListText"
             Grid.Row="0" Grid.Column="0"
@@ -101,15 +127,17 @@
 
         <ContentControl x:Name="externalContents" Grid.Row="0" Grid.Column="2" Width="350" Height="600" Grid.RowSpan="7" Margin="30 0 0 10"/>
 
-        <Button x:Name="leaveAdminButton"
-                Style="{StaticResource BackButtonTemplate}"
-                Grid.Row="0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
+        <Button x:Name="exportToExcel"
+                Style="{StaticResource ButtonTemplate}"
+                Grid.Row="3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 Grid.ColumnSpan="2" 
                 Grid.Column="0"
-                Width="55"
+                Margin="0 10 0 0"
+                Width="135"
                 Height="35"
-                Click="leaveAdminButton_Click">Гарах</Button>
+                Click="exportToExcel_Click">Excel рүү гаргах</Button>
+        
     </Grid>
 </UserControl>
