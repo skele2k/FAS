@@ -185,6 +185,7 @@ namespace FASDesktopUI
                     break;
                 }
                 code = fp.TickOrError();
+                Thread.Sleep(500);
             }
         }
     }
