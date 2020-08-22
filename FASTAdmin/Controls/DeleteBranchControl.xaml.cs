@@ -24,6 +24,8 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class DeleteBranchControl : UserControl
     {
+        public event EventHandler<string> UpdateDataGridEvent;
+
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
         public BranchModel selectedBranch { get; set; }
         public DeleteBranchControl()
@@ -62,16 +64,14 @@ namespace FASTAdmin.Controls
             {
                 BranchModel model = (BranchModel)branchSelectDropdown.SelectedItem;
                 var t = await ApiProcessor.DeleteBranchByID(model.id);
-                if (t == "success")
-                {
-                    MessageBox.Show("Амжилттай устгалаа.");
-                }
-                else
+                if (t != "success")
                 {
                     MessageBox.Show("Устгалт амжилтгүй.");
                 }
                 ResetForm();
                 branches.Clear();
+
+                UpdateDataGridEvent?.Invoke(this, "");
             }
             catch
             {

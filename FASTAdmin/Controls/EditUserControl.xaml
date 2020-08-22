@@ -36,13 +36,13 @@
         <!--Row 4 -->
         <StackPanel Orientation="Horizontal" Grid.Row="4" Margin="50 20 0 0" x:Name="newLastNameStackPanel">
             <TextBlock Text="Шинэ овог:" Margin="0 0 10 0"/>
-            <TextBox x:Name="newFirstname" Width="150"/>
+            <TextBox x:Name="newLastname" Width="150"/>
         </StackPanel>
 
         <!--Row 5 -->
         <StackPanel Orientation="Horizontal" Grid.Row="5" Margin="50 20 0 0" x:Name="newFirstNameStackPanel">
             <TextBlock Text="Шинэ нэр:" Margin="0 0 19 0"/>
-            <TextBox x:Name="newLastname" Width="150"/>
+            <TextBox x:Name="newFirstname" Width="150"/>
         </StackPanel>
         
         <!-- Row 6 -->

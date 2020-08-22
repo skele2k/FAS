@@ -15,7 +15,8 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class AddUserControl : UserControl
     {
-        //List<StaffModel> staffs;
+        public event EventHandler<string> UpdateDataGridEvent;
+
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
         byte[] fpTemplate;
         public AddUserControl()
@@ -23,7 +24,7 @@ namespace FASTAdmin.Controls
             InitializeComponent();
             WireUpBranchDropDown();
         }
-
+        
         private async Task InitializeBranchList()
         {
 
@@ -76,7 +77,7 @@ namespace FASTAdmin.Controls
         private string getCurrentDate()
         {
             DateTime dateTime = DateTime.UtcNow.Date;
-            string currentDate = dateTime.ToString("dd/MM/yyyy");
+            string currentDate = dateTime.ToString("MM/dd/yyyy");
             return currentDate;
         }
         private (AttendanceModel model, bool isValid) ValidateAttendanceModel(StaffModel theStaff)
@@ -115,9 +116,6 @@ namespace FASTAdmin.Controls
 
                 var t = Task.Run(async () => await ApiProcessor.SaveToAttendanceSheet(form.model));
                 var res = t.Result;
-
-
-                MessageBox.Show("Амжилттай ажилтан нэмлээ.");
             }
             catch
             {
@@ -186,6 +184,8 @@ namespace FASTAdmin.Controls
             AddStaffsToDatabase();
             ResetForm();
             branches.Clear();
+            System.Threading.Thread.Sleep(100);
+            UpdateDataGridEvent?.Invoke(this, "");
         }
 
         private void ResetForm()

@@ -44,9 +44,22 @@ namespace FASDesktopUI
             tick.Visibility = Visibility.Hidden;
             error.Visibility = Visibility.Hidden;
 
-            Thread tickOrErrorDisplayer = new Thread(new ThreadStart(displayTickOrError));
-            tickOrErrorDisplayer.IsBackground = true;
-            tickOrErrorDisplayer.Start();
+            fp.SuccessfullyAddedToDBEvent += Fp_SuccessfullyAddedToDBEvent;
+            fp.FailedToAddToDBEvent += Fp_FailedToAddToDBEvent;
+        }
+
+        private void Fp_FailedToAddToDBEvent(object sender, string e)
+        {
+            this.Dispatcher.Invoke(() => { error.Visibility = Visibility.Visible; });
+            Thread.Sleep(800);
+            this.Dispatcher.Invoke(() => { error.Visibility = Visibility.Hidden; });
+        }
+
+        private void Fp_SuccessfullyAddedToDBEvent(object sender, (StaffModel, AttendanceModel) e)
+        {
+            this.Dispatcher.Invoke(() => { tick.Visibility = Visibility.Visible; });
+            Thread.Sleep(800);
+            this.Dispatcher.Invoke(() => { tick.Visibility = Visibility.Hidden; });
         }
 
         private void Authenticate()
@@ -158,34 +171,6 @@ namespace FASDesktopUI
             {
                 MessageBox.Show("Сүлжээний алдаа.");
                 return 0;
-            }
-        }
-        // Seperate thread for displaying tick or error. 
-        private void displayTickOrError()
-        {
-            int code = fp.TickOrError();
-            while (true)
-            {
-                if (code == 1)
-                {
-                    // This is when the fingerprint has been recognized
-                    this.Dispatcher.Invoke(() => { tick.Visibility = Visibility.Visible; });
-                    Thread.Sleep(800);
-                    this.Dispatcher.Invoke(() => { tick.Visibility = Visibility.Hidden; });
-                }
-                else if (code == 2)
-                {
-                    // This is when the fingerprint has not been recognized
-                    this.Dispatcher.Invoke(() => { error.Visibility = Visibility.Visible; });
-                    Thread.Sleep(800);
-                    this.Dispatcher.Invoke(() => { error.Visibility = Visibility.Hidden; });
-                }
-                if (fp == null)
-                {
-                    break;
-                }
-                code = fp.TickOrError();
-                Thread.Sleep(500);
             }
         }
     }

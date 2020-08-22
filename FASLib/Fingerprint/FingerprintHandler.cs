@@ -21,6 +21,10 @@ namespace FASLib.Fingerprint
             InitializeDevice();
         }
 
+        public event EventHandler<(StaffModel, AttendanceModel)> SuccessfullyAddedToDBEvent;
+        public event EventHandler<string> FailedToAddToDBEvent;
+
+
         Thread captureThread = null;
         byte[] theChosenOne = new byte[2048]; // Complete fingerprint template when registering. It is later returned to either AddUserControl or EditUserControl
 
@@ -54,13 +58,6 @@ namespace FASLib.Fingerprint
 
         private int mfpWidth = 0;
         private int mfpHeight = 0;
-        int tickOrError = 0;
-        // 1 = tick, 2 = error
-        //private int mfpDpi = 0;
-        public int TickOrError()
-        {
-            return tickOrError;
-        }
         public byte[] GetTemplate()
         {
             return theChosenOne;
@@ -153,10 +150,6 @@ namespace FASLib.Fingerprint
         {
             return REGISTER_FINGER_COUNT - RegisterCount;
         }
-        public void StopThread()
-        {
-            bIsTimeToDie = true;
-        }
         private double CalculateOfficeHours(string arriveTime, string leaveTime)
         {
             DateTime arrTime = DateTime.Parse(arriveTime);
@@ -184,7 +177,7 @@ namespace FASLib.Fingerprint
 
                 if (theStaff == null)
                 {
-                    tickOrError = 2;
+                    FailedToAddToDBEvent?.Invoke(this, "");
                     return;
                 }
             }
@@ -200,7 +193,6 @@ namespace FASLib.Fingerprint
 
                 if (atOffice == false && theRecordOfStaff.arriveTime == null)
                 {
-                    tickOrError = 1;
                     string date = getCurrentDate();
                     string time = getCurrentTime();
                     
@@ -213,12 +205,14 @@ namespace FASLib.Fingerprint
 
                     var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
                     var ans = res.Result;
+
+                    SuccessfullyAddedToDBEvent?.Invoke(this,(theStaff, model));
+
                     //MessageBox.Show($"Сайн байна уу? {theStaff.fullName}");
 
                 }
                 else if (atOffice == false && theRecordOfStaff.arriveTime != null)
                 {
-                    tickOrError = 1;
                     string date = getCurrentDate();
                     string time = getCurrentTime();
                     
@@ -230,11 +224,13 @@ namespace FASLib.Fingerprint
 
                     var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
                     var ans = res.Result;
+
+                    SuccessfullyAddedToDBEvent?.Invoke(this, (theStaff, model));
+
                     //MessageBox.Show($"Сайн байна уу? {theStaff.fullName}");
                 }
                 else if (atOffice == true && theRecordOfStaff.leaveTime == null)
                 {
-                    tickOrError = 1;
                     string date = getCurrentDate();
                     string time = getCurrentTime();
                     double officeHours = CalculateOfficeHours(theRecordOfStaff.arriveTime, time);
@@ -250,11 +246,12 @@ namespace FASLib.Fingerprint
                     var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
                     var str = res.Result;
 
+                    SuccessfullyAddedToDBEvent?.Invoke(this, (theStaff, model));
+
                     //MessageBox.Show($"Баяртай! {theStaff.fullName}");
                 }
                 else if (atOffice == true && theRecordOfStaff.leaveTime != null)
                 {
-                    tickOrError = 1;
                     string date = getCurrentDate();
                     string time = getCurrentTime();
                     double officeHours = CalculateOfficeHours(theRecordOfStaff.arriveTime, time);
@@ -269,10 +266,16 @@ namespace FASLib.Fingerprint
 
                     var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
                     var str = res.Result;
+
+                    SuccessfullyAddedToDBEvent?.Invoke(this, (theStaff, model));
+
                     //MessageBox.Show($"Баяртай! {theStaff.fullName}");
                 }
             }
-            catch { }
+            catch
+            {
+                
+            }
 
         }
 
@@ -366,7 +369,6 @@ namespace FASLib.Fingerprint
             {
                 while (!bIsTimeToDie)
                 {
-                    tickOrError = 0;
                     int ret = fpInstance.AcquireFingerprint(FPBuffer, CapTmp, ref cbCapTmp);
 
                     if (ret == zkfp.ZKFP_ERR_OK)
@@ -457,8 +459,7 @@ namespace FASLib.Fingerprint
                     return;
                 }
             }
-            tickOrError = 2;
-            // MessageBox.Show("Тийм хурууны хээ байхкүэ хө");
+            FailedToAddToDBEvent?.Invoke(this, "");
         }
 
         public void DisconnectDevice()

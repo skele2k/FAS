@@ -26,20 +26,32 @@
                    FontFamily="Calibri"
                    FontSize="30"/>
 
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Grid.Row="2"
+                    Margin="0 70 0 0"
+                    x:Name="periodSelectStackPanel">
+            <CheckBox x:Name="periodSelectCheckbox" IsChecked="False" Checked="periodSelectCheckbox_Checked" Unchecked="periodSelectCheckbox_Unchecked"/>
+            <TextBlock Text="Хугацаа сонгох" 
+                       x:Name="timePeriodSelectTextBlock"/>
+        </StackPanel>
+        
         <StackPanel Orientation="Horizontal" 
                     HorizontalAlignment="Center"
-                    Margin="0 70 0 0"
+                    Margin="0 20 0 0"
                     x:Name="CalendarsStackPanel"
-                    Grid.Row="2">
-            <StackPanel Orientation="Vertical">
+                    Grid.Row="3">
+            <StackPanel Orientation="Vertical" Margin="0 0 15 0">
                 <TextBlock x:Name="startExcelTextBlock"
-                       Text="Эхлэх өдөр"/>
+                       Text="Эхлэх өдөр"
+                        HorizontalAlignment="Center"/>
                 <DatePicker Margin="0 5 0 0" x:Name="startDataPicker"/>
             </StackPanel>
             
             <StackPanel Orientation="Vertical">
                 <TextBlock x:Name="endExcelTextBlock"
-                       Text="Төгсгөх өдөр"/>
+                       Text="Төгсгөх өдөр"
+                           HorizontalAlignment="Center"/>
                 <DatePicker Margin="0 5 0 0" x:Name="endDataPicker"/>
             </StackPanel>
             
@@ -49,7 +61,7 @@
             Height="30" 
             Style="{StaticResource ButtonTemplate}" 
             x:Name="exportToExcelButton" 
-            Grid.Row="3" 
+            Grid.Row="4" 
             Margin="0 40 0 0"
             Width="90" 
             Click="exportToExcelButton_Click">Хуулах</Button>

@@ -24,6 +24,8 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class EditBranchControl : UserControl
     {
+        public event EventHandler<string> UpdateDataGridEvent;
+
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
         public BranchModel selectedBranch { get; set; }
         public EditBranchControl()
@@ -99,8 +101,9 @@ namespace FASTAdmin.Controls
             }
 
             AddBranchToDatabase();
-            MessageBox.Show("Амжилттай шинэчиллээ.");
             ResetForm();
+
+            UpdateDataGridEvent?.Invoke(this, "");
         }
         private void ResetForm()
         {

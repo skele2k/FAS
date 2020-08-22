@@ -26,6 +26,8 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class EditUserControl : UserControl
     {
+        public event EventHandler<string> UpdateDataGridEvent;
+
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
         ObservableCollection<BranchModel> branches = new ObservableCollection<BranchModel>();
         public StaffModel selectedStaff { get; set; }
@@ -171,10 +173,11 @@ namespace FASTAdmin.Controls
                 return;
             }
             SaveStaffToDatabase();
-            MessageBox.Show("Амжилттай шинэчиллээ.");
 
             ResetForm();
             staffs.Clear();
+
+            UpdateDataGridEvent?.Invoke(this, "");
         }
         private void staffSelectDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

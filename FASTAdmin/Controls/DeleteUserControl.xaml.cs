@@ -25,6 +25,8 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class DeleteUserControl : UserControl
     {
+        public event EventHandler<string> UpdateDataGridEvent;
+
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
         public StaffModel selectedStaff { get; set; }
         public DeleteUserControl()
@@ -64,17 +66,15 @@ namespace FASTAdmin.Controls
             {
                 StaffModel model = (StaffModel)staffSelectDropDown.SelectedItem;
                 var t = await ApiProcessor.DeleteStaffByID(model.id);
-                if (t == "success")
-                {
-                    MessageBox.Show("Амжилттай устгалаа.");
-                }
-                else
+                if (t != "success")
                 {
                     MessageBox.Show("Устгалт амжилтгүй");
                 }
 
                 ResetForm();
                 staffs.Clear();
+
+                UpdateDataGridEvent?.Invoke(this, "");
             }
             catch
             {

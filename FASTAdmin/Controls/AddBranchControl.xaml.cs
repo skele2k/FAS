@@ -23,6 +23,7 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class AddBranchControl : UserControl
     {
+        public event EventHandler<string> UpdateDataGridEvent;
         public AddBranchControl()
         {
             InitializeComponent();
@@ -39,11 +40,7 @@ namespace FASTAdmin.Controls
             try
             {
                 var t = await ApiProcessor.SaveBranch(form.model);
-                if (t == "success")
-                {
-                    MessageBox.Show("Амжилттай нэмэгдлээ.");
-                }
-                else
+                if (t != "success")
                 {
                     MessageBox.Show("Алдаа гарлаа. Та дахин оролдоно уу?");
                 }
@@ -85,6 +82,8 @@ namespace FASTAdmin.Controls
             }
             AddBranchToDatabase();
             ResetForm();
+
+            UpdateDataGridEvent?.Invoke(this, "");
         }
     }
 }

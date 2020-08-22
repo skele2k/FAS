@@ -24,8 +24,15 @@ namespace FASTAdmin.Controls
         public ExportToExcelControl()
         {
             InitializeComponent();
+            InitializeUserControl();
         }
+        private void InitializeUserControl()
+        {
+            startDataPicker.SelectedDate = DateTime.UtcNow;
+            endDataPicker.SelectedDate = DateTime.UtcNow;
 
+            CalendarsStackPanel.Visibility = Visibility.Hidden;
+        }
         private void exportToExcelButton_Click(object sender, RoutedEventArgs e)
         {
             if (startDataPicker.SelectedDate.ToString() == "" || endDataPicker.SelectedDate.ToString() == "")
@@ -36,14 +43,31 @@ namespace FASTAdmin.Controls
             DateTime startDate = (DateTime) startDataPicker.SelectedDate;
             DateTime endDate = (DateTime) endDataPicker.SelectedDate;
 
-            if (endDate.CompareTo(startDate) > 0)
+            if (periodSelectCheckbox.IsChecked == true)
             {
-                xlHelper.PeriodDataExporter(startDate, endDate);
+                if (endDate.CompareTo(startDate) > 0)
+                {
+                    xlHelper.PeriodDataExporter(startDate, endDate);
+                }
+                else
+                {
+                    MessageBox.Show("Эхлэх хугацаа дуусах хугацаанаас их байж болохгүй.");
+                }
             }
             else
             {
-                MessageBox.Show("Эхлэх хугацаа дуусах хугацаанаас их байж болохгүй.");
+                xlHelper.AllDataExporter();
             }
+        }
+
+        private void periodSelectCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            CalendarsStackPanel.Visibility = Visibility.Visible;
+        }
+
+        private void periodSelectCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CalendarsStackPanel.Visibility = Visibility.Hidden;
         }
     }
 }

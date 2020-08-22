@@ -26,43 +26,24 @@ namespace FASTAdmin.Controls
     {
         BranchModel selectedBranch;
         StaffModel selectedStaff;
-        Thread refreshThread = null;
         public AdminControl()
         {
             InitializeComponent();
-
-            //refreshThread = new Thread(new ThreadStart(AutoRefresher));
-            //refreshThread.IsBackground = true;
-            //refreshThread.Start();
         }
-        //private void AutoRefresher()
-        //{
-        //    while (true)
-        //    {
-        //        if (refreshNoticer.refreshNow == true)
-        //        {
-        //            this.Dispatcher.Invoke(async () =>
-        //            {
-        //                Thread.Sleep(100);
-        //                await LoadDataGrid();
-        //                refreshNoticer.refreshNow = false;
-        //            });
-        //        }
-        //    }
-        //}
         private async Task LoadDataGrid()
         {
             try
             {
                 var staffs = await ApiProcessor.LoadStaffs();
-                staffDataGrid.ItemsSource = staffs;
+                this.Dispatcher.Invoke(() => { staffDataGrid.ItemsSource = staffs; });
 
                 var branches = await ApiProcessor.LoadBranches();
-                branchDataGrid.ItemsSource = branches;
+                this.Dispatcher.Invoke(() => { branchDataGrid.ItemsSource = branches; });
             }
-            catch
+            catch(Exception e)
             {
-                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+                //MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+                MessageBox.Show(e.ToString());
             }
         }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -72,7 +53,14 @@ namespace FASTAdmin.Controls
 
         private void AddNewStaffButton_Click(object sender, RoutedEventArgs e)
         {
-            externalContents.Content = new AddUserControl();
+            AddUserControl t = new AddUserControl();
+            externalContents.Content = t;
+            t.UpdateDataGridEvent += T_UpdateDataGridEvent;
+        }
+
+        private void T_UpdateDataGridEvent(object sender, string e)
+        {
+            Task.Run(async () => await LoadDataGrid());
         }
 
         private void deleteSelectedItemButton_Click_1(object sender, RoutedEventArgs e)
@@ -87,6 +75,12 @@ namespace FASTAdmin.Controls
             DeleteUserControl deleteControl = new DeleteUserControl();
             deleteControl.selectedStaff = selectedStaff;
             externalContents.Content = deleteControl;
+            deleteControl.UpdateDataGridEvent += DeleteControl_UpdateDataGridEvent;
+        }
+
+        private void DeleteControl_UpdateDataGridEvent(object sender, string e)
+        {
+            Task.Run(async () => await LoadDataGrid());
         }
 
         private void EditSelectedItemButton_Click(object sender, RoutedEventArgs e)
@@ -101,11 +95,24 @@ namespace FASTAdmin.Controls
             EditUserControl editControl = new EditUserControl();
             editControl.selectedStaff = selectedStaff;
             externalContents.Content = editControl;
+            editControl.UpdateDataGridEvent += EditControl_UpdateDataGridEvent;
+        }
+
+        private void EditControl_UpdateDataGridEvent(object sender, string e)
+        {
+            Task.Run(async () => await LoadDataGrid());
         }
 
         private void addNewBranchButton_Click(object sender, RoutedEventArgs e)
         {
-            externalContents.Content = new AddBranchControl();
+            AddBranchControl addBranch = new AddBranchControl();
+            externalContents.Content = addBranch;
+            addBranch.UpdateDataGridEvent += AddBranch_UpdateDataGridEvent;
+        }
+
+        private void AddBranch_UpdateDataGridEvent(object sender, string e)
+        {
+            Task.Run(async () => await LoadDataGrid());
         }
 
         private void deleteSelectedBranchButton_Click(object sender, RoutedEventArgs e)
@@ -120,6 +127,12 @@ namespace FASTAdmin.Controls
             DeleteBranchControl deleteControl = new DeleteBranchControl();
             deleteControl.selectedBranch = selectedBranch;
             externalContents.Content = deleteControl;
+            deleteControl.UpdateDataGridEvent += DeleteControl_UpdateDataGridEvent1;
+        }
+
+        private void DeleteControl_UpdateDataGridEvent1(object sender, string e)
+        {
+            Task.Run(async () => await LoadDataGrid());
         }
 
         private void EditSelectedBranchButton_Click(object sender, RoutedEventArgs e)
@@ -134,6 +147,12 @@ namespace FASTAdmin.Controls
             EditBranchControl editControl = new EditBranchControl();
             editControl.selectedBranch = selectedBranch;
             externalContents.Content = editControl;
+            editControl.UpdateDataGridEvent += EditControl_UpdateDataGridEvent1;
+        }
+
+        private void EditControl_UpdateDataGridEvent1(object sender, string e)
+        {
+            Task.Run(async () => await LoadDataGrid());
         }
 
         private void leaveAdminButton_Click(object sender, RoutedEventArgs e)
@@ -146,12 +165,7 @@ namespace FASTAdmin.Controls
             branchEditButtons.Visibility = Visibility.Collapsed;
             externalContents.Visibility = Visibility.Collapsed;
             leaveAdminButton.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                refreshThread.Abort();
-            }
-            catch { }
+            reloadListButton.Visibility = Visibility.Collapsed;
 
             BackControl.Content = new AuthenticationControl();
         }
