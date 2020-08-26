@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace FASLib.Helpers
 {
@@ -14,14 +15,23 @@ namespace FASLib.Helpers
     {
         public static HttpClient ApiClient { get; set; }
 
-        public static void InitializeClient()
+        public static bool InitializeClient()
         {
             string api = ConfigurationManager.AppSettings["api"];
-
-            ApiClient = new HttpClient();
-            ApiClient.BaseAddress = new Uri(api);
-            ApiClient.DefaultRequestHeaders.Accept.Clear();
-            ApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            bool output = true;
+            try
+            {
+                ApiClient = new HttpClient();
+                ApiClient.BaseAddress = new Uri(api);
+                ApiClient.DefaultRequestHeaders.Accept.Clear();
+                ApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээтэй холбогдоход алдаа гарлаа. IP хаягаа шалгана уу?");
+                output = false;
+            }
+            return output;
         }
     }
 }

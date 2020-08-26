@@ -78,13 +78,16 @@ namespace FASTAdmin.Controls
         }
         private async void loginButton_Click(object sender, RoutedEventArgs e)
         {
+            loginButton.IsEnabled = false;
             if (addUsernameTextBox.Text == "" || addPasswordTextBox.Password == "")
             {
                 MessageBox.Show("Нэр эсвэл нууц үг хоосон байна.");
+                loginButton.IsEnabled = true;
                 return;
             }
             if(!ConfigureAPI())
             {
+                loginButton.IsEnabled = true;
                 return;
             }
 
@@ -103,20 +106,24 @@ namespace FASTAdmin.Controls
                     ipAddressStackPanel.Visibility = Visibility.Collapsed;
                     changePassTextBlock.Visibility = Visibility.Collapsed;
 
+                    ApiHelper.ApiClient.DefaultRequestHeaders.Clear();
                     ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
                     BackControl.Content = new AdminControl();
                 }
                 else
                 {
                     MessageBox.Show("Нэр эсвэл нууц үг буруу байна.");
+                    loginButton.IsEnabled = true;
                     return;
                 }
             }
             catch (Exception)
             {
                 MessageBox.Show("Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+                loginButton.IsEnabled = true;
                 return;
             }
+            loginButton.IsEnabled = true;
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)

@@ -225,6 +225,7 @@ namespace FASLib.Fingerprint
                     var res = Task.Run(async () => await ApiProcessor.EditAttendanceSheet(model));
                     var ans = res.Result;
 
+                    model.arriveTime = time;
                     SuccessfullyAddedToDBEvent?.Invoke(this, (theStaff, model));
 
                     //MessageBox.Show($"Сайн байна уу? {theStaff.fullName}");

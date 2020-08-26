@@ -75,6 +75,7 @@ namespace FASTAdmin.Controls
         }
         private void changeButton_Click(object sender, RoutedEventArgs e)
         {
+            changeButton.IsEnabled = false;
             var form = ValidateNewForm();
             var oldform = ValidateOldForm();
 
@@ -86,6 +87,7 @@ namespace FASTAdmin.Controls
             if (oldform.model.password == form.model.password)
             {
                 MessageBox.Show("Хуучин нууц үгтэй адилхан нууц үг байж болохгүй.");
+                changeButton.IsEnabled = true;
                 return;
             }
 
@@ -98,11 +100,13 @@ namespace FASTAdmin.Controls
 
                     if (token != null)
                     {
+                        ApiHelper.ApiClient.DefaultRequestHeaders.Clear();
                         ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
                     }
                     else
                     {
                         MessageBox.Show("Буруу нэр эсвэл нууц үг");
+                        changeButton.IsEnabled = true;
                         return;
                     }
                 }
@@ -110,6 +114,7 @@ namespace FASTAdmin.Controls
             catch
             {
                 MessageBox.Show("Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+                changeButton.IsEnabled = true;
                 return;
             }
 
@@ -134,7 +139,11 @@ namespace FASTAdmin.Controls
                         throw new Exception();
                     }
                 }
-                catch { return; }
+                catch 
+                {
+                    changeButton.IsEnabled = false;
+                    return; 
+                }
 
                 try
                 {
@@ -163,9 +172,11 @@ namespace FASTAdmin.Controls
                 catch
                 {
                     MessageBox.Show("Алдаа гарлаа.");
+                    changeButton.IsEnabled = true;
                     return;
                 }
             }
+            changeButton.IsEnabled = true;
         }
         private void backButton_Click(object sender, RoutedEventArgs e)
         {

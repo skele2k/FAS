@@ -18,8 +18,8 @@ using FASLib.DataAccess;
 using FASLib.Models;
 using FASLib.Fingerprint;
 using FASLib.Helpers;
-using Caliburn.Micro;
 using System.Runtime.InteropServices;
+using System.Configuration;
 
 namespace FASDesktopUI
 {
@@ -31,21 +31,46 @@ namespace FASDesktopUI
         FingerprintHandler fp;
         List<byte[]> fps = new List<byte[]>();
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
+        Dictionary<int, string> idBranchMap = new Dictionary<int, string>();
         public MainWindow()
         {
             InitializeComponent();
-            ApiHelper.InitializeClient();
+            CheckValidIP();
+        }
+        private void StartUp()
+        {
             Authenticate();
             fp = new FingerprintHandler();
             GetFingerprintsFromDB();
             fp.ConnectDeviceAndIdentify();
-            
+
             InitializeCurrentDate();
+
+            userInfoStackPanel.Visibility = Visibility.Hidden;
             tick.Visibility = Visibility.Hidden;
             error.Visibility = Visibility.Hidden;
 
             fp.SuccessfullyAddedToDBEvent += Fp_SuccessfullyAddedToDBEvent;
             fp.FailedToAddToDBEvent += Fp_FailedToAddToDBEvent;
+        }
+        private void CheckValidIP()
+        {
+            var api = ConfigurationManager.AppSettings["api"];
+            
+            if (api == "" || api == "notset")
+            {
+                Window window = new getIpWindow();
+                window.ShowDialog();
+            }
+
+            bool output = ApiHelper.InitializeClient();
+            if (output == false)
+            {
+                return;
+            }
+
+            StartUp();
+            LoadBranches();
         }
 
         private void Fp_FailedToAddToDBEvent(object sender, string e)
@@ -57,6 +82,32 @@ namespace FASDesktopUI
 
         private void Fp_SuccessfullyAddedToDBEvent(object sender, (StaffModel, AttendanceModel) e)
         {
+            this.Dispatcher.Invoke(() => {
+                arriveTimeDisplayStackPanel.Visibility = Visibility.Hidden;
+                leaveTimeDisplayStackPanel.Visibility = Visibility.Hidden;
+                userInfoStackPanel.Visibility = Visibility.Visible;
+
+                staffFirstNameTextBlock.Text = e.Item1.firstName;
+                staffLastNameTextBlock.Text = e.Item1.lastName;
+                branchNameTextBlock.Text = idBranchMap[e.Item1.branch_id];
+                
+                if (e.Item2.atOffice == 0)
+                {
+                    
+                    leaveTimeTextBlock.Text = e.Item2.leaveTime;
+                    arriveTimeDisplayStackPanel.Visibility = Visibility.Collapsed;
+                    leaveTimeDisplayStackPanel.Visibility = Visibility.Visible;
+
+                }
+                else
+                {
+                    arriveTimeTextBlock.Text = e.Item2.arriveTime;
+                    leaveTimeDisplayStackPanel.Visibility = Visibility.Collapsed;
+                    arriveTimeDisplayStackPanel.Visibility = Visibility.Visible;
+                }
+                
+
+                }); 
             this.Dispatcher.Invoke(() => { tick.Visibility = Visibility.Visible; });
             Thread.Sleep(800);
             this.Dispatcher.Invoke(() => { tick.Visibility = Visibility.Hidden; });
@@ -95,10 +146,7 @@ namespace FASDesktopUI
                 }
                 fp.PushData(fps);
             }
-            catch (Exception)
-            {
-                MessageBox.Show("Сүлжээтэй холбогдоход алдаа гарлаа.");
-            }
+            catch { }
         }
         private bool IsNewDay(string currentDate)
         {
@@ -110,18 +158,22 @@ namespace FASDesktopUI
             //};
 
             //var lastDateList = SqliteDataAccess.LoadData<string>(sql, parameters);
-            var w = Task.Run(async () => await ApiProcessor.LoadAttendanceSheet());
-            var attendanceList = w.Result;
-            int size = attendanceList.Count();
-            if (size == 0)
+            try
             {
-                return true;
+                var w = Task.Run(async () => await ApiProcessor.LoadAttendanceSheet());
+                var attendanceList = w.Result;
+                int size = attendanceList.Count();
+                if (size == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    string lastDate = attendanceList[size - 1].date;
+                    return !(lastDate == currentDate);
+                }
             }
-            else
-            {
-                string lastDate = attendanceList[size - 1].date;
-                return !(lastDate == currentDate);
-            }
+            catch { return false; }
         }
         private AttendanceModel ValidateForm(StaffModel staffModel, string currentDate)
         {
@@ -152,10 +204,7 @@ namespace FASDesktopUI
                     }
                 }
             }
-            catch
-            {
-                MessageBox.Show("Сүлжээний алдаа.");
-            }
+            catch { }
         }
 
         private int CountStaff()
@@ -167,11 +216,26 @@ namespace FASDesktopUI
                 staffList.ForEach(x => staffs.Add(x));
                 return staffList.Count();
             }
-            catch
+            catch { return 0; }
+        }
+        private void LoadBranches()
+        {
+            try
             {
-                MessageBox.Show("Сүлжээний алдаа.");
-                return 0;
+                var t = Task.Run(async () => await ApiProcessor.LoadBranches());
+                var branches = t.Result;
+
+                for (int i = 0; i < branches.Count(); i++)
+                {
+                    idBranchMap[branches[i].id] = branches[i].name;
+                }
             }
+            catch { }
+        }
+        private void ipButton_Click(object sender, RoutedEventArgs e)
+        {
+            Window window = new getIpWindow();
+            window.Show();
         }
     }
 
