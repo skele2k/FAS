@@ -14,21 +14,31 @@ namespace FASDataManager.Controllers
     {
         AttendanceRepository _attendanceRepository = new AttendanceRepository();
         // GET: api/Attendance
+        /// <summary>
+        /// Gets all attendances
+        /// </summary>
+        /// <returns>List of AttendanceModel</returns>
         public List<AttendanceModel> Get()
         {
             return _attendanceRepository.GetAttendance();
         }
         // POST: api/Attendance
+        /// <summary>
+        /// Add new AttendanceModel
+        /// </summary>
+        /// <param name="staffModel"></param>
+        /// <returns>bool</returns>
         public bool Post([FromBody]AttendanceModel staffModel)
         {
             return _attendanceRepository.AddStaffToAttendanceSheet(staffModel);
         }
-        // DELETE: api/Attendance/5
-        public void Delete(int id)
-        {
-        }
 
         // PUT: api/Attendance
+        /// <summary>
+        /// Replaces AttendanceModel according to the staff_id and branch_id from body
+        /// </summary>
+        /// <param name="attendanceModel"></param>
+        /// <returns>bool</returns>
         public bool Put([FromBody]AttendanceModel attendanceModel)
         {
             return _attendanceRepository.EditAttendanceSheet(attendanceModel);
