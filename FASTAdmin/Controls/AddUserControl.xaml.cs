@@ -98,24 +98,51 @@ namespace FASTAdmin.Controls
             }
             return (model, isValid);
         }
+
+        private bool IsNewDay(string currentDate)
+        {
+            try
+            {
+                var w = Task.Run(async () => await ApiProcessor.LoadAttendanceSheet());
+                var attendanceList = w.Result;
+                int size = attendanceList.Count();
+                if (size == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    string lastDate = attendanceList[size - 1].date;
+                    return !(lastDate == currentDate);
+                }
+            }
+            catch { return false; }
+        }
+
         private async Task InsertToAttendanceSheet(StaffModel theStaff)
         {
             try
             {
-                var staffs = await ApiProcessor.LoadStaffs();
+                string currentDate = getCurrentDate();
+                bool isNewDay = IsNewDay(currentDate);
 
-                foreach (StaffModel staff in staffs)
+                if (isNewDay == false)
                 {
-                    if (theStaff.fingerPrint.SequenceEqual(staff.fingerPrint))
-                    {
-                        theStaff.id = staff.id;
-                        break;
-                    }
-                }
-                var form = ValidateAttendanceModel(theStaff);
+                    var staffs = await ApiProcessor.LoadStaffs();
 
-                var t = Task.Run(async () => await ApiProcessor.SaveToAttendanceSheet(form.model));
-                var res = t.Result;
+                    foreach (StaffModel staff in staffs)
+                    {
+                        if (theStaff.fingerPrint.SequenceEqual(staff.fingerPrint))
+                        {
+                            theStaff.id = staff.id;
+                            break;
+                        }
+                    }
+                    var form = ValidateAttendanceModel(theStaff);
+
+                    var t = Task.Run(async () => await ApiProcessor.SaveToAttendanceSheet(form.model));
+                    var res = t.Result;
+                }
             }
             catch
             {

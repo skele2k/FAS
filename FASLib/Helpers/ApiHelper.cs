@@ -25,6 +25,9 @@ namespace FASLib.Helpers
                 ApiClient.BaseAddress = new Uri(api);
                 ApiClient.DefaultRequestHeaders.Accept.Clear();
                 ApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var t = Task.Run(async () => await ApiProcessor.LoadAdmins());
+                var res = t.Result;
             }
             catch
             {

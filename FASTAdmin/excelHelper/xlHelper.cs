@@ -66,15 +66,54 @@ namespace FASTAdmin.excelHelper
                 {
                     branchNameMapper[branchList[i].id] = branchList[i].name;
                 }
+                int left = 0;
+                int right = size - 1;
+                int startIndex = 0;
+                while (left <= right)
+                {
+                    int mid = left + (right - left) / 2;
+                    var midDate = DateTime.Parse(attendanceList[mid].date);
+                    if (midDate.CompareTo(startDate) == 0)
+                    {
+                        startIndex = mid;
+                        break;
+                    }
+                    if (midDate.CompareTo(startDate) > 0)
+                    {
+                        right = mid - 1;
+                    }
+                    else if (midDate.CompareTo(startDate) < 0)
+                    {
+                        left = mid + 1;
+                        startIndex = left;
+                    }
+                }
+                for (int i = startIndex; i > 0; i--)
+                {
+                    if (startIndex == size)
+                    {
+                        break;
+                    }
+                    var currentDate = DateTime.Parse(attendanceList[i].date);
+                    var prevDate = DateTime.Parse(attendanceList[i - 1].date);
+                    if (currentDate.CompareTo(prevDate) > 0)
+                    {
+                        startIndex = i;
+                        break;
+                    }
 
-                for (int i = 0; i < size; i++)
+                    if (i == 1)
+                    {
+                        startIndex = 0;
+                    }
+                }
+
+                int k = 0;
+                for (int i = startIndex; i < size; i++)
                 {
                     DateTime currentDate = DateTime.Parse(attendanceList[i].date);
                     string currentDateStr = currentDate.ToString();
-                    if (currentDate.CompareTo(startDate) < 0)
-                    {
-                        continue;
-                    }
+                    
                     if (currentDate.CompareTo(endDate) > 0)
                     {
                         break;
@@ -83,27 +122,29 @@ namespace FASTAdmin.excelHelper
 
                     if (staffNameMapper.ContainsKey(attendanceList[i].staff_id))
                     {
-                        worksheet.Cells[$"A{ i + 2 }"].Value = staffNameMapper[attendanceList[i].staff_id];
+                        worksheet.Cells[$"A{ k + 2 }"].Value = staffNameMapper[attendanceList[i].staff_id];
                     }
                     else
                     {
-                        worksheet.Cells[$"A{ i + 2 }"].Value = attendanceList[i].staff_id;
+                        worksheet.Cells[$"A{ k + 2 }"].Value = attendanceList[i].staff_id;
                     }
 
                     if (branchNameMapper.ContainsKey(attendanceList[i].branch_id))
                     {
-                        worksheet.Cells[$"B{ i + 2 }"].Value = branchNameMapper[attendanceList[i].branch_id];
+                        worksheet.Cells[$"B{ k + 2 }"].Value = branchNameMapper[attendanceList[i].branch_id];
                     }
                     else
                     {
-                        worksheet.Cells[$"B{ i + 2 }"].Value = attendanceList[i].branch_id;
+                        worksheet.Cells[$"B{ k + 2 }"].Value = attendanceList[i].branch_id;
                     }
 
-                    worksheet.Cells[$"C{ i + 2 }"].Value = attendanceList[i].arriveTime;
-                    worksheet.Cells[$"D{ i + 2 }"].Value = attendanceList[i].leaveTime;
-                    worksheet.Cells[$"E{ i + 2 }"].Value = attendanceList[i].officeHours;
-                    worksheet.Cells[$"F{ i + 2 }"].Value = attendanceList[i].atOffice;
-                    worksheet.Cells[$"G{ i + 2 }"].Value = attendanceList[i].date;
+                    worksheet.Cells[$"C{ k + 2 }"].Value = attendanceList[i].arriveTime;
+                    worksheet.Cells[$"D{ k + 2 }"].Value = attendanceList[i].leaveTime;
+                    worksheet.Cells[$"E{ k + 2 }"].Value = attendanceList[i].officeHours;
+                    worksheet.Cells[$"F{ k + 2 }"].Value = attendanceList[i].atOffice;
+                    worksheet.Cells[$"G{ k + 2 }"].Value = attendanceList[i].date;
+
+                    k++;
                 }
 
                 package.Save();

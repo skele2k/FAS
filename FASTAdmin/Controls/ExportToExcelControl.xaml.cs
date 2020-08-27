@@ -45,7 +45,7 @@ namespace FASTAdmin.Controls
 
             if (periodSelectCheckbox.IsChecked == true)
             {
-                if (endDate.CompareTo(startDate) > 0)
+                if (endDate.CompareTo(startDate) >= 0)
                 {
                     xlHelper.PeriodDataExporter(startDate, endDate);
                 }
