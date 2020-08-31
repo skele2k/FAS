@@ -19,6 +19,7 @@ using FASLib.Fingerprint;
 using FASLib.DataAccess;
 using FASLib.Models;
 using FASLib.Helpers;
+using System.ComponentModel;
 
 namespace FASTAdmin
 {
@@ -29,7 +30,8 @@ namespace FASTAdmin
     {
         List<byte[]> fps = new List<byte[]>();
         FingerprintHandler fp;
-        byte[] fpTemplate;
+        byte[] fpTemplate = new byte[2048];
+        bool closeWindow = false;
         public byte[] ReturnFP
         {
             get
@@ -41,7 +43,25 @@ namespace FASTAdmin
         {
             InitializeComponent();
             fp = new FingerprintHandler();
+
+            fp.SuccessfullyScannedFP += Fp_SuccessfullyScannedFP;
+            fp.GetTemplate += Fp_GetTemplate;
         }
+
+        private void Fp_GetTemplate(object sender, byte[] e)
+        {
+            fpTemplate = e;
+            Task.Run(() => CloseWindow());
+        }
+
+        private void Fp_SuccessfullyScannedFP(object sender, int e)
+        {
+            if (e != 0)
+            {
+                this.Dispatcher.Invoke(() => { FINGER_SCAN_COUNT.Text = e.ToString(); });
+            }
+        }
+
         private async Task GetFingerprintsFromDB()
         {
             var staffList = await ApiProcessor.LoadStaffs(); 
@@ -58,27 +78,9 @@ namespace FASTAdmin
             }
         }
 
-        private void UpdateNumber()
+        private async Task CloseWindow()
         {
-            bool firstTwo = false;
-            bool firstOne = false;
-            int numOfTry = fp.GetNumOfTry();
-            while (numOfTry > 0)
-            {
-                if (numOfTry == 2 && !firstTwo)
-                {
-                    this.Dispatcher.Invoke(() => { FINGER_SCAN_COUNT.Text = 2.ToString(); });
-                    firstTwo = true;
-                }
-                else if (numOfTry == 1 && !firstOne)
-                {
-                    this.Dispatcher.Invoke(() => { FINGER_SCAN_COUNT.Text = 1.ToString(); });
-                    firstOne = true;
-                }
-                numOfTry = fp.GetNumOfTry();
-            }
-            Thread.Sleep(100);
-            fpTemplate = fp.GetTemplate();
+            Thread.Sleep(200);
             fp.DisconnectDevice();
             this.Dispatcher.Invoke(() => { Window.GetWindow(this).DialogResult = true; });
             this.Dispatcher.Invoke(() => { Window.GetWindow(this).Close(); });
@@ -90,9 +92,6 @@ namespace FASTAdmin
             fp.PushData(fps);
             fp.ConnectDeviceAndRegister();
 
-            Thread displayThread = new Thread(new ThreadStart(UpdateNumber));
-            displayThread.IsBackground = true;
-            displayThread.Start();
         }
     }
 }

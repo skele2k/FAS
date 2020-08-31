@@ -23,7 +23,8 @@ namespace FASLib.Fingerprint
 
         public event EventHandler<(StaffModel, AttendanceModel)> SuccessfullyAddedToDBEvent;
         public event EventHandler<string> FailedToAddToDBEvent;
-
+        public event EventHandler<int> SuccessfullyScannedFP;
+        public event EventHandler<byte[]> GetTemplate;
 
         Thread captureThread = null;
         byte[] theChosenOne = new byte[2048]; // Complete fingerprint template when registering. It is later returned to either AddUserControl or EditUserControl
@@ -58,10 +59,6 @@ namespace FASLib.Fingerprint
 
         private int mfpWidth = 0;
         private int mfpHeight = 0;
-        public byte[] GetTemplate()
-        {
-            return theChosenOne;
-        }
         public bool InitializeDevice()
         {
             int callBackCode = fpInstance.Initialize();
@@ -400,7 +397,10 @@ namespace FASLib.Fingerprint
                     Thread.Sleep(100);
                 }
             }
-            catch { }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
 
         public void RegistrationCase()
@@ -423,6 +423,8 @@ namespace FASLib.Fingerprint
 
             RegisterCount++;
 
+            SuccessfullyScannedFP?.Invoke(this, REGISTER_FINGER_COUNT - RegisterCount);
+
             if (RegisterCount >= REGISTER_FINGER_COUNT)
             {
                 // Generate a fp template by the combination of 3 successfully fingerprint acquisition
@@ -433,6 +435,9 @@ namespace FASLib.Fingerprint
                     
                     bIsTimeToDie = true;
                     theChosenOne = RegTmp;
+
+                    GetTemplate?.Invoke(this, RegTmp);
+
                     return;
                 }
                 else

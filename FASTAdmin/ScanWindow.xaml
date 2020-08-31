@@ -13,8 +13,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Center" Margin="0 125 0 0">
-            <TextBlock Text="Хуруугаа " VerticalAlignment="Center"/>
-            <TextBlock x:Name="FINGER_SCAN_COUNT" Text="3" VerticalAlignment="Center" />
+            <TextBlock Text="Нэг хуруугаа " VerticalAlignment="Center"/>
+            <TextBlock 
+                x:Name="FINGER_SCAN_COUNT" 
+                Text="3" 
+                VerticalAlignment="Center"
+                />
             <TextBlock Text=" удаа уншуулна уу?" VerticalAlignment="Center" />
         </StackPanel>
 
