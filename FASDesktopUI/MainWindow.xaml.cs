@@ -17,7 +17,7 @@ namespace FASDesktopUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        FingerprintHandler fp;
+        FingerprintHandler fp = null;
         List<byte[]> fps = new List<byte[]>();
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
         Dictionary<int, string> idBranchMap = new Dictionary<int, string>();
@@ -26,10 +26,16 @@ namespace FASDesktopUI
             InitializeComponent();
             CheckValidIP();
         }
+        private void InitializeFP()
+        {
+            fp = new FingerprintHandler();
+
+            fp.SuccessfullyAddedToDBEvent += Fp_SuccessfullyAddedToDBEvent;
+            fp.FailedToAddToDBEvent += Fp_FailedToAddToDBEvent;
+        }
         private void StartUp()
         {
             Authenticate();
-            fp = new FingerprintHandler();
             GetFingerprintsFromDB();
             fp.ConnectDeviceAndIdentify();
 
@@ -38,9 +44,6 @@ namespace FASDesktopUI
             userInfoStackPanel.Visibility = Visibility.Hidden;
             tick.Visibility = Visibility.Hidden;
             error.Visibility = Visibility.Hidden;
-
-            fp.SuccessfullyAddedToDBEvent += Fp_SuccessfullyAddedToDBEvent;
-            fp.FailedToAddToDBEvent += Fp_FailedToAddToDBEvent;
         }
         private void CheckValidIP()
         {
@@ -48,18 +51,40 @@ namespace FASDesktopUI
             
             if (api == "" || api == "notset")
             {
-                Window window = new getIpWindow();
-                window.ShowDialog();
+                var w = new getIpWindow();
+                if (w.ShowDialog() == true)
+                {
+                    if (w.IsSuccessful == true)
+                    {
+                        if (StartApp() == false)
+                        {
+                            ShowDefaultScreen();
+                            return;
+                        }
+                    }
+                }
             }
+            if(StartApp() == false)
+            {
+                ShowDefaultScreen();
+                return;
+            }
+        }
 
+        private bool StartApp()
+        {
             bool output = ApiHelper.InitializeClient();
             if (output == false)
             {
-                return;
+                return false;
             }
-
+            if (fp == null)
+            {
+                InitializeFP();
+            }
             StartUp();
             LoadBranches();
+            return true;
         }
 
         private void Fp_FailedToAddToDBEvent(object sender, string e)
@@ -111,10 +136,11 @@ namespace FASDesktopUI
 
                 if (token != null)
                 {
+                    ApiHelper.ApiClient.DefaultRequestHeaders.Clear();
                     ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
                 }
             }
-            catch
+            catch(Exception e)
             {
                 MessageBox.Show("Сүлжээний алдаа гарлаа. Сүлжээгээ шалгана уу?");
             }
@@ -223,8 +249,43 @@ namespace FASDesktopUI
         }
         private void ipButton_Click(object sender, RoutedEventArgs e)
         {
-            Window window = new getIpWindow();
-            window.Show();
+            if (fp != null)
+            {
+                fp.DisconnectDevice();
+                fp = null;
+            }
+            var w = new getIpWindow();
+
+            if (w.ShowDialog() == true)
+            {
+                if (w.IsSuccessful == true)
+                {
+                    if (StartApp() == false)
+                    {
+                        ShowDefaultScreen();
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void ShowDefaultScreen()
+        {
+            
+            staffLastNameTextBlock.Text = "------------";
+            staffFirstNameTextBlock.Text = "------------";
+            branchNameTextBlock.Text = "--------------";
+            arriveTimeTextBlock.Text = "00:00:00 00";
+            leaveTimeTextBlock.Text = "00:00:00 00";
+
+            userInfoStackPanel.Visibility = Visibility.Visible;
+            nameStackPanel.Visibility = Visibility.Visible;
+            branchStackPanel.Visibility = Visibility.Visible;
+            timeDisplayStackPanel.Visibility = Visibility.Visible;
+            arriveTimeTextBlock.Visibility = Visibility.Visible;
+            leaveTimeTextBlock.Visibility = Visibility.Visible;
+            error.Visibility = Visibility.Visible;
+
         }
     }
 

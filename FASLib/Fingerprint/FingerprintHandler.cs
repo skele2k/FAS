@@ -105,7 +105,7 @@ namespace FASLib.Fingerprint
         {
             int openDeviceCallBackCode = fpInstance.OpenDevice(0);
 
-            if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode)
+            if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode && zkfp.ZKFP_ERR_ALREADY_OPENED != 1)
             {
                 MessageBox.Show("Төхөөрөмжтэй холбогдоход алдаа гарлаа.");
                 return;
@@ -320,7 +320,7 @@ namespace FASLib.Fingerprint
         {
             int openDeviceCallBackCode = fpInstance.OpenDevice(0);
 
-            if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode)
+            if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode && zkfp.ZKFP_ERR_ALREADY_OPENED != 1)
             {
                 MessageBox.Show("Төхөөрөмжтэй холбогдоход алдаа гарлаа.");
                 return;
@@ -471,7 +471,6 @@ namespace FASLib.Fingerprint
         public void DisconnectDevice()
         {
             int result = fpInstance.CloseDevice();
-            captureThread.Abort();
 
             if (result == zkfp.ZKFP_ERR_OK)
             {

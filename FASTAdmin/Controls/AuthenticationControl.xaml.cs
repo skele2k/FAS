@@ -37,8 +37,25 @@ namespace FASTAdmin.Controls
             var api = ConfigurationManager.AppSettings["api"];
             if (api != "notset")
             {
-                ipAddressTextBox.Text = api;
+                ipAddressTextBox.Text = CutAddress(api);
             }
+        }
+        private string CutAddress(string api)
+        {
+            if (api.StartsWith("https://") && api.EndsWith(":44360"))
+            {
+                int len = api.Length;
+                api = api.Substring(8,len - 14);
+            }
+            return api;
+        }
+        private string CreateAddress(string api)
+        {
+            if (!api.StartsWith("https://") && !api.EndsWith(":44360"))
+            {
+                api = "https://" + api + ":44360";
+            }
+            return api;
         }
         private (bool isValid, AdminModel model) ValidateForm()
         {
@@ -58,7 +75,7 @@ namespace FASTAdmin.Controls
         private bool ConfigureAPI()
         {
             var api = ConfigurationManager.AppSettings["api"];
-            var new_api = ipAddressTextBox.Text;
+            var new_api = CreateAddress(ipAddressTextBox.Text);
             if (new_api == "" && api == "notset" )
             {
                 MessageBox.Show("Холбогдох сүлжээгээ өгнө үү?");

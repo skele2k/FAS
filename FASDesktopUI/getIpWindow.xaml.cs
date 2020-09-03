@@ -21,32 +21,57 @@ namespace FASDesktopUI
     /// </summary>
     public partial class getIpWindow : Window
     {
+        bool isSuccessful = false;
         public getIpWindow()
         {
             InitializeComponent();
 
             InitializeIPAddress();
         }
+        public bool IsSuccessful
+        {
+            get
+            {
+                return isSuccessful;
+            }
+        }
         private void InitializeIPAddress()
         {
             var api = ConfigurationManager.AppSettings["api"];
-            ipInputTextBox.Text = api;
+            ipInputTextBox.Text = CutAddress(api);
         }
-
+        private string CutAddress(string api)
+        {
+            if (api.StartsWith("https://") && api.EndsWith(":44360"))
+            {
+                int len = api.Length;
+                api = api.Substring(8, len - 14);
+            }
+            return api;
+        }
+        private string CreateAddress(string api)
+        {
+            if (!api.StartsWith("https://") && !api.EndsWith(":44360"))
+            {
+                api = "https://" + api + ":44360";
+            }
+            return api;
+        }
         private void submitIpButton_Click(object sender, RoutedEventArgs e)
         {
             if (ipInputTextBox.Text == "" || ipInputTextBox.Text == "notset")
             {
                 return;
             }
-            string new_api = ipInputTextBox.Text;
+            string new_api = CreateAddress(ipInputTextBox.Text);
 
             Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             configuration.AppSettings.Settings["api"].Value = new_api;
             configuration.Save();
 
             ConfigurationManager.RefreshSection("appSettings");
-
+            isSuccessful = true;
+            DialogResult = true;
             this.Close();
         }
     }
