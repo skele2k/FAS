@@ -9,6 +9,7 @@ using FASLib.Models;
 using FASLib.Fingerprint;
 using FASLib.Helpers;
 using System.Configuration;
+using System.Windows.Threading;
 
 namespace FASDesktopUI
 {
@@ -89,9 +90,17 @@ namespace FASDesktopUI
 
         private void Fp_FailedToAddToDBEvent(object sender, string e)
         {
-            this.Dispatcher.Invoke(() => { error.Visibility = Visibility.Visible; });
+            this.Dispatcher.Invoke(() => 
+            {
+                userInfoStackPanel.Visibility = Visibility.Hidden;
+                error.Visibility = Visibility.Visible;
+                repeatFingerprintAlert.Visibility = Visibility.Visible;
+            });
             Thread.Sleep(800);
-            this.Dispatcher.Invoke(() => { error.Visibility = Visibility.Hidden; });
+            this.Dispatcher.Invoke(() => 
+            { 
+                error.Visibility = Visibility.Hidden;
+            });
         }
 
         private void Fp_SuccessfullyAddedToDBEvent(object sender, (StaffModel, AttendanceModel) e)
@@ -284,8 +293,18 @@ namespace FASDesktopUI
             timeDisplayStackPanel.Visibility = Visibility.Visible;
             arriveTimeTextBlock.Visibility = Visibility.Visible;
             leaveTimeTextBlock.Visibility = Visibility.Visible;
+            repeatFingerprintAlert.Visibility = Visibility.Hidden;
             error.Visibility = Visibility.Visible;
 
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            DispatcherTimer timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, (object s, EventArgs ev) =>
+            {
+                this.myDateTime.Text = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss");
+            }, this.Dispatcher);
+            timer.Start();
         }
     }
 

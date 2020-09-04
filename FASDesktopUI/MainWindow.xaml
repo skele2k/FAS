@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FASDesktopUI"
-        mc:Ignorable="d" ResizeMode="NoResize" Foreground="White" FontSize="20"
+        mc:Ignorable="d" ResizeMode="NoResize" Foreground="White" FontSize="20" Loaded="Window_Loaded"
         Title="FAS" Height="590" Width="600" Background="#000d30" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
@@ -22,6 +22,24 @@
 
         </Grid.ColumnDefinitions>
 
+        <StatusBar 
+            Grid.Row="0" 
+            Grid.Column="0" 
+            Grid.ColumnSpan="2"
+            Background="#333d59"
+            Foreground="White"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Width="200"
+            Height="30">
+            <TextBlock
+                x:FieldModifier="private"
+                x:Name="myDateTime" 
+                FontSize="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </StatusBar>
+        
         <Image Source=".\fp.jpg" 
                Grid.Row="1" 
                Grid.Column="0"
@@ -43,18 +61,29 @@
             </Ellipse.Fill>
         </Ellipse>
 
-        <Ellipse 
-            Width="50" 
-            Height="50" 
+        <StackPanel 
+            Orientation="Horizontal"
             Grid.Row="2"
             Grid.Column="0"
-            x:Name="error"
+            Grid.ColumnSpan="2"
+            x:Name="error">
+            <Ellipse 
+            Width="50" 
+            Height="50" 
             HorizontalAlignment="Left"
             Margin="140 0 0 0">
-            <Ellipse.Fill>
-                <ImageBrush ImageSource=".\error.png" />
-            </Ellipse.Fill>
-        </Ellipse>
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource=".\error.png" />
+                </Ellipse.Fill>
+            </Ellipse>
+            
+            <TextBlock 
+                Text="Хуруугаа дахин дарна уу?" 
+                VerticalAlignment="Center"
+                Margin="10 0 0 0"
+                Foreground="Red"
+                x:Name="repeatFingerprintAlert"/>
+        </StackPanel>
 
         <StackPanel Grid.Row="1" Grid.Column="1"
                     Orientation="Vertical" 
