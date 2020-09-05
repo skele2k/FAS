@@ -71,6 +71,7 @@
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\AttendanceModel.cs" />
     <Compile Include="Models\BranchModel.cs" />
+    <Compile Include="Models\DisplayStaffModel.cs" />
     <Compile Include="Models\StaffModel.cs" />
     <Compile Include="Models\Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

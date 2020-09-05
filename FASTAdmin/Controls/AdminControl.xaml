@@ -72,7 +72,8 @@
                 Margin="55 0 0 0"
                 Height="35"
                 FontSize="25"
-                Click="reloadListButton_Click">
+                Click="reloadListButton_Click"
+                ToolTip="Жагсаалтыг шинэчлэх">
             ⟲
         </Button>
 
@@ -90,13 +91,31 @@
             x:Name="staffDataGrid" 
             HorizontalAlignment="Left" 
             Margin="20 10 10 10" 
-            CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False"
-            MaxHeight="500" Height="500" Width="640"></DataGrid>
+            CanUserAddRows="True" CanUserDeleteRows="False" CanUserResizeRows="False"
+            AutoGenerateColumns="False"
+            MaxHeight="500" Height="500" Width="640">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Овог" Width="158" Binding="{Binding lastName}"/>
+                <DataGridTextColumn Header="Нэр" Width="158" Binding="{Binding firstName}"/>
+                <DataGridTextColumn Header="Тасаг" Binding="{Binding branchName}" Width="316"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="20 0 0 0" HorizontalAlignment="Center"
                     x:Name="staffEditButtons">
-            <Button Style="{StaticResource ButtonTemplate}" Height="30"  x:Name="AddNewStaffButton" Width="80" Margin="0 0 5 0" Click="AddNewStaffButton_Click">Шинэ</Button>
-            <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="deleteSelectedItemButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedItemButton_Click_1">Устгах</Button>
+            <Button 
+                Style="{StaticResource ButtonTemplate}" 
+                Height="30"  
+                x:Name="AddNewStaffButton" 
+                Width="80" 
+                Margin="0 0 5 0" 
+                Click="AddNewStaffButton_Click">Шинэ</Button>
+            <Button 
+                Style="{StaticResource ButtonTemplate}" 
+                Height="30" 
+                x:Name="deleteSelectedItemButton"
+                Width="80" Margin="0 0 5 0" 
+                Click="deleteSelectedItemButton_Click_1">Устгах</Button>
             <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="EditSelectedItemButton" Width="80" Click="EditSelectedItemButton_Click">Янзлах</Button>
         </StackPanel>
 
@@ -116,7 +135,12 @@
             HorizontalAlignment="Left" 
             Margin="20 10 10 10" 
             CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False"
-            MaxHeight="500" Height="500" Width="250"></DataGrid>
+            AutoGenerateColumns="False"
+            MaxHeight="500" Height="500" Width="250">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Нэр" Width="242" Binding="{Binding name}"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="20 0 0 0"
                     x:Name="branchEditButtons">
@@ -138,6 +162,6 @@
                 Width="135"
                 Height="35"
                 Click="exportToExcel_Click">Excel рүү гаргах</Button>
-        
+
     </Grid>
 </UserControl>

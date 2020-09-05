@@ -26,19 +26,46 @@ namespace FASTAdmin.Controls
     {
         BranchModel selectedBranch;
         StaffModel selectedStaff;
+        Dictionary<int, string> branchNameMapper = new Dictionary<int, string>();
         public AdminControl()
         {
             InitializeComponent();
+            MapBranchName();
+        }
+        private void MapBranchName()
+        {
+            var temp = Task.Run(async () => await ApiProcessor.LoadBranches());
+            var branches = temp.Result;
+            foreach(var branch in branches)
+            {
+                branchNameMapper[branch.id] = branch.name;
+            }
+        }
+        private List<DisplayStaffModel> GenerateNewModels(List<StaffModel> staffs)
+        {
+            List<DisplayStaffModel> newStaffs = new List<DisplayStaffModel>();
+            foreach(var staff in staffs)
+            {
+                DisplayStaffModel newStaff = new DisplayStaffModel();
+                newStaff.firstName = staff.firstName;
+                newStaff.lastName = staff.lastName;
+                newStaff.branchName = branchNameMapper[staff.branch_id];
+                newStaffs.Add(newStaff);
+            }
+            return newStaffs;
         }
         private async Task LoadDataGrid()
         {
             try
             {
                 var staffs = await ApiProcessor.LoadStaffs();
-                this.Dispatcher.Invoke(() => { staffDataGrid.ItemsSource = staffs; });
-
+                var newStaffs = GenerateNewModels(staffs);
                 var branches = await ApiProcessor.LoadBranches();
-                this.Dispatcher.Invoke(() => { branchDataGrid.ItemsSource = branches; });
+                this.Dispatcher.Invoke(() => 
+                { 
+                    staffDataGrid.ItemsSource = newStaffs;
+                    branchDataGrid.ItemsSource = branches;
+                });
             }
             catch(Exception e)
             {
