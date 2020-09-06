@@ -24,9 +24,8 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class AdminControl : UserControl
     {
-        BranchModel selectedBranch;
-        StaffModel selectedStaff;
         Dictionary<int, string> branchNameMapper = new Dictionary<int, string>();
+        Dictionary<DisplayStaffModel, StaffModel> staffMapper = new Dictionary<DisplayStaffModel, StaffModel>();
         public AdminControl()
         {
             InitializeComponent();
@@ -51,6 +50,10 @@ namespace FASTAdmin.Controls
                 newStaff.lastName = staff.lastName;
                 newStaff.branchName = branchNameMapper[staff.branch_id];
                 newStaffs.Add(newStaff);
+                if (!staffMapper.ContainsKey(newStaff))
+                {
+                    staffMapper[newStaff] = staff;
+                }
             }
             return newStaffs;
         }
@@ -73,6 +76,40 @@ namespace FASTAdmin.Controls
                 MessageBox.Show(e.ToString());
             }
         }
+
+        private async Task LoadStaffDataGrid()
+        {
+            try
+            {
+                var staffs = await ApiProcessor.LoadStaffs();
+                var newStaffs = GenerateNewModels(staffs);
+                this.Dispatcher.Invoke(() =>
+                {
+                    staffDataGrid.ItemsSource = newStaffs;
+                });
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+        }
+
+        private async Task LoadBranchDataGrid()
+        {
+            try
+            {
+                var branches = await ApiProcessor.LoadBranches();
+                this.Dispatcher.Invoke(() =>
+                {
+                    branchDataGrid.ItemsSource = branches;
+                });
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+        }
+
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await LoadDataGrid();
@@ -87,7 +124,7 @@ namespace FASTAdmin.Controls
 
         private void T_UpdateDataGridEvent(object sender, string e)
         {
-            Task.Run(async () => await LoadDataGrid());
+            Task.Run(async () => await LoadStaffDataGrid());
         }
 
         private void deleteSelectedItemButton_Click_1(object sender, RoutedEventArgs e)
@@ -98,7 +135,9 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            selectedStaff = (StaffModel) staffDataGrid.SelectedItem;
+            DisplayStaffModel selectedDisplayStaff = (DisplayStaffModel) staffDataGrid.SelectedItem;
+            StaffModel selectedStaff = staffMapper[selectedDisplayStaff];
+
             DeleteUserControl deleteControl = new DeleteUserControl();
             deleteControl.selectedStaff = selectedStaff;
             externalContents.Content = deleteControl;
@@ -107,7 +146,7 @@ namespace FASTAdmin.Controls
 
         private void DeleteControl_UpdateDataGridEvent(object sender, string e)
         {
-            Task.Run(async () => await LoadDataGrid());
+            Task.Run(async () => await LoadStaffDataGrid());
         }
 
         private void EditSelectedItemButton_Click(object sender, RoutedEventArgs e)
@@ -118,7 +157,9 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            selectedStaff = (StaffModel)staffDataGrid.SelectedItem;
+            DisplayStaffModel selectedDisplayStaff = (DisplayStaffModel)staffDataGrid.SelectedItem;
+            StaffModel selectedStaff = staffMapper[selectedDisplayStaff];
+
             EditUserControl editControl = new EditUserControl();
             editControl.selectedStaff = selectedStaff;
             externalContents.Content = editControl;
@@ -127,7 +168,7 @@ namespace FASTAdmin.Controls
 
         private void EditControl_UpdateDataGridEvent(object sender, string e)
         {
-            Task.Run(async () => await LoadDataGrid());
+            Task.Run(async () => await LoadStaffDataGrid());
         }
 
         private void addNewBranchButton_Click(object sender, RoutedEventArgs e)
@@ -139,7 +180,7 @@ namespace FASTAdmin.Controls
 
         private void AddBranch_UpdateDataGridEvent(object sender, string e)
         {
-            Task.Run(async () => await LoadDataGrid());
+            Task.Run(async () => await LoadBranchDataGrid());
         }
 
         private void deleteSelectedBranchButton_Click(object sender, RoutedEventArgs e)
@@ -150,7 +191,7 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            selectedBranch = (BranchModel) branchDataGrid.SelectedItem;
+            BranchModel selectedBranch = (BranchModel) branchDataGrid.SelectedItem;
             DeleteBranchControl deleteControl = new DeleteBranchControl();
             deleteControl.selectedBranch = selectedBranch;
             externalContents.Content = deleteControl;
@@ -159,7 +200,7 @@ namespace FASTAdmin.Controls
 
         private void DeleteControl_UpdateDataGridEvent1(object sender, string e)
         {
-            Task.Run(async () => await LoadDataGrid());
+            Task.Run(async () => await LoadBranchDataGrid());
         }
 
         private void EditSelectedBranchButton_Click(object sender, RoutedEventArgs e)
@@ -170,7 +211,7 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            selectedBranch = (BranchModel)branchDataGrid.SelectedItem;
+            BranchModel selectedBranch = (BranchModel)branchDataGrid.SelectedItem;
             EditBranchControl editControl = new EditBranchControl();
             editControl.selectedBranch = selectedBranch;
             externalContents.Content = editControl;
@@ -179,7 +220,7 @@ namespace FASTAdmin.Controls
 
         private void EditControl_UpdateDataGridEvent1(object sender, string e)
         {
-            Task.Run(async () => await LoadDataGrid());
+            Task.Run(async () => await LoadBranchDataGrid());
         }
 
         private void leaveAdminButton_Click(object sender, RoutedEventArgs e)

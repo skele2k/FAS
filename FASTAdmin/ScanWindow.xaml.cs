@@ -31,7 +31,6 @@ namespace FASTAdmin
         List<byte[]> fps = new List<byte[]>();
         FingerprintHandler fp;
         byte[] fpTemplate = new byte[2048];
-        bool closeWindow = false;
         public byte[] ReturnFP
         {
             get

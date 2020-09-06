@@ -28,7 +28,7 @@ namespace FASTAdmin.Controls
         {
             InitializeComponent();
         }
-        private async void AddBranchToDatabase()
+        private void AddBranchToDatabase()
         {
             var form = Validate();
             
@@ -39,10 +39,11 @@ namespace FASTAdmin.Controls
             }
             try
             {
-                var t = await ApiProcessor.SaveBranch(form.model);
-                if (t != "success")
+                var t = Task.Run(async () => await ApiProcessor.SaveBranch(form.model));
+                var result = t.Result;
+                if (result != "success")
                 {
-                    MessageBox.Show("Алдаа гарлаа. Та дахин оролдоно уу?");
+                    throw new Exception();
                 }
             }
             catch
@@ -80,6 +81,7 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Та шинэ тасгийн нэрээ өгнө үү?");
                 return;
             }
+
             AddBranchToDatabase();
             ResetForm();
 

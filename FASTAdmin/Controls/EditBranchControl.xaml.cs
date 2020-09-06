@@ -69,7 +69,7 @@ namespace FASTAdmin.Controls
             }
             return (isValid, model);
         }
-        private async void AddBranchToDatabase()
+        private void AddBranchToDatabase()
         {
             var form = ValidateForm();
             if (form.isValid == false)
@@ -79,7 +79,12 @@ namespace FASTAdmin.Controls
             }
             try
             {
-                var t = await ApiProcessor.EditBranchByID(form.model);
+                var t = Task.Run(async () => await ApiProcessor.EditBranchByID(form.model));
+                var result = t.Result;
+                if (result != "success")
+                {
+                    throw new Exception();
+                }
             }
             catch
             {
