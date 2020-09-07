@@ -39,13 +39,14 @@ namespace FASTAdmin.excelHelper
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"{startDateStr}-{endDateStr}");
 
-                worksheet.Cells[1, 1].Value = "Нэр";
+                worksheet.Cells[1, 1].Value = "Өдөр";
                 worksheet.Cells[1, 2].Value = "Тасаг";
-                worksheet.Cells[1, 3].Value = "Ирсэн цаг";
-                worksheet.Cells[1, 4].Value = "Явсан цаг";
-                worksheet.Cells[1, 5].Value = "Ажилласан цаг";
-                worksheet.Cells[1, 6].Value = "Ажил дээрээ байгаа эсэх";
-                worksheet.Cells[1, 7].Value = "Өдөр";
+                worksheet.Cells[1, 3].Value = "Нэр";
+                worksheet.Cells[1, 4].Value = "Ирсэн цаг";
+                worksheet.Cells[1, 5].Value = "Явсан цаг";
+                worksheet.Cells[1, 6].Value = "Ажилласан цаг";
+                worksheet.Cells[1, 7].Value = "Ажил дээрээ байгаа эсэх";
+                
 
                 var attendanceList = await ApiProcessor.LoadAttendanceSheet();
                 int size = attendanceList.Count();
@@ -122,14 +123,7 @@ namespace FASTAdmin.excelHelper
                     }
 
 
-                    if (staffNameMapper.ContainsKey(attendanceList[i].staff_id))
-                    {
-                        worksheet.Cells[$"A{ k + 2 }"].Value = staffNameMapper[attendanceList[i].staff_id];
-                    }
-                    else
-                    {
-                        worksheet.Cells[$"A{ k + 2 }"].Value = attendanceList[i].staff_id;
-                    }
+                    worksheet.Cells[$"A{ k + 2 }"].Value = attendanceList[i].date;
 
                     if (branchNameMapper.ContainsKey(attendanceList[i].branch_id))
                     {
@@ -140,11 +134,20 @@ namespace FASTAdmin.excelHelper
                         worksheet.Cells[$"B{ k + 2 }"].Value = attendanceList[i].branch_id;
                     }
 
-                    worksheet.Cells[$"C{ k + 2 }"].Value = attendanceList[i].arriveTime;
-                    worksheet.Cells[$"D{ k + 2 }"].Value = attendanceList[i].leaveTime;
-                    worksheet.Cells[$"E{ k + 2 }"].Value = attendanceList[i].officeHours;
-                    worksheet.Cells[$"F{ k + 2 }"].Value = attendanceList[i].atOffice;
-                    worksheet.Cells[$"G{ k + 2 }"].Value = attendanceList[i].date;
+                    if (staffNameMapper.ContainsKey(attendanceList[i].staff_id))
+                    {
+                        worksheet.Cells[$"C{ k + 2 }"].Value = staffNameMapper[attendanceList[i].staff_id];
+                    }
+                    else
+                    {
+                        worksheet.Cells[$"C{ k + 2 }"].Value = attendanceList[i].staff_id;
+                    }
+
+
+                    worksheet.Cells[$"D{ k + 2 }"].Value = attendanceList[i].arriveTime;
+                    worksheet.Cells[$"E{ k + 2 }"].Value = attendanceList[i].leaveTime;
+                    worksheet.Cells[$"F{ k + 2 }"].Value = attendanceList[i].officeHours;
+                    worksheet.Cells[$"G{ k + 2 }"].Value = attendanceList[i].atOffice;
 
                     k++;
                 }
@@ -177,13 +180,14 @@ namespace FASTAdmin.excelHelper
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Бүх ирц");
 
                 // adding headers
-                worksheet.Cells[1, 1].Value = "Нэр";
+                worksheet.Cells[1, 1].Value = "Өдөр";
                 worksheet.Cells[1, 2].Value = "Тасаг";
+                worksheet.Cells[1, 3].Value = "Нэр";
                 worksheet.Cells[1, 3].Value = "Ирсэн цаг";
                 worksheet.Cells[1, 4].Value = "Явсан цаг";
                 worksheet.Cells[1, 5].Value = "Ажилласан цаг";
                 worksheet.Cells[1, 6].Value = "Ажил дээрээ байгаа эсэх";
-                worksheet.Cells[1, 7].Value = "Өдөр";
+                
                 
                 var attendanceList = await ApiProcessor.LoadAttendanceSheet();
                 int size = attendanceList.Count();
@@ -209,14 +213,7 @@ namespace FASTAdmin.excelHelper
 
                 for (int i = 0; i < size; i++)
                 {
-                    if (staffNameMapper.ContainsKey(attendanceList[i].staff_id))
-                    {
-                        worksheet.Cells[$"A{ i + 2 }"].Value = staffNameMapper[attendanceList[i].staff_id];
-                    }
-                    else
-                    {
-                        worksheet.Cells[$"A{ i + 2 }"].Value = attendanceList[i].staff_id;
-                    }
+                    worksheet.Cells[$"A{ i + 2 }"].Value = attendanceList[i].date;
 
                     if (branchNameMapper.ContainsKey(attendanceList[i].branch_id))
                     {
@@ -227,11 +224,21 @@ namespace FASTAdmin.excelHelper
                         worksheet.Cells[$"B{ i + 2 }"].Value = attendanceList[i].branch_id;
                     }
 
-                    worksheet.Cells[$"C{ i + 2 }"].Value = attendanceList[i].arriveTime;
-                    worksheet.Cells[$"D{ i + 2 }"].Value = attendanceList[i].leaveTime;
-                    worksheet.Cells[$"E{ i + 2 }"].Value = attendanceList[i].officeHours;
-                    worksheet.Cells[$"F{ i + 2 }"].Value = attendanceList[i].atOffice;
-                    worksheet.Cells[$"G{ i + 2 }"].Value = attendanceList[i].date;
+                    if (staffNameMapper.ContainsKey(attendanceList[i].staff_id))
+                    {
+                        worksheet.Cells[$"C{ i + 2 }"].Value = staffNameMapper[attendanceList[i].staff_id];
+                    }
+                    else
+                    {
+                        worksheet.Cells[$"C{ i + 2 }"].Value = attendanceList[i].staff_id;
+                    }
+
+
+                    worksheet.Cells[$"D{ i + 2 }"].Value = attendanceList[i].arriveTime;
+                    worksheet.Cells[$"E{ i + 2 }"].Value = attendanceList[i].leaveTime;
+                    worksheet.Cells[$"F{ i + 2 }"].Value = attendanceList[i].officeHours;
+                    worksheet.Cells[$"G{ i + 2 }"].Value = attendanceList[i].atOffice;
+                    
                 }
                 package.Save();
                 OpenFile(filePath);
