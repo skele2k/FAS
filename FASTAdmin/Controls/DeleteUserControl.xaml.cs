@@ -29,6 +29,9 @@ namespace FASTAdmin.Controls
 
         ObservableCollection<StaffModel> staffs = new ObservableCollection<StaffModel>();
         public StaffModel selectedStaff { get; set; }
+
+        bool canDelete = false;
+
         public DeleteUserControl()
         {
             InitializeComponent();
@@ -54,6 +57,17 @@ namespace FASTAdmin.Controls
 
         }
 
+        private bool Confirm()
+        {
+            var w = new DeleteConfirmation();
+
+            if (w.ShowDialog() == true)
+            {
+                canDelete = w.CanDelete;
+            }
+            return canDelete;
+        }
+
         private async void deleteStaff_Click(object sender, RoutedEventArgs e)
         {
             if (staffSelectDropDown.SelectedItem == null)
@@ -65,6 +79,12 @@ namespace FASTAdmin.Controls
             try
             {
                 StaffModel model = (StaffModel)staffSelectDropDown.SelectedItem;
+                
+                if(Confirm() == false)
+                {
+                    return;
+                }
+
                 var t = await ApiProcessor.DeleteStaffByID(model.id);
                 if (t != "success")
                 {

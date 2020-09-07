@@ -8,8 +8,44 @@ namespace FASLib.Models
 {
     public class DisplayStaffModel
     {
-        public string firstName { get; set; }
-        public string lastName { get; set; }
-        public string branchName { get; set; }
+        private string _firstName;
+        private string _lastName;
+        private string _branchName;
+        
+        public string firstName
+        {
+            get
+            {
+                return _firstName;
+            }
+            set
+            {
+                _firstName = value;
+            }
+        }
+
+        public string lastName
+        {
+            get
+            {
+                return _lastName;
+            }
+            set
+            {
+                _lastName = value;
+            }
+        }
+
+        public string branchName
+        {
+            get
+            {
+                return _branchName;
+            }
+            set
+            {
+                _branchName = value;
+            }
+        }
     }
 }

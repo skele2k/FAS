@@ -88,11 +88,12 @@
         <DataGrid
             IsReadOnly="True"
             Grid.Row="1" Grid.Column="0"
-            x:Name="staffDataGrid" 
+            x:Name="staffDataGrid"
             HorizontalAlignment="Left" 
             Margin="20 10 10 10" 
-            CanUserAddRows="True" CanUserDeleteRows="False" CanUserResizeRows="False"
             AutoGenerateColumns="False"
+            CanUserAddRows="True"
+            ItemsSource="{Binding StaffCollection}"
             MaxHeight="500" Height="500" Width="640">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Овог" Width="158" Binding="{Binding lastName}"/>

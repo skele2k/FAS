@@ -10,11 +10,20 @@ namespace FASTAdmin.Controls
     /// </summary>
     public partial class ExportToExcelControl : UserControl
     {
+        private string thePath = "";
+        public event EventHandler<string> fileLocationIsSet;
         public ExportToExcelControl()
         {
             InitializeComponent();
             InitializeUserControl();
+            this.fileLocationIsSet += ExportToExcelControl_fileLocationIsSet;
         }
+
+        private void ExportToExcelControl_fileLocationIsSet(object sender, string e)
+        {
+            fileLocationTextblock.Text = thePath;
+        }
+
         private void InitializeUserControl()
         {
             startDataPicker.SelectedDate = DateTime.UtcNow;
@@ -29,6 +38,11 @@ namespace FASTAdmin.Controls
                 MessageBox.Show("Эхлэх эсвэл дуусах өдөр сонгогдоогүй байна.");
                 return;
             }
+            if (fileLocationTextblock.Text == "")
+            {
+                MessageBox.Show("Хуулах газраа сонгоно уу?");
+                return;
+            }
             DateTime startDate = (DateTime) startDataPicker.SelectedDate;
             DateTime endDate = (DateTime) endDataPicker.SelectedDate;
 
@@ -36,7 +50,7 @@ namespace FASTAdmin.Controls
             {
                 if (endDate.CompareTo(startDate) >= 0)
                 {
-                    xlHelper.PeriodDataExporter(startDate, endDate);
+                    xlHelper.PeriodDataExporter(startDate, endDate, thePath);
                 }
                 else
                 {
@@ -45,7 +59,7 @@ namespace FASTAdmin.Controls
             }
             else
             {
-                xlHelper.AllDataExporter();
+                xlHelper.AllDataExporter(thePath);
             }
         }
 
@@ -57,6 +71,20 @@ namespace FASTAdmin.Controls
         private void periodSelectCheckbox_Unchecked(object sender, RoutedEventArgs e)
         {
             CalendarsStackPanel.Visibility = Visibility.Hidden;
+        }
+
+        private void fileLocationButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                var checker = result.ToString();
+                if (checker == "OK")
+                {
+                    thePath = dialog.SelectedPath;
+                    fileLocationIsSet?.Invoke(this, "");
+                }
+            }
         }
     }
 }

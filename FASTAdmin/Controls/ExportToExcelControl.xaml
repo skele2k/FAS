@@ -15,6 +15,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
@@ -26,10 +27,26 @@
                    FontFamily="Calibri"
                    FontSize="30"/>
 
+        <StackPanel Orientation="Vertical"
+                    Grid.Row="2"
+                    HorizontalAlignment="Center"
+                    Margin="0 20 0 0">
+            <TextBlock Text="Хуулах газраа сонгох: " Margin="0 0 0 10"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="248" x:Name="fileLocationTextblock" Height="30"/>
+                <Button 
+                x:Name="fileLocationButton" 
+                Click="fileLocationButton_Click" 
+                Width="30" 
+                Height="30"
+                Margin="10 0 0 0">...</Button>
+            </StackPanel>
+        </StackPanel>
+        
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
-                    Grid.Row="2"
-                    Margin="0 70 0 0"
+                    Grid.Row="3"
+                    Margin="0 40 0 0"
                     x:Name="periodSelectStackPanel">
             <CheckBox x:Name="periodSelectCheckbox" IsChecked="False" Checked="periodSelectCheckbox_Checked" Unchecked="periodSelectCheckbox_Unchecked"/>
             <TextBlock Text="Хугацаа сонгох" 
@@ -40,7 +57,7 @@
                     HorizontalAlignment="Center"
                     Margin="0 20 0 0"
                     x:Name="CalendarsStackPanel"
-                    Grid.Row="3">
+                    Grid.Row="4">
             <StackPanel Orientation="Vertical" Margin="0 0 15 0">
                 <TextBlock x:Name="startExcelTextBlock"
                        Text="Эхлэх өдөр"
@@ -61,7 +78,7 @@
             Height="30" 
             Style="{StaticResource ButtonTemplate}" 
             x:Name="exportToExcelButton" 
-            Grid.Row="4" 
+            Grid.Row="5" 
             Margin="0 40 0 0"
             Width="90" 
             Click="exportToExcelButton_Click">Хуулах</Button>

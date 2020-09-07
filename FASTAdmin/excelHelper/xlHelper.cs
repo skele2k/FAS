@@ -16,20 +16,22 @@ namespace FASTAdmin.excelHelper
 {
     public static class xlHelper
     {
-        public async static void PeriodDataExporter(DateTime startDate, DateTime endDate)
+        public async static void PeriodDataExporter(DateTime startDate, DateTime endDate, string path)
         {
-            string untilUser = System.Environment.GetEnvironmentVariable("USERPROFILE");
-            System.IO.Directory.CreateDirectory(untilUser + @"\Desktop\FASxlOutput");
+            System.IO.Directory.CreateDirectory(path + @"\FASxlOutput");
 
             string startDateStr = startDate.ToString("MM_dd_yyyy");
             string endDateStr = endDate.ToString("MM_dd_yyyy");
 
-            FileInfo newFile = new FileInfo(untilUser + $"\\Desktop\\FASxlOutput\\{ startDateStr }-{ endDateStr }.xlsx");
+            string filePath = path + $"\\FASxlOutput\\{ startDateStr }-{ endDateStr }.xlsx";
+
+
+            FileInfo newFile = new FileInfo(filePath);
         
             if (newFile.Exists)
             {
                 newFile.Delete();
-                newFile = new FileInfo(untilUser + $"\\Desktop\\FASxlOutput\\{ startDateStr }-{ endDateStr }.xlsx");
+                newFile = new FileInfo(filePath);
             }
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -151,17 +153,15 @@ namespace FASTAdmin.excelHelper
             }
             MessageBox.Show("Хөрвүүлж дууслаа!");
         }
-        public async static void AllDataExporter()
+        public async static void AllDataExporter(string path)
         {
-
-            string untilUser = System.Environment.GetEnvironmentVariable("USERPROFILE");
-            System.IO.Directory.CreateDirectory(untilUser + @"\Desktop\FASxlOutput");
-            FileInfo newFile = new FileInfo(untilUser + @"\Desktop\FASxlOutput\allTimeAttendance.xlsx");
+            System.IO.Directory.CreateDirectory(path + @"\FASxlOutput");
+            FileInfo newFile = new FileInfo(path + @"\FASxlOutput\allTimeAttendance.xlsx");
 
             if (newFile.Exists)
             {
                 newFile.Delete();
-                newFile = new FileInfo(untilUser + @"\Desktop\FASxlOutput\allTimeAttendance.xlsx");
+                newFile = new FileInfo(path + @"\FASxlOutput\allTimeAttendance.xlsx");
             }
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 

@@ -3,6 +3,7 @@ using FASLib.Models;
 using FASTAdmin.excelHelper;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -26,6 +27,20 @@ namespace FASTAdmin.Controls
     {
         Dictionary<int, string> branchNameMapper = new Dictionary<int, string>();
         Dictionary<DisplayStaffModel, StaffModel> staffMapper = new Dictionary<DisplayStaffModel, StaffModel>();
+
+        private static ObservableCollection<DisplayStaffModel> displayStaffs = new ObservableCollection<DisplayStaffModel>();
+        public ObservableCollection<DisplayStaffModel> StaffCollection
+        {
+            get
+            {
+                return displayStaffs;
+            }
+            set
+            {
+                displayStaffs = value;
+            }
+        }
+
         public AdminControl()
         {
             InitializeComponent();
@@ -35,20 +50,28 @@ namespace FASTAdmin.Controls
         {
             var temp = Task.Run(async () => await ApiProcessor.LoadBranches());
             var branches = temp.Result;
+            branchNameMapper.Clear();
             foreach(var branch in branches)
             {
                 branchNameMapper[branch.id] = branch.name;
             }
         }
-        private List<DisplayStaffModel> GenerateNewModels(List<StaffModel> staffs)
+        private ObservableCollection<DisplayStaffModel> GenerateNewModels(List<StaffModel> staffs)
         {
-            List<DisplayStaffModel> newStaffs = new List<DisplayStaffModel>();
+            ObservableCollection<DisplayStaffModel> newStaffs = new ObservableCollection<DisplayStaffModel>();
             foreach(var staff in staffs)
             {
                 DisplayStaffModel newStaff = new DisplayStaffModel();
                 newStaff.firstName = staff.firstName;
                 newStaff.lastName = staff.lastName;
-                newStaff.branchName = branchNameMapper[staff.branch_id];
+                if (branchNameMapper.ContainsKey(staff.branch_id))
+                {
+                    newStaff.branchName = branchNameMapper[staff.branch_id];
+                }
+                else
+                {
+                    newStaff.branchName = "Устсан тасаг";
+                }
                 newStaffs.Add(newStaff);
                 if (!staffMapper.ContainsKey(newStaff))
                 {
@@ -62,11 +85,11 @@ namespace FASTAdmin.Controls
             try
             {
                 var staffs = await ApiProcessor.LoadStaffs();
-                var newStaffs = GenerateNewModels(staffs);
+                displayStaffs = GenerateNewModels(staffs);
                 var branches = await ApiProcessor.LoadBranches();
                 this.Dispatcher.Invoke(() => 
                 { 
-                    staffDataGrid.ItemsSource = newStaffs;
+                    staffDataGrid.ItemsSource = StaffCollection;
                     branchDataGrid.ItemsSource = branches;
                 });
             }
@@ -82,10 +105,10 @@ namespace FASTAdmin.Controls
             try
             {
                 var staffs = await ApiProcessor.LoadStaffs();
-                var newStaffs = GenerateNewModels(staffs);
+                displayStaffs = GenerateNewModels(staffs);
                 this.Dispatcher.Invoke(() =>
                 {
-                    staffDataGrid.ItemsSource = newStaffs;
+                    staffDataGrid.ItemsSource = StaffCollection;
                 });
             }
             catch(Exception e)
@@ -180,6 +203,7 @@ namespace FASTAdmin.Controls
 
         private void AddBranch_UpdateDataGridEvent(object sender, string e)
         {
+            MapBranchName();
             Task.Run(async () => await LoadBranchDataGrid());
         }
 
@@ -200,6 +224,7 @@ namespace FASTAdmin.Controls
 
         private void DeleteControl_UpdateDataGridEvent1(object sender, string e)
         {
+            MapBranchName();
             Task.Run(async () => await LoadBranchDataGrid());
         }
 
@@ -220,6 +245,7 @@ namespace FASTAdmin.Controls
 
         private void EditControl_UpdateDataGridEvent1(object sender, string e)
         {
+            MapBranchName();
             Task.Run(async () => await LoadBranchDataGrid());
         }
 

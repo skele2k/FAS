@@ -25,6 +25,7 @@ namespace FASLib.Fingerprint
         public event EventHandler<string> FailedToAddToDBEvent;
         public event EventHandler<int> SuccessfullyScannedFP;
         public event EventHandler<byte[]> GetTemplate;
+        public event EventHandler<string> DeviceNotConnected;
 
         Thread captureThread = null;
         byte[] theChosenOne = new byte[2048]; // Complete fingerprint template when registering. It is later returned to either AddUserControl or EditUserControl
@@ -108,6 +109,7 @@ namespace FASLib.Fingerprint
             if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode && zkfp.ZKFP_ERR_ALREADY_OPENED != 1)
             {
                 MessageBox.Show("Төхөөрөмжтэй холбогдоход алдаа гарлаа.");
+                DeviceNotConnected?.Invoke(this, "not_connected");
                 return;
             }
 

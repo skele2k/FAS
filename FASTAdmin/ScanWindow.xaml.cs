@@ -45,6 +45,13 @@ namespace FASTAdmin
 
             fp.SuccessfullyScannedFP += Fp_SuccessfullyScannedFP;
             fp.GetTemplate += Fp_GetTemplate;
+            fp.DeviceNotConnected += Fp_DeviceNotConnected;
+        }
+
+        private void Fp_DeviceNotConnected(object sender, string e)
+        {
+            fpTemplate = null;
+            Task.Run(() => CloseWindow());
         }
 
         private void Fp_GetTemplate(object sender, byte[] e)
