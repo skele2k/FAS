@@ -27,7 +27,7 @@ namespace FASTAdmin.excelHelper
 
 
             FileInfo newFile = new FileInfo(filePath);
-        
+
             if (newFile.Exists)
             {
                 newFile.Delete();
@@ -115,7 +115,7 @@ namespace FASTAdmin.excelHelper
                 {
                     DateTime currentDate = DateTime.Parse(attendanceList[i].date);
                     string currentDateStr = currentDate.ToString();
-                    
+
                     if (currentDate.CompareTo(endDate) > 0)
                     {
                         break;
@@ -150,18 +150,24 @@ namespace FASTAdmin.excelHelper
                 }
 
                 package.Save();
+                OpenFile(filePath);
             }
             MessageBox.Show("Хөрвүүлж дууслаа!");
+        }
+        private static void OpenFile(string path)
+        {
+            System.Diagnostics.Process.Start(path);
         }
         public async static void AllDataExporter(string path)
         {
             System.IO.Directory.CreateDirectory(path + @"\FASxlOutput");
-            FileInfo newFile = new FileInfo(path + @"\FASxlOutput\allTimeAttendance.xlsx");
-
+            string filePath = path + @"\FASxlOutput\allTimeAttendance.xlsx";
+            FileInfo newFile = new FileInfo(filePath);
+            
             if (newFile.Exists)
             {
                 newFile.Delete();
-                newFile = new FileInfo(path + @"\FASxlOutput\allTimeAttendance.xlsx");
+                newFile = new FileInfo(filePath);
             }
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -227,8 +233,8 @@ namespace FASTAdmin.excelHelper
                     worksheet.Cells[$"F{ i + 2 }"].Value = attendanceList[i].atOffice;
                     worksheet.Cells[$"G{ i + 2 }"].Value = attendanceList[i].date;
                 }
-
                 package.Save();
+                OpenFile(filePath);
             }
             MessageBox.Show("Хөрвүүлж дууслаа!");
         }
