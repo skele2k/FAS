@@ -21,6 +21,7 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -62,7 +63,7 @@
                 Click="leaveAdminButton_Click">Гарах</Button>
 
         <Button x:Name="reloadListButton"
-                Style="{StaticResource BackButtonTemplate}"
+                Style="{StaticResource reloadButtonTemplate}"
                 Grid.Row="0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
@@ -85,23 +86,35 @@
             FontFamily="Calibri"
             HorizontalAlignment="Center"
             Margin="10 20 0 0"/>
+        
         <DataGrid
-            IsReadOnly="True"
             Grid.Row="1" Grid.Column="0"
             x:Name="staffDataGrid"
             HorizontalAlignment="Left" 
-            Margin="20 10 10 10" 
+            Margin="20,11,0,9"
+            SelectionMode="Single"
             AutoGenerateColumns="False"
             CanUserAddRows="True"
-            ItemsSource="{Binding StaffCollection}"
-            MaxHeight="500" Height="500" Width="640">
+            CanUserDeleteRows="False"
+            ItemsSource="{Binding StaffCollection, Mode=TwoWay}"
+            MaxHeight="500" Height="500" Width="620">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Овог" Width="158" Binding="{Binding lastName}"/>
                 <DataGridTextColumn Header="Нэр" Width="158" Binding="{Binding firstName}"/>
-                <DataGridTextColumn Header="Тасаг" Binding="{Binding branchName}" Width="316"/>
+                <DataGridTextColumn Header="Тасаг" Width="316" Binding="{Binding branchName}"/>
             </DataGrid.Columns>
         </DataGrid>
-
+        <Button 
+            Grid.Row="1" 
+            Grid.Column="1"
+            x:Name="addFPButton"
+            Height="500"
+            ToolTip="Хүснэгтээр нэмсэн хүний хурууны хээг нэмж баталгаажуулах"
+            Width="20"
+            HorizontalAlignment="Left"
+            Style="{StaticResource reloadButtonTemplate}"
+            Click="addFPButton_Click"
+            Margin="5 0 5 0">+</Button>
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="20 0 0 0" HorizontalAlignment="Center"
                     x:Name="staffEditButtons">
             <Button 
@@ -122,19 +135,19 @@
 
         <TextBlock 
             x:Name="branchListText"
-            Grid.Row="0" Grid.Column="1"
+            Grid.Row="0" Grid.Column="2"
             HorizontalAlignment="Center"
             Text="Тасгийн жагсаалт" 
             FontFamily="Calibri"
             Foreground="White"
-            Margin="10 20 0 0"/>
+            Margin="0 20 0 0"/>
 
         <DataGrid
             IsReadOnly="True"
-            Grid.Row="1" Grid.Column="1"
+            Grid.Row="1" Grid.Column="2"
             x:Name="branchDataGrid" 
             HorizontalAlignment="Left" 
-            Margin="20 10 10 10" 
+            Margin="0 10 10 10" 
             CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False"
             AutoGenerateColumns="False"
             MaxHeight="500" Height="500" Width="250">
@@ -143,14 +156,14 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="20 0 0 0"
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="2" Margin="0 0 0 0"
                     x:Name="branchEditButtons">
             <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="addNewBranchButton" Width="80" Margin="0 0 5 0" Click="addNewBranchButton_Click">Шинэ</Button>
             <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="deleteSelectedBranchButton" Width="80" Margin="0 0 5 0" Click="deleteSelectedBranchButton_Click">Устгах</Button>
             <Button Style="{StaticResource ButtonTemplate}" Height="30" x:Name="EditSelectedBranchButton" Width="80" Click="EditSelectedBranchButton_Click">Янзлах</Button>
         </StackPanel>
 
-        <ContentControl x:Name="externalContents" Grid.Row="0" Grid.Column="2" Width="350" Height="600" Grid.RowSpan="7" Margin="30 0 0 10"/>
+        <ContentControl x:Name="externalContents" Grid.Row="0" Grid.Column="3" Width="350" Height="600" Grid.RowSpan="7" Margin="20 0 0 10"/>
 
         <Button x:Name="exportToExcel"
                 Style="{StaticResource ButtonTemplate}"

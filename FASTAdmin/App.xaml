@@ -5,8 +5,8 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <SolidColorBrush x:Key="mouseOverColor" Color="OrangeRed" />
-        <SolidColorBrush x:Key="backMouseOverColor" Color="Red" />
-        
+        <SolidColorBrush x:Key="backMouseOverColor" Color="#676cbe" />
+        <SolidColorBrush x:Key="reloadMouseOverColor" Color="#676cbe" />
         <Style x:Key="ButtonTemplate" TargetType="Button">
             <Setter Property="Background" Value="#29308f"/>
             <Setter Property="Foreground" Value="White"/>
@@ -47,6 +47,30 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="{StaticResource backMouseOverColor}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="reloadButtonTemplate" TargetType="Button">
+            <Setter Property="Background" Value="#29308f"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="0" Background="{TemplateBinding Background}"
+                                BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                            </ContentPresenter>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource reloadMouseOverColor}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
 

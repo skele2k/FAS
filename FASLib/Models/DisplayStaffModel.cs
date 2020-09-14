@@ -11,7 +11,18 @@ namespace FASLib.Models
         private string _firstName;
         private string _lastName;
         private string _branchName;
-        
+        private int _id;
+        public int id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
         public string firstName
         {
             get
@@ -35,7 +46,6 @@ namespace FASLib.Models
                 _lastName = value;
             }
         }
-
         public string branchName
         {
             get

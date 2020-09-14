@@ -27,6 +27,7 @@ namespace FASTAdmin.Controls
     {
         Dictionary<int, string> branchNameMapper = new Dictionary<int, string>();
         Dictionary<DisplayStaffModel, StaffModel> staffMapper = new Dictionary<DisplayStaffModel, StaffModel>();
+        byte[] fpTemplate;
 
         private static ObservableCollection<DisplayStaffModel> displayStaffs = new ObservableCollection<DisplayStaffModel>();
         public ObservableCollection<DisplayStaffModel> StaffCollection
@@ -46,6 +47,7 @@ namespace FASTAdmin.Controls
             InitializeComponent();
             MapBranchName();
         }
+
         private void MapBranchName()
         {
             var temp = Task.Run(async () => await ApiProcessor.LoadBranches());
@@ -62,6 +64,7 @@ namespace FASTAdmin.Controls
             foreach(var staff in staffs)
             {
                 DisplayStaffModel newStaff = new DisplayStaffModel();
+                newStaff.id = staff.id;
                 newStaff.firstName = staff.firstName;
                 newStaff.lastName = staff.lastName;
                 if (branchNameMapper.ContainsKey(staff.branch_id))
@@ -158,13 +161,17 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            DisplayStaffModel selectedDisplayStaff = (DisplayStaffModel) staffDataGrid.SelectedItem;
-            StaffModel selectedStaff = staffMapper[selectedDisplayStaff];
+            try
+            {
+                DisplayStaffModel selectedDisplayStaff = (DisplayStaffModel)staffDataGrid.SelectedItem;
+                StaffModel selectedStaff = staffMapper[selectedDisplayStaff];
 
-            DeleteUserControl deleteControl = new DeleteUserControl();
-            deleteControl.selectedStaff = selectedStaff;
-            externalContents.Content = deleteControl;
-            deleteControl.UpdateDataGridEvent += DeleteControl_UpdateDataGridEvent;
+                DeleteUserControl deleteControl = new DeleteUserControl();
+                deleteControl.selectedStaff = selectedStaff;
+                externalContents.Content = deleteControl;
+                deleteControl.UpdateDataGridEvent += DeleteControl_UpdateDataGridEvent;
+            }
+            catch { }
         }
 
         private void DeleteControl_UpdateDataGridEvent(object sender, string e)
@@ -180,13 +187,20 @@ namespace FASTAdmin.Controls
                 return;
             }
 
-            DisplayStaffModel selectedDisplayStaff = (DisplayStaffModel)staffDataGrid.SelectedItem;
-            StaffModel selectedStaff = staffMapper[selectedDisplayStaff];
+            try
+            {
+                DisplayStaffModel selectedDisplayStaff = (DisplayStaffModel)staffDataGrid.SelectedItem;
+                StaffModel selectedStaff = staffMapper[selectedDisplayStaff];
 
-            EditUserControl editControl = new EditUserControl();
-            editControl.selectedStaff = selectedStaff;
-            externalContents.Content = editControl;
-            editControl.UpdateDataGridEvent += EditControl_UpdateDataGridEvent;
+                EditUserControl editControl = new EditUserControl();
+                editControl.selectedStaff = selectedStaff;
+                externalContents.Content = editControl;
+                editControl.UpdateDataGridEvent += EditControl_UpdateDataGridEvent;
+            }
+            catch
+            {
+
+            }
         }
 
         private void EditControl_UpdateDataGridEvent(object sender, string e)
@@ -255,6 +269,7 @@ namespace FASTAdmin.Controls
             staffDataGrid.Visibility = Visibility.Collapsed;
             staffEditButtons.Visibility = Visibility.Collapsed;
             branchListText.Visibility = Visibility.Collapsed;
+            addFPButton.Visibility = Visibility.Collapsed;
             branchDataGrid.Visibility = Visibility.Collapsed;
             branchEditButtons.Visibility = Visibility.Collapsed;
             externalContents.Visibility = Visibility.Collapsed;
@@ -272,6 +287,64 @@ namespace FASTAdmin.Controls
         private async void reloadListButton_Click(object sender, RoutedEventArgs e)
         {
             await LoadDataGrid();
+        }
+
+        private StaffModel ValidateStaffModel(DisplayStaffModel model)
+        {
+            StaffModel nModel = new StaffModel();
+            nModel.firstName = model.firstName;
+            nModel.lastName = model.lastName;
+            nModel.branch_id = branchNameMapper.FirstOrDefault(x => x.Value == model.branchName).Key;
+            nModel.fingerPrint = fpTemplate;
+            return nModel;
+        }
+
+        private void GetShitDone()
+        {
+            DisplayStaffModel selectedItem = new DisplayStaffModel();
+            this.Dispatcher.Invoke(() =>
+            {
+                selectedItem = (DisplayStaffModel)staffDataGrid.SelectedItem;
+            });
+            if (selectedItem == null)
+            {
+                return;
+            }
+            if (selectedItem.firstName == null || selectedItem.lastName == null || selectedItem.branchName == null)
+            {
+                MessageBox.Show("Нэр эсвэл тасаг хоосон байна.");
+                return;
+            }
+            try
+            {
+                if (selectedItem.id == 0)
+                {
+                    var w = new ScanWindow();
+
+                    if (w.ShowDialog() == true)
+                    {
+                        fpTemplate = w.ReturnFP;
+                    }
+                    if (fpTemplate == null)
+                    {
+                        MessageBox.Show("Ажилтан нэмэлт амжилтгүй");
+                        return;
+                    }
+                    var newStaff = ValidateStaffModel(selectedItem);
+                    var t = Task.Run(async () => await ApiProcessor.SaveStaff(newStaff));
+                    var res = t.Result;
+                    if (res == "success")
+                    {
+                        Task.Run(async () => await this.LoadStaffDataGrid());
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void addFPButton_Click(object sender, RoutedEventArgs e)
+        {
+            GetShitDone();
         }
     }
 }

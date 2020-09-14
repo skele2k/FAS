@@ -106,7 +106,7 @@ namespace FASLib.Fingerprint
         {
             int openDeviceCallBackCode = fpInstance.OpenDevice(0);
 
-            if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode && zkfp.ZKFP_ERR_ALREADY_OPENED != 1)
+            if (zkfp.ZKFP_ERR_OK != openDeviceCallBackCode)
             {
                 MessageBox.Show("Төхөөрөмжтэй холбогдоход алдаа гарлаа.");
                 DeviceNotConnected?.Invoke(this, "not_connected");
