@@ -297,8 +297,11 @@ namespace FASLib.Fingerprint
                         theRecord = attendance[i];
                         break;
                     }
+                    else if (attendance[i].date != currentDate)
+                    {
+                        break;
+                    }
                 }
-
                 return theRecord;
             }
             catch

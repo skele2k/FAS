@@ -160,7 +160,7 @@ namespace FASLib.Helpers
         }
         public static async Task<string> EditStaffByID(StaffModel theStaff)
         {
-            string url = $"https://localhost:44360/api/staff/ { theStaff.id }";
+            string url = $"/api/staff/ { theStaff.id }";
             var json = new JavaScriptSerializer().Serialize(theStaff);
             HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 

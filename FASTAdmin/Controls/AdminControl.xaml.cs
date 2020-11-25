@@ -299,7 +299,7 @@ namespace FASTAdmin.Controls
             return nModel;
         }
 
-        private void GetShitDone()
+        private async void GetFP()
         {
             DisplayStaffModel selectedItem = new DisplayStaffModel();
             this.Dispatcher.Invoke(() =>
@@ -333,18 +333,93 @@ namespace FASTAdmin.Controls
                     var newStaff = ValidateStaffModel(selectedItem);
                     var t = Task.Run(async () => await ApiProcessor.SaveStaff(newStaff));
                     var res = t.Result;
+
                     if (res == "success")
                     {
+                        await InsertToAttendanceSheet(newStaff);
                         Task.Run(async () => await this.LoadStaffDataGrid());
                     }
                 }
             }
             catch { }
         }
+        private async Task InsertToAttendanceSheet(StaffModel theStaff)
+        {
+            try
+            {
+                string currentDate = getCurrentDate();
+                bool isNewDay = IsNewDay(currentDate);
+
+                if (isNewDay == false)
+                {
+                    var staffs = await ApiProcessor.LoadStaffs();
+
+                    foreach (StaffModel staff in staffs)
+                    {
+                        if (theStaff.fingerPrint.SequenceEqual(staff.fingerPrint))
+                        {
+                            theStaff.id = staff.id;
+                            break;
+                        }
+                    }
+                    var form = ValidateAttendanceModel(theStaff);
+
+                    var t = Task.Run(async () => await ApiProcessor.SaveToAttendanceSheet(form.model));
+                    var res = t.Result;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Сүлжээний алдаа. Сүлжээнд холбогдсон эсэхээ шалгана уу?");
+            }
+        }
+        private (AttendanceModel model, bool isValid) ValidateAttendanceModel(StaffModel theStaff)
+        {
+            AttendanceModel model = new AttendanceModel();
+            bool isValid = true;
+
+            try
+            {
+                model.staff_id = theStaff.id;
+                model.branch_id = theStaff.branch_id;
+                model.date = getCurrentDate();
+                model.atOffice = 0;
+            }
+            catch
+            {
+                isValid = false;
+            }
+            return (model, isValid);
+        }
+        private bool IsNewDay(string currentDate)
+        {
+            try
+            {
+                var w = Task.Run(async () => await ApiProcessor.LoadAttendanceSheet());
+                var attendanceList = w.Result;
+                int size = attendanceList.Count();
+                if (size == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    string lastDate = attendanceList[size - 1].date;
+                    return !(lastDate == currentDate);
+                }
+            }
+            catch { return false; }
+        }
+        private string getCurrentDate()
+        {
+            DateTime dateTime = DateTime.UtcNow.Date;
+            string currentDate = dateTime.ToString("MM/dd/yyyy");
+            return currentDate;
+        }
 
         private void addFPButton_Click(object sender, RoutedEventArgs e)
         {
-            GetShitDone();
+            GetFP();
         }
     }
 }

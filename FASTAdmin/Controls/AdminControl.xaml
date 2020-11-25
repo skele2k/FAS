@@ -47,7 +47,7 @@
 
         <ContentControl x:Name="BackControl"
                         Grid.Row="0" 
-                        Grid.ColumnSpan="4"
+                        Grid.ColumnSpan="5"
                         Grid.Column="0"
                         Grid.RowSpan="5"/>
 

@@ -8,7 +8,7 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 
-[assembly: OwinStartup(typeof(FASDataManager.Startup))]
+[assembly: OwinStartup("Start", typeof(FASDataManager.Startup))]
 
 namespace FASDataManager
 {

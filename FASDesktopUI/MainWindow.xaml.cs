@@ -90,11 +90,10 @@ namespace FASDesktopUI
 
         private void Fp_FailedToAddToDBEvent(object sender, string e)
         {
-            this.Dispatcher.Invoke(() => 
+            this.Dispatcher.Invoke(() =>
             {
                 userInfoStackPanel.Visibility = Visibility.Hidden;
                 error.Visibility = Visibility.Visible;
-                repeatFingerprintAlert.Visibility = Visibility.Visible;
             });
             Thread.Sleep(800);
             this.Dispatcher.Invoke(() => 
@@ -149,7 +148,7 @@ namespace FASDesktopUI
                     ApiHelper.ApiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token.Access_Token);
                 }
             }
-            catch(Exception e)
+            catch
             {
                 MessageBox.Show("Сүлжээний алдаа гарлаа. Сүлжээгээ шалгана уу?");
             }

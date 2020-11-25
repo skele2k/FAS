@@ -1,5 +1,6 @@
 ﻿using FASLib.DataAccess;
 using FASLib.Helpers;
+using FASLib.Models;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -14,23 +15,45 @@ using System.Windows.Media.Media3D;
 
 namespace FASTAdmin.excelHelper
 {
+    class comparer : IComparer<StaffModel>
+    {
+        public int Compare(StaffModel x, StaffModel y)
+        {
+            if (x.branch_id == y.branch_id)
+            {
+                return x.firstName.CompareTo(y.firstName);
+            }
+            else
+            {
+                bool first = x.branch_id.CompareTo(y.branch_id) != 0;
+                bool second = x.firstName.CompareTo(y.firstName) != 0;
+                return Convert.ToInt32(first && second);
+            }
+        }
+    }
     public static class xlHelper
     {
         public async static void PeriodDataExporter(DateTime startDate, DateTime endDate, string path)
         {
-            System.IO.Directory.CreateDirectory(path + @"\FASxlOutput");
-
             string startDateStr = startDate.ToString("MM_dd_yyyy");
             string endDateStr = endDate.ToString("MM_dd_yyyy");
 
-            string filePath = path + $"\\FASxlOutput\\{ startDateStr }-{ endDateStr }.xlsx";
+            string filePath = path + $"\\{ startDateStr }-{ endDateStr }.xlsx";
 
 
             FileInfo newFile = new FileInfo(filePath);
 
             if (newFile.Exists)
             {
-                newFile.Delete();
+                try
+                {
+                    newFile.Delete();
+                }
+                catch
+                {
+                    MessageBox.Show("Нээлттэй эксэл файлаа хаана уу?");
+                    return;
+                }
                 newFile = new FileInfo(filePath);
             }
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -38,7 +61,7 @@ namespace FASTAdmin.excelHelper
             using (ExcelPackage package = new ExcelPackage(newFile))
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"{startDateStr}-{endDateStr}");
-
+                
                 worksheet.Cells[1, 1].Value = "Өдөр";
                 worksheet.Cells[1, 2].Value = "Тасаг";
                 worksheet.Cells[1, 3].Value = "Нэр";
@@ -56,6 +79,7 @@ namespace FASTAdmin.excelHelper
 
                 Dictionary<int, string> staffNameMapper = new Dictionary<int, string>();
                 Dictionary<int, string> branchNameMapper = new Dictionary<int, string>();
+                Dictionary<int, double> staffWorkHourMapper = new Dictionary<int, double>();
 
                 int staffSize = staffList.Count();
                 int branchSize = branchList.Count();
@@ -65,7 +89,7 @@ namespace FASTAdmin.excelHelper
                     staffNameMapper[staffList[i].id] = staffList[i].fullName;
                 }
 
-                for (int i = 0; i < staffSize; i++)
+                for (int i = 0; i < branchSize; i++)
                 {
                     branchNameMapper[branchList[i].id] = branchList[i].name;
                 }
@@ -110,6 +134,17 @@ namespace FASTAdmin.excelHelper
                         startIndex = 0;
                     }
                 }
+                List<AttendanceModel> outList = new List<AttendanceModel>();
+
+                for (int i = startIndex; i < size; i++)
+                {
+                    outList.Add(attendanceList[i]);
+                    DateTime currentDate = DateTime.Parse(attendanceList[i].date);
+                    if (currentDate.CompareTo(endDate) > 0)
+                    {
+                        break;
+                    }
+                }
 
                 int k = 0;
                 for (int i = startIndex; i < size; i++)
@@ -124,7 +159,7 @@ namespace FASTAdmin.excelHelper
 
 
                     worksheet.Cells[$"A{ k + 2 }"].Value = attendanceList[i].date;
-
+          
                     if (branchNameMapper.ContainsKey(attendanceList[i].branch_id))
                     {
                         worksheet.Cells[$"B{ k + 2 }"].Value = branchNameMapper[attendanceList[i].branch_id];
@@ -149,13 +184,37 @@ namespace FASTAdmin.excelHelper
                     worksheet.Cells[$"F{ k + 2 }"].Value = attendanceList[i].officeHours;
                     worksheet.Cells[$"G{ k + 2 }"].Value = attendanceList[i].atOffice;
 
+                    if (staffWorkHourMapper.ContainsKey(attendanceList[i].staff_id))
+                    {
+                        staffWorkHourMapper[attendanceList[i].staff_id] += attendanceList[i].officeHours;
+                    }
+                    else
+                    {
+                        staffWorkHourMapper[attendanceList[i].staff_id] = attendanceList[i].officeHours;
+                    }
+
                     k++;
                 }
 
+                //Analysis part
+                worksheet.Cells[1, 11].Value = "Тасаг";
+                worksheet.Cells[1, 12].Value = "Нэр";
+                worksheet.Cells[1, 13].Value = "Сонгосон хугацаанд ажилласан цаг";
+
+                comparer cmp = new comparer();
+                List<StaffModel> display = staffList.OrderBy(s => branchNameMapper[s.branch_id]).ThenBy(s => s.firstName).ToList();
+
+                for (int i = 0; i < staffSize; i++)
+                {
+                    worksheet.Cells[$"K{ i + 2 }"].Value = branchNameMapper[display[i].branch_id];
+                    worksheet.Cells[$"L{ i + 2 }"].Value = staffNameMapper[display[i].id];
+                    worksheet.Cells[$"M{ i + 2 }"].Value = staffWorkHourMapper[display[i].id];
+                }
+
                 package.Save();
+                MessageBox.Show("Хөрвүүлж дууслаа!");
                 OpenFile(filePath);
             }
-            MessageBox.Show("Хөрвүүлж дууслаа!");
         }
         private static void OpenFile(string path)
         {
@@ -163,13 +222,20 @@ namespace FASTAdmin.excelHelper
         }
         public async static void AllDataExporter(string path)
         {
-            System.IO.Directory.CreateDirectory(path + @"\FASxlOutput");
-            string filePath = path + @"\FASxlOutput\allTimeAttendance.xlsx";
+            string filePath = path + @"\allTimeAttendance.xlsx";
             FileInfo newFile = new FileInfo(filePath);
             
             if (newFile.Exists)
             {
-                newFile.Delete();
+                try
+                {
+                    newFile.Delete();
+                }
+                catch
+                {
+                    MessageBox.Show("Нээлттэй эксэл файлаа хаана уу?");
+                    return;
+                }
                 newFile = new FileInfo(filePath);
             }
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -183,10 +249,10 @@ namespace FASTAdmin.excelHelper
                 worksheet.Cells[1, 1].Value = "Өдөр";
                 worksheet.Cells[1, 2].Value = "Тасаг";
                 worksheet.Cells[1, 3].Value = "Нэр";
-                worksheet.Cells[1, 3].Value = "Ирсэн цаг";
-                worksheet.Cells[1, 4].Value = "Явсан цаг";
-                worksheet.Cells[1, 5].Value = "Ажилласан цаг";
-                worksheet.Cells[1, 6].Value = "Ажил дээрээ байгаа эсэх";
+                worksheet.Cells[1, 4].Value = "Ирсэн цаг";
+                worksheet.Cells[1, 5].Value = "Явсан цаг";
+                worksheet.Cells[1, 6].Value = "Ажилласан цаг";
+                worksheet.Cells[1, 7].Value = "Ажил дээрээ байгаа эсэх";
                 
                 
                 var attendanceList = await ApiProcessor.LoadAttendanceSheet();
@@ -197,6 +263,7 @@ namespace FASTAdmin.excelHelper
 
                 Dictionary<int, string> staffNameMapper = new Dictionary<int, string>();
                 Dictionary<int, string> branchNameMapper = new Dictionary<int, string>();
+                Dictionary<int, double> staffWorkHourMapper = new Dictionary<int, double>();
 
                 int staffSize = staffList.Count();
                 int branchSize = branchList.Count();
@@ -206,7 +273,7 @@ namespace FASTAdmin.excelHelper
                     staffNameMapper[staffList[i].id] = staffList[i].fullName;
                 }
 
-                for (int i = 0; i < staffSize; i++)
+                for (int i = 0; i < branchSize; i++)
                 {
                     branchNameMapper[branchList[i].id] = branchList[i].name;
                 }
@@ -238,12 +305,36 @@ namespace FASTAdmin.excelHelper
                     worksheet.Cells[$"E{ i + 2 }"].Value = attendanceList[i].leaveTime;
                     worksheet.Cells[$"F{ i + 2 }"].Value = attendanceList[i].officeHours;
                     worksheet.Cells[$"G{ i + 2 }"].Value = attendanceList[i].atOffice;
-                    
+
+                    if (staffWorkHourMapper.ContainsKey(attendanceList[i].staff_id))
+                    {
+                        staffWorkHourMapper[attendanceList[i].staff_id] += attendanceList[i].officeHours;
+                    }
+                    else
+                    {
+                        staffWorkHourMapper[attendanceList[i].staff_id] = attendanceList[i].officeHours;
+                    }
                 }
+
+                //Analysis part
+                worksheet.Cells[1, 11].Value = "Тасаг";
+                worksheet.Cells[1, 12].Value = "Нэр";
+                worksheet.Cells[1, 13].Value = "Сонгосон хугацаанд ажилласан цаг";
+
+                comparer cmp = new comparer();
+                staffList.OrderBy(s => s.branch_id).ThenBy(s => s.firstName);
+
+                for (int i = 0; i < staffSize; i++)
+                {
+                    worksheet.Cells[$"K{ i + 2 }"].Value = branchNameMapper[staffList[i].branch_id];
+                    worksheet.Cells[$"L{ i + 2 }"].Value = staffNameMapper[staffList[i].id];
+                    worksheet.Cells[$"M{ i + 2 }"].Value = staffWorkHourMapper[staffList[i].id];
+                }
+
                 package.Save();
+                MessageBox.Show("Хөрвүүлж дууслаа!");
                 OpenFile(filePath);
             }
-            MessageBox.Show("Хөрвүүлж дууслаа!");
         }
     }
 }

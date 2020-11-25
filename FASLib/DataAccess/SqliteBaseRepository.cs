@@ -17,8 +17,10 @@ namespace FASLib.DataAccess
         {
             get
             {
-                string untilUser = System.Environment.GetEnvironmentVariable("USERPROFILE");
-                string fullPath = untilUser + @"\AppData\Local\FAS\db";
+                //string untilUser = System.Environment.GetEnvironmentVariable("USERPROFILE");
+                string untilUser = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+                string fullPath = untilUser + @"\FAS\db";
                 System.IO.Directory.CreateDirectory(fullPath);
                 return fullPath + @"\AttendDB.sqlite";
             }

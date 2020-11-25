@@ -42,18 +42,36 @@ namespace FASDesktopUI
         }
         private string CutAddress(string api)
         {
-            if (api.StartsWith("https://") && api.EndsWith(":44360"))
+            bool isSecond = false;
+            int start = 0;
+            int end = 0;
+            for (int i = 0; i < api.Length; i++)
             {
-                int len = api.Length;
-                api = api.Substring(8, len - 14);
+                if (api[i] == ':')
+                {
+                    if (isSecond == false)
+                    {
+                        start = i + 3;
+                        isSecond = true;
+
+                    }
+                    else
+                    {
+                        end = i;
+                    }
+                }
+            }
+            if (start != 0 && end != 0)
+            {
+                api = api.Substring(start, end - start);
             }
             return api;
         }
         private string CreateAddress(string api)
         {
-            if (!api.StartsWith("https://") && !api.EndsWith(":44360"))
+            if (!api.StartsWith("http://") && !api.EndsWith(":8888"))
             {
-                api = "https://" + api + ":44360";
+                api = "http://" + api + ":8888";
             }
             return api;
         }
