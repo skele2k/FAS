@@ -15,10 +15,9 @@ namespace FASLib.Helpers
     {
         public static HttpClient ApiClient { get; set; }
 
-        public static bool InitializeClient()
+        public static bool InitializeClient(string api = "")
         {
-            string api = ConfigurationManager.AppSettings["api"];
-            bool output = true;
+            var output = true;
             try
             {
                 ApiClient = new HttpClient();
@@ -26,6 +25,7 @@ namespace FASLib.Helpers
                 ApiClient.DefaultRequestHeaders.Accept.Clear();
                 ApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+                //Check if IP is working
                 var t = Task.Run(async () => await ApiProcessor.LoadAdmins());
                 var res = t.Result;
             }

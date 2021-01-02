@@ -1,5 +1,6 @@
 ﻿using FASLib.Helpers;
 using FASLib.Models;
+using FASLib.DataAccess;
 using OfficeOpenXml.Packaging.Ionic.Zip;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace FASTAdmin.Controls
         }
         private void InitializeIPAddress()
         {
-            var api = ConfigurationManager.AppSettings["api"];
+            var api = Properties.Settings.Default.api;
             if (api != "notset")
             {
                 ipAddressTextBox.Text = CutAddress(api);
@@ -92,48 +93,61 @@ namespace FASTAdmin.Controls
         }
         private bool ConfigureAPI()
         {
-            var api = ConfigurationManager.AppSettings["api"];
-            var new_api = CreateAddress(ipAddressTextBox.Text);
-            if (new_api == "" && api == "notset" )
+            var api = Properties.Settings.Default.api;
+            
+            string text = "";
+            this.Dispatcher.Invoke(() =>
+            {
+                text = ipAddressTextBox.Text;
+            });
+
+            var new_api = CreateAddress(text); ;
+            
+            if (new_api == "" && api == "notset")
             {
                 MessageBox.Show("Холбогдох сүлжээгээ өгнө үү?");
                 return false;
             }
-
+                
             if (new_api != api && new_api != "notset")
             {
-                Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                configuration.AppSettings.Settings["api"].Value = new_api;
-                configuration.Save();
-
-                ConfigurationManager.RefreshSection("appSettings");
+                Properties.Settings.Default.api = new_api;
+                Properties.Settings.Default.Save();
             }
-            ApiHelper.InitializeClient();
+            
+            if (!ApiHelper.InitializeClient(new_api))
+            {
+                return false;
+            }
+            
             return true;
-        }
+        
+        } 
         private async void loginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (addUsernameTextBox.Text == "" || addPasswordTextBox.Password == "")
-            {
-                MessageBox.Show("Нэр эсвэл нууц үг хоосон байна.");
-                loginButton.IsEnabled = true;
-                return;
-            }
-            if(!ConfigureAPI())
-            {
-                return;
-            }
-
-            var form = ValidateForm();
-
-            if (form.isValid == false)
-            {
-                return;
-            }
-
             try
             {
-                Token token = await ApiProcessor.Authenticate(form.model.username, form.model.password);
+                loginButton.IsEnabled = false;
+                if (addUsernameTextBox.Text == "" || addPasswordTextBox.Password == "")
+                {
+                    MessageBox.Show("Нэр эсвэл нууц үг хоосон байна.");
+                    loginButton.IsEnabled = true;
+                    return;
+                }
+                var asyncRun = await Task.Run(() => ConfigureAPI());
+                if (!asyncRun)
+                {
+                    loginButton.IsEnabled = true;
+                    return;
+                }
+
+                var form = ValidateForm();
+
+                if (form.isValid == false)
+                {
+                    return;
+                }
+                Token token = await Task.Run(() => ApiProcessor.Authenticate(form.model.username, form.model.password));
 
                 if (token != null)
                 {
@@ -151,18 +165,18 @@ namespace FASTAdmin.Controls
                 else
                 {
                     MessageBox.Show("Нэр эсвэл нууц үг буруу байна.");
-                    return;
                 }
             }
             catch (Exception)
             {
-                return;
             }
+            loginButton.IsEnabled = true;
         }
 
-        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        private async void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            if (!ConfigureAPI())
+            var asyncRun = await Task.Run(() => ConfigureAPI());
+            if (!asyncRun)
             {
                 return;
             }

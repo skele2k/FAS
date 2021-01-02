@@ -25,7 +25,7 @@ namespace FASDesktopUI
         public MainWindow()
         {
             InitializeComponent();
-            CheckValidIP();
+            ShowDefaultScreen();
         }
         private void InitializeFP()
         {
@@ -34,6 +34,20 @@ namespace FASDesktopUI
             fp.SuccessfullyAddedToDBEvent += Fp_SuccessfullyAddedToDBEvent;
             fp.FailedToAddToDBEvent += Fp_FailedToAddToDBEvent;
         }
+        private void disableIpButton()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ipButton.IsEnabled = false;
+            });
+        }
+        private void enableIpButton()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ipButton.IsEnabled = true;
+            });
+        }
         private void StartUp()
         {
             Authenticate();
@@ -41,41 +55,18 @@ namespace FASDesktopUI
             fp.ConnectDeviceAndIdentify();
 
             InitializeCurrentDate();
-
-            userInfoStackPanel.Visibility = Visibility.Hidden;
-            tick.Visibility = Visibility.Hidden;
-            error.Visibility = Visibility.Hidden;
-        }
-        private void CheckValidIP()
-        {
-            var api = ConfigurationManager.AppSettings["api"];
+            this.Dispatcher.Invoke(() =>
+            {
+                userInfoStackPanel.Visibility = Visibility.Hidden;
+                tick.Visibility = Visibility.Hidden;
+                error.Visibility = Visibility.Hidden;
+            });
             
-            if (api == "" || api == "notset")
-            {
-                var w = new getIpWindow();
-                if (w.ShowDialog() == true)
-                {
-                    if (w.IsSuccessful == true)
-                    {
-                        if (StartApp() == false)
-                        {
-                            ShowDefaultScreen();
-                            return;
-                        }
-                    }
-                }
-            }
-            if(StartApp() == false)
-            {
-                ShowDefaultScreen();
-                return;
-            }
         }
-
         private bool StartApp()
         {
-            bool output = ApiHelper.InitializeClient();
-            if (output == false)
+            var api = Properties.Settings.Default.api;
+            if (!ApiHelper.InitializeClient(api))
             {
                 return false;
             }
@@ -255,7 +246,7 @@ namespace FASDesktopUI
             }
             catch { }
         }
-        private void ipButton_Click(object sender, RoutedEventArgs e)
+        private async void ipButton_Click(object sender, RoutedEventArgs e)
         {
             if (fp != null)
             {
@@ -268,32 +259,35 @@ namespace FASDesktopUI
             {
                 if (w.IsSuccessful == true)
                 {
-                    if (StartApp() == false)
+                    disableIpButton();
+                    var t = await Task.Run(() => StartApp());
+                    if (t == false)
                     {
                         ShowDefaultScreen();
-                        return;
                     }
+                    enableIpButton();
                 }
             }
         }
 
         private void ShowDefaultScreen()
         {
-            
-            staffLastNameTextBlock.Text = "------------";
-            staffFirstNameTextBlock.Text = "------------";
-            branchNameTextBlock.Text = "--------------";
-            arriveTimeTextBlock.Text = "00:00:00 00";
-            leaveTimeTextBlock.Text = "00:00:00 00";
+            this.Dispatcher.Invoke(() => {
+                staffLastNameTextBlock.Text = "------------";
+                staffFirstNameTextBlock.Text = "------------";
+                branchNameTextBlock.Text = "--------------";
+                arriveTimeTextBlock.Text = "00:00:00 00";
+                leaveTimeTextBlock.Text = "00:00:00 00";
 
-            userInfoStackPanel.Visibility = Visibility.Visible;
-            nameStackPanel.Visibility = Visibility.Visible;
-            branchStackPanel.Visibility = Visibility.Visible;
-            timeDisplayStackPanel.Visibility = Visibility.Visible;
-            arriveTimeTextBlock.Visibility = Visibility.Visible;
-            leaveTimeTextBlock.Visibility = Visibility.Visible;
-            repeatFingerprintAlert.Visibility = Visibility.Hidden;
-            error.Visibility = Visibility.Visible;
+                userInfoStackPanel.Visibility = Visibility.Visible;
+                nameStackPanel.Visibility = Visibility.Visible;
+                branchStackPanel.Visibility = Visibility.Visible;
+                timeDisplayStackPanel.Visibility = Visibility.Visible;
+                arriveTimeTextBlock.Visibility = Visibility.Visible;
+                leaveTimeTextBlock.Visibility = Visibility.Visible;
+                repeatFingerprintAlert.Visibility = Visibility.Hidden;
+                error.Visibility = Visibility.Visible;
+            });
 
         }
 

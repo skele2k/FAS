@@ -37,7 +37,7 @@ namespace FASDesktopUI
         }
         private void InitializeIPAddress()
         {
-            var api = ConfigurationManager.AppSettings["api"];
+            var api = Properties.Settings.Default.api;
             ipInputTextBox.Text = CutAddress(api);
         }
         private string CutAddress(string api)
@@ -83,11 +83,9 @@ namespace FASDesktopUI
             }
             string new_api = CreateAddress(ipInputTextBox.Text);
 
-            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            configuration.AppSettings.Settings["api"].Value = new_api;
-            configuration.Save();
+            Properties.Settings.Default.api = new_api;
+            Properties.Settings.Default.Save();
 
-            ConfigurationManager.RefreshSection("appSettings");
             isSuccessful = true;
             DialogResult = true;
             this.Close();

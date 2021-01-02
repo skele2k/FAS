@@ -197,18 +197,19 @@ namespace FASTAdmin.excelHelper
                 }
 
                 //Analysis part
-                worksheet.Cells[1, 11].Value = "Тасаг";
-                worksheet.Cells[1, 12].Value = "Нэр";
-                worksheet.Cells[1, 13].Value = "Сонгосон хугацаанд ажилласан цаг";
+                ExcelWorksheet analyze = package.Workbook.Worksheets.Add($"Тайлан");
+                analyze.Cells[1, 1].Value = "Тасаг";
+                analyze.Cells[1, 2].Value = "Нэр";
+                analyze.Cells[1, 3].Value = "Сонгосон хугацаанд ажилласан цаг";
 
                 comparer cmp = new comparer();
                 List<StaffModel> display = staffList.OrderBy(s => branchNameMapper[s.branch_id]).ThenBy(s => s.firstName).ToList();
 
                 for (int i = 0; i < staffSize; i++)
                 {
-                    worksheet.Cells[$"K{ i + 2 }"].Value = branchNameMapper[display[i].branch_id];
-                    worksheet.Cells[$"L{ i + 2 }"].Value = staffNameMapper[display[i].id];
-                    worksheet.Cells[$"M{ i + 2 }"].Value = staffWorkHourMapper[display[i].id];
+                    analyze.Cells[$"A{ i + 2 }"].Value = branchNameMapper[display[i].branch_id];
+                    analyze.Cells[$"B{ i + 2 }"].Value = staffNameMapper[display[i].id];
+                    analyze.Cells[$"C{ i + 2 }"].Value = staffWorkHourMapper[display[i].id];
                 }
 
                 package.Save();
@@ -315,20 +316,20 @@ namespace FASTAdmin.excelHelper
                         staffWorkHourMapper[attendanceList[i].staff_id] = attendanceList[i].officeHours;
                     }
                 }
-
                 //Analysis part
-                worksheet.Cells[1, 11].Value = "Тасаг";
-                worksheet.Cells[1, 12].Value = "Нэр";
-                worksheet.Cells[1, 13].Value = "Сонгосон хугацаанд ажилласан цаг";
+                ExcelWorksheet analyze = package.Workbook.Worksheets.Add($"Тайлан");
+                analyze.Cells[1, 1].Value = "Тасаг";
+                analyze.Cells[1, 2].Value = "Нэр";
+                analyze.Cells[1, 3].Value = "Сонгосон хугацаанд ажилласан цаг";
 
                 comparer cmp = new comparer();
-                staffList.OrderBy(s => s.branch_id).ThenBy(s => s.firstName);
+                List<StaffModel> display = staffList.OrderBy(s => branchNameMapper[s.branch_id]).ThenBy(s => s.firstName).ToList();
 
                 for (int i = 0; i < staffSize; i++)
                 {
-                    worksheet.Cells[$"K{ i + 2 }"].Value = branchNameMapper[staffList[i].branch_id];
-                    worksheet.Cells[$"L{ i + 2 }"].Value = staffNameMapper[staffList[i].id];
-                    worksheet.Cells[$"M{ i + 2 }"].Value = staffWorkHourMapper[staffList[i].id];
+                    analyze.Cells[$"A{ i + 2 }"].Value = branchNameMapper[display[i].branch_id];
+                    analyze.Cells[$"B{ i + 2 }"].Value = staffNameMapper[display[i].id];
+                    analyze.Cells[$"C{ i + 2 }"].Value = staffWorkHourMapper[display[i].id];
                 }
 
                 package.Save();

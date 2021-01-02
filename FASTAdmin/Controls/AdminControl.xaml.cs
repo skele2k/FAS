@@ -299,7 +299,7 @@ namespace FASTAdmin.Controls
             return nModel;
         }
 
-        private async void GetFP()
+        private void GetFP()
         {
             DisplayStaffModel selectedItem = new DisplayStaffModel();
             this.Dispatcher.Invoke(() =>
@@ -336,12 +336,13 @@ namespace FASTAdmin.Controls
 
                     if (res == "success")
                     {
-                        await InsertToAttendanceSheet(newStaff);
+                        Task.Run(async () => await InsertToAttendanceSheet(newStaff));
+                        //await InsertToAttendanceSheet(newStaff);
                         Task.Run(async () => await this.LoadStaffDataGrid());
                     }
                 }
             }
-            catch { }
+            catch(Exception e) { MessageBox.Show(e.ToString()); }
         }
         private async Task InsertToAttendanceSheet(StaffModel theStaff)
         {

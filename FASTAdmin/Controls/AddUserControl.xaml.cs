@@ -1,7 +1,6 @@
 ﻿using FASLib.Fingerprint;
 using FASLib.Helpers;
 using FASLib.Models;
-using libzkfpcsharp;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;

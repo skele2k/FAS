@@ -84,7 +84,7 @@ namespace FASTAdmin
             }
         }
 
-        private async Task CloseWindow()
+        private void CloseWindow()
         {
             Thread.Sleep(200);
             fp.DisconnectDevice();

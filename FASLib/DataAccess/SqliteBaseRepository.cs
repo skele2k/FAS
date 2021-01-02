@@ -3,6 +3,7 @@ using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,6 @@ namespace FASLib.DataAccess
 {
     public static class SqliteBaseRepository
     {
-        public static string FullPath { get; set; }
         public static string DbLocation
         {
             get
@@ -21,8 +21,14 @@ namespace FASLib.DataAccess
                 string untilUser = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
                 string fullPath = untilUser + @"\FAS\db";
-                System.IO.Directory.CreateDirectory(fullPath);
-                return fullPath + @"\AttendDB.sqlite";
+
+                if (!File.Exists(fullPath))
+                {
+                    System.IO.Directory.CreateDirectory(fullPath);
+                }
+
+                var filePath = Path.Combine(fullPath, "AttendDB.sqlite");
+                return filePath;
             }
         }
         public static SQLiteConnection SimpleDbConnection()
