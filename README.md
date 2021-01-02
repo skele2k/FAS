@@ -38,7 +38,7 @@ How to setup WEB-API:
         -> Set Identity to "Local System"  
         -> Set 32-bit Application to "True"  
 All done. The WEB Api has been set to your local network.  
-Try searching "http://yourip:8888"  
+Try searching "http://localhost:8888"  
 
 
 Download FAS Admin: https://drive.google.com/file/d/1Dr5Aa_gXM7Bap4RolIYz5vvkutjosA_p/view?usp=sharing  
